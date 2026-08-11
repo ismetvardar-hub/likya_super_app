@@ -24,6 +24,7 @@ import RoomOnlyConcept from './components/RoomOnlyConcept';
 import AthletePerformanceAI from './components/AthletePerformanceAI';
 import StrategicRiskShield from './components/StrategicRiskShield';
 import SmartDestinationEngine from './components/SmartDestinationEngine';
+import HRPayrollAgent from './components/HRPayrollAgent';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -345,6 +346,9 @@ export default function LikyaCampusCommandSystem() {
 
           {/* ✨ SMART DESTINATION ENGINE - GELECEK VİZYONU */}
           <SmartDestinationEngine />
+
+          {/* 👥 İNSAN KAYNAKLARI - BORDRO & ÖZLÜK HAKLARI AJANI */}
+          <HRPayrollAgent />
         </div>
       )}
 
