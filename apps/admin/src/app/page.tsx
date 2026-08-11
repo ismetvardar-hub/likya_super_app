@@ -27,6 +27,7 @@ import SmartDestinationEngine from './components/SmartDestinationEngine';
 import HRPayrollAgent from './components/HRPayrollAgent';
 import FacilityMaintenanceAgent from './components/FacilityMaintenanceAgent';
 import SecurityIncidentAgent from './components/SecurityIncidentAgent';
+import DepartmentAgents from './components/DepartmentAgents';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -357,6 +358,9 @@ export default function LikyaCampusCommandSystem() {
 
           {/* 🛡️ GÜVENLİK & OLAY YÖNETİMİ AJANI */}
           <SecurityIncidentAgent />
+
+          {/* ⚖️ YENİ DEPARTMAN AJANLARI */}
+          <DepartmentAgents />
         </div>
       )}
 
