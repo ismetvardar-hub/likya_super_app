@@ -25,6 +25,7 @@ import AthletePerformanceAI from './components/AthletePerformanceAI';
 import StrategicRiskShield from './components/StrategicRiskShield';
 import SmartDestinationEngine from './components/SmartDestinationEngine';
 import HRPayrollAgent from './components/HRPayrollAgent';
+import FacilityMaintenanceAgent from './components/FacilityMaintenanceAgent';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -349,6 +350,9 @@ export default function LikyaCampusCommandSystem() {
 
           {/* 👥 İNSAN KAYNAKLARI - BORDRO & ÖZLÜK HAKLARI AJANI */}
           <HRPayrollAgent />
+
+          {/* 🔧 TESİS BAKIM & ARIZA AJANI */}
+          <FacilityMaintenanceAgent />
         </div>
       )}
 
