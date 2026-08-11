@@ -40,10 +40,10 @@ export default function AIAgentAutonomousController() {
       // Supabase'e Dinamik Fiyat Kaydı (opsiyonel - supabase-js kuruluysa)
       try {
         const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-        if (supabaseUrl && supabaseAnonKey) {
+        const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+        if (supabaseUrl && supabasePublishableKey) {
           const { createClient } = await import('@supabase/supabase-js');
-          const supabase = createClient(supabaseUrl, supabaseAnonKey);
+          const supabase = createClient(supabaseUrl, supabasePublishableKey);
           const { error: priceError } = await supabase.from('pricing_logs').insert([
             {
               entity_type: 'parcel',

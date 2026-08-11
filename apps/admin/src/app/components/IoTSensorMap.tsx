@@ -32,11 +32,11 @@ export default function IoTSensorMap() {
     let channel: any = null;
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-      if (supabaseUrl && supabaseAnonKey) {
+      const supabasePublishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+      if (supabaseUrl && supabasePublishableKey) {
         // Dinamik import ile supabase-js yükle (kuruluysa)
         import('@supabase/supabase-js').then(({ createClient }) => {
-          const supabase = createClient(supabaseUrl, supabaseAnonKey);
+          const supabase = createClient(supabaseUrl, supabasePublishableKey);
           channel = supabase
             .channel('schema-db-changes')
             .on(
