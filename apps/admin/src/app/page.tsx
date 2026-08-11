@@ -26,6 +26,7 @@ import StrategicRiskShield from './components/StrategicRiskShield';
 import SmartDestinationEngine from './components/SmartDestinationEngine';
 import HRPayrollAgent from './components/HRPayrollAgent';
 import FacilityMaintenanceAgent from './components/FacilityMaintenanceAgent';
+import SecurityIncidentAgent from './components/SecurityIncidentAgent';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -353,6 +354,9 @@ export default function LikyaCampusCommandSystem() {
 
           {/* 🔧 TESİS BAKIM & ARIZA AJANI */}
           <FacilityMaintenanceAgent />
+
+          {/* 🛡️ GÜVENLİK & OLAY YÖNETİMİ AJANI */}
+          <SecurityIncidentAgent />
         </div>
       )}
 
