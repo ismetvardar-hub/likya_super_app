@@ -149,7 +149,7 @@ class _FlippableTicketWidgetState extends State<FlippableTicketWidget> with Sing
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppTheme.primaryColor.withOpacity(0.2)),
+          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [

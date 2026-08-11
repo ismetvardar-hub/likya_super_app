@@ -57,7 +57,7 @@ class ReviewListWidget extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: AppTheme.successColor.withOpacity(0.12),
+                              color: AppTheme.successColor.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Text('Doğrulanmış Alıcı', style: TextStyle(color: AppTheme.successColor, fontSize: 9, fontWeight: FontWeight.bold)),

@@ -149,7 +149,7 @@ class _FoodRescueScreenState extends State<FoodRescueScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: isFreeSolidarity ? AppTheme.accentColor.withOpacity(0.2) : Colors.red.withOpacity(0.12),
+                              color: isFreeSolidarity ? AppTheme.accentColor.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

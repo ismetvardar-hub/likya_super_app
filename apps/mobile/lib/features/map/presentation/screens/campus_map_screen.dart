@@ -105,7 +105,7 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
                         border: Border.all(color: pinColor, width: isSelected ? 3 : 1),
                         boxShadow: [
                           BoxShadow(
-                            color: pinColor.withOpacity(0.4),
+                            color: pinColor.withValues(alpha: 0.4),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -121,7 +121,7 @@ class _CampusMapScreenState extends State<CampusMapScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(6),
                         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
                       ),

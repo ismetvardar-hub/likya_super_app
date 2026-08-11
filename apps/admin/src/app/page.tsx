@@ -15,6 +15,15 @@ import SupplierManagement from './components/SupplierManagement';
 import Park3DTwin from './components/Park3DTwin';
 import DynamicLoyaltyPricing from './components/DynamicLoyaltyPricing';
 import SystemStressTestAndEdgeController from './components/SystemStressTestAndEdgeController';
+import MonitoringPanel from './components/MonitoringPanel';
+import LikyaCrew from './components/LikyaCrew';
+import SmartCaravanPark from './components/SmartCaravanPark';
+import SmartTentStore from './components/SmartTentStore';
+import LikyaMarketplace from './components/LikyaMarketplace';
+import RoomOnlyConcept from './components/RoomOnlyConcept';
+import AthletePerformanceAI from './components/AthletePerformanceAI';
+import StrategicRiskShield from './components/StrategicRiskShield';
+import SmartDestinationEngine from './components/SmartDestinationEngine';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -309,6 +318,33 @@ export default function LikyaCampusCommandSystem() {
 
           {/* ⚙️ SİSTEM STRES TESTİ & EDGE FUNCTIONS */}
           <SystemStressTestAndEdgeController />
+
+          {/* 📊 LOGLAMA & İZLEME PANELİ */}
+          <MonitoringPanel />
+
+          {/* 👥 LİKYA CREW - DİNAMİK PERSONEL OPERASYONU */}
+          <LikyaCrew />
+
+          {/* 🚐 SMART CARAVAN & PARK - KULLANDIKÇA ÖDE */}
+          <SmartCaravanPark />
+
+          {/* 🎪 TENT & EXPERIENCE STORE - DENEYİMLE-SATIN AL */}
+          <SmartTentStore />
+
+          {/* 🏪 LİKYA OUTDOOR SHOWROOM & PHYGITAL PAZARYERİ */}
+          <LikyaMarketplace />
+
+          {/* 🏡 ROOM ONLY - SADECE ODA & LİKYA ÇARŞI */}
+          <RoomOnlyConcept />
+
+          {/* 🏃 ATHLETE AI & BIOMETRIC PERFORMANCE SYSTEM */}
+          <AthletePerformanceAI />
+
+          {/* 🛡️ STRATEJİK RİSK KALKANI & KRİTİK GÖREV YÖNETİMİ */}
+          <StrategicRiskShield />
+
+          {/* ✨ SMART DESTINATION ENGINE - GELECEK VİZYONU */}
+          <SmartDestinationEngine />
         </div>
       )}
 

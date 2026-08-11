@@ -20,9 +20,9 @@ class SellerBadgeWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withOpacity(0.05),
+        color: AppTheme.primaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.primaryColor.withOpacity(0.15)),
+        border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [

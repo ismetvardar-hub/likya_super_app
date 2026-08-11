@@ -71,7 +71,7 @@ class _MeshRadarScreenState extends State<MeshRadarScreen> with SingleTickerProv
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppTheme.accentColor.withOpacity(0.4)),
+                border: Border.all(color: AppTheme.accentColor.withValues(alpha: 0.4)),
               ),
               child: Column(
                 children: [
@@ -98,7 +98,7 @@ class _MeshRadarScreenState extends State<MeshRadarScreen> with SingleTickerProv
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppTheme.accentColor.withOpacity(0.5), width: 1.5),
+                        border: Border.all(color: AppTheme.accentColor.withValues(alpha: 0.5), width: 1.5),
                       ),
                       child: Center(
                         child: Container(
@@ -135,7 +135,7 @@ class _MeshRadarScreenState extends State<MeshRadarScreen> with SingleTickerProv
                 margin: const EdgeInsets.only(bottom: 10),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                    backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                     child: const Icon(Icons.sensors, color: AppTheme.primaryColor),
                   ),
                   title: Text(node.peerName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),

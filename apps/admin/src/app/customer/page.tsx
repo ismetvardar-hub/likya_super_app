@@ -10,9 +10,11 @@ import SportsTab from './components/SportsTab';
 import TicketsTab from './components/TicketsTab';
 import WalletTab from './components/WalletTab';
 import AIChatModal from './components/AIChatModal';
+import CommunityEventsTab from './components/CommunityEventsTab';
+import GiftSystem from './components/GiftSystem';
 
 export default function CustomerSuperApp() {
-  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet'>('trendyol');
+  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift'>('trendyol');
   const [walletBalance, setWalletBalance] = useState(1450.00);
   const [ecoPoints, setEcoPoints] = useState(320);
   const [cart, setCart] = useState<Array<{ id: string; name: string; price: number; qty: number }>>([]);
@@ -51,6 +53,8 @@ export default function CustomerSuperApp() {
     { key: 'sports', icon: '🎾', label: 'Spor' },
     { key: 'tickets', icon: '🎟️', label: 'QR Bilet' },
     { key: 'wallet', icon: '💳', label: 'Cüzdan' },
+    { key: 'community', icon: '👥', label: 'Topluluk' },
+    { key: 'gift', icon: '🎁', label: 'İkram' },
   ];
 
   return (
@@ -89,6 +93,8 @@ export default function CustomerSuperApp() {
               {activeScreen === 'sports' && '🎾 Spor Kompleksi & Kort'}
               {activeScreen === 'tickets' && '🎟️ Bilet & QR Turnike'}
               {activeScreen === 'wallet' && '💳 Likya Pay & Cüzdan'}
+              {activeScreen === 'community' && '👥 Topluluk & Etkinlikler'}
+              {activeScreen === 'gift' && '🎁 Espirili İkram & Hediye'}
             </div>
           </div>
           <div
@@ -112,6 +118,8 @@ export default function CustomerSuperApp() {
           {activeScreen === 'booking' && <AccommodationTab />}
           {activeScreen === 'sports' && <SportsTab />}
           {activeScreen === 'tickets' && <TicketsTab qrHash={qrHash} qrCountdown={qrCountdown} />}
+          {activeScreen === 'community' && <CommunityEventsTab />}
+          {activeScreen === 'gift' && <GiftSystem />}
           {activeScreen === 'wallet' && <WalletTab walletBalance={walletBalance} setWalletBalance={setWalletBalance} ecoPoints={ecoPoints} setEcoPoints={setEcoPoints} />}
         </div>
 

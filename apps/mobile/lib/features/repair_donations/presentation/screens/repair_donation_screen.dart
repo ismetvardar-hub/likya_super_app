@@ -41,7 +41,7 @@ class RepairDonationScreen extends StatelessWidget {
           children: [
             // Yeni Başvuru Yap İnce Banner Kartı
             Card(
-              color: AppTheme.secondaryColor.withOpacity(0.08),
+              color: AppTheme.secondaryColor.withValues(alpha: 0.08),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -117,7 +117,7 @@ class RepairDonationScreen extends StatelessWidget {
                           children: [
                             Chip(
                               label: Text(item['category'] as String),
-                              backgroundColor: AppTheme.accentColor.withOpacity(0.2),
+                              backgroundColor: AppTheme.accentColor.withValues(alpha: 0.2),
                             ),
                             Text(
                               item['statusTitle'] as String,

@@ -99,7 +99,7 @@ class _SmartLaundryScreenState extends State<SmartLaundryScreen> {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: AppTheme.accentColor.withOpacity(0.35), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: AppTheme.accentColor.withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: const Column(
@@ -148,7 +148,7 @@ class _SmartLaundryScreenState extends State<SmartLaundryScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: isAvail ? AppTheme.successColor.withOpacity(0.15) : AppTheme.warningColor.withOpacity(0.15),
+                              color: isAvail ? AppTheme.successColor.withValues(alpha: 0.15) : AppTheme.warningColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

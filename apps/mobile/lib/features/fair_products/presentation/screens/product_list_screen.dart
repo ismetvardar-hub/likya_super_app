@@ -105,7 +105,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                     onSelected: (selected) {
                       setState(() => selectedCategory = category);
                     },
-                    selectedColor: AppTheme.primaryColor.withOpacity(0.15),
+                    selectedColor: AppTheme.primaryColor.withValues(alpha: 0.15),
                     checkmarkColor: AppTheme.primaryColor,
                     labelStyle: TextStyle(
                       color: isSelected ? AppTheme.primaryColor : AppTheme.textDark,

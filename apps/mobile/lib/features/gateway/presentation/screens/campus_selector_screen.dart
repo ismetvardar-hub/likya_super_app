@@ -66,7 +66,7 @@ class _CampusSelectorScreenState extends State<CampusSelectorScreen> {
 
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
-            color: isSelected ? AppTheme.primaryColor.withOpacity(0.06) : Colors.white,
+            color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.06) : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
               side: BorderSide(

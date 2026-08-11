@@ -83,7 +83,7 @@ class LeaderboardScreen extends StatelessWidget {
                         width: b.isUnlocked ? 1.5 : 1,
                       ),
                       boxShadow: b.isUnlocked
-                          ? [BoxShadow(color: AppTheme.accentColor.withOpacity(0.15), blurRadius: 8)]
+                          ? [BoxShadow(color: AppTheme.accentColor.withValues(alpha: 0.15), blurRadius: 8)]
                           : [],
                     ),
                     child: Column(
@@ -139,7 +139,7 @@ class LeaderboardScreen extends StatelessWidget {
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 10),
-                  color: u.rank == 1 ? AppTheme.primaryColor.withOpacity(0.04) : Colors.white,
+                  color: u.rank == 1 ? AppTheme.primaryColor.withValues(alpha: 0.04) : Colors.white,
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: u.rank == 1

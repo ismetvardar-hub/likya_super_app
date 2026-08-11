@@ -72,7 +72,7 @@ class _NatureSoundscapeScreenState extends State<NatureSoundscapeScreen> {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF4CA1AF).withOpacity(0.3), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: const Color(0xFF4CA1AF).withValues(alpha: 0.3), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: Column(
@@ -110,7 +110,7 @@ class _NatureSoundscapeScreenState extends State<NatureSoundscapeScreen> {
               final isPlaying = _activeSoundTitle == s['title'];
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                color: isPlaying ? AppTheme.primaryColor.withOpacity(0.08) : Colors.white,
+                color: isPlaying ? AppTheme.primaryColor.withValues(alpha: 0.08) : Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
                   side: BorderSide(

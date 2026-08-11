@@ -64,7 +64,7 @@ class EventListScreen extends StatelessWidget {
                       children: [
                         Chip(
                           label: Text(event['category'] as String),
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+                          backgroundColor: AppTheme.primaryColor.withValues(alpha: 0.1),
                           labelStyle: const TextStyle(color: AppTheme.primaryColor, fontWeight: FontWeight.bold),
                         ),
                         Text(

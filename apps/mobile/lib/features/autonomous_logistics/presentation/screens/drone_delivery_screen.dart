@@ -52,7 +52,7 @@ class DroneDeliveryScreen extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF3B82F6).withOpacity(0.35), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: const Color(0xFF3B82F6).withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: const Column(
@@ -99,7 +99,7 @@ class DroneDeliveryScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: isInTransit ? AppTheme.accentColor.withOpacity(0.2) : AppTheme.successColor.withOpacity(0.15),
+                              color: isInTransit ? AppTheme.accentColor.withValues(alpha: 0.2) : AppTheme.successColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

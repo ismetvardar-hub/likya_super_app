@@ -55,7 +55,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF38B6FF).withOpacity(0.5),
+                    color: const Color(0xFF38B6FF).withValues(alpha: 0.5),
                     blurRadius: 30,
                     spreadRadius: 6,
                   ),
@@ -73,7 +73,7 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: Colors.white12),
               ),
@@ -90,9 +90,9 @@ class _VoiceAssistantScreenState extends State<VoiceAssistantScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.3),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFF38B6FF).withOpacity(0.4)),
+                  border: Border.all(color: const Color(0xFF38B6FF).withValues(alpha: 0.4)),
                 ),
                 child: Text(
                   _aiResponseText,

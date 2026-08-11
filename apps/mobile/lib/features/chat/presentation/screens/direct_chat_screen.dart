@@ -76,7 +76,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
           // Takas Teklifi Hızlı Aksiyon Barı
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: AppTheme.accentColor.withOpacity(0.15),
+            color: AppTheme.accentColor.withValues(alpha: 0.15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -116,7 +116,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
                       color: msg.isMine ? AppTheme.primaryColor : Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
+                        BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6),
                       ],
                     ),
                     child: Column(
@@ -152,7 +152,7 @@ class _DirectChatScreenState extends State<DirectChatScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -2)),
+                BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -2)),
               ],
             ),
             child: SafeArea(

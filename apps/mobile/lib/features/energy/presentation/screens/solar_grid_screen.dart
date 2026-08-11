@@ -46,7 +46,7 @@ class SolarGridScreen extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFFF6AD55).withOpacity(0.4), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: const Color(0xFFF6AD55).withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: Column(

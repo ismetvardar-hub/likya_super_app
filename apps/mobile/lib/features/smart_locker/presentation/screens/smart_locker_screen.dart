@@ -143,7 +143,7 @@ class _SmartLockerScreenState extends State<SmartLockerScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.successColor.withOpacity(0.15),
+                                  color: AppTheme.successColor.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: const Text('Teslime Hazır 📦', style: TextStyle(color: AppTheme.successColor, fontWeight: FontWeight.bold, fontSize: 10)),

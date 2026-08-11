@@ -125,7 +125,7 @@ class _LiveEventInteractionScreenState extends State<LiveEventInteractionScreen>
               final isSelected = _selectedSongVote == entry.key;
               return Card(
                 margin: const EdgeInsets.only(bottom: 8),
-                color: isSelected ? AppTheme.primaryColor.withOpacity(0.08) : Colors.white,
+                color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.08) : Colors.white,
                 child: ListTile(
                   onTap: () {
                     setState(() => _selectedSongVote = entry.key);

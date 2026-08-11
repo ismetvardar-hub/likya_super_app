@@ -37,7 +37,7 @@ class ProductDetailScreen extends StatelessWidget {
               children: [
                 Chip(
                   label: const Text('Gıda & Organik'),
-                  backgroundColor: AppTheme.accentColor.withOpacity(0.2),
+                  backgroundColor: AppTheme.accentColor.withValues(alpha: 0.2),
                 ),
                 const Text(
                   'Stokta Var (15 Adet)',

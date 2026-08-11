@@ -72,7 +72,7 @@ class _TenantDashboardScreenState extends State<TenantDashboardScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00f2fe).withOpacity(0.3),
+            color: const Color(0xFF00f2fe).withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -137,9 +137,9 @@ class _TenantDashboardScreenState extends State<TenantDashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,9 +188,9 @@ class _TenantDashboardScreenState extends State<TenantDashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,8 +236,8 @@ class _TenantDashboardScreenState extends State<TenantDashboardScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: sale['durum'] == 'Tamamlandı'
-                        ? const Color(0xFF48bb78).withOpacity(0.2)
-                        : const Color(0xFFecc94b).withOpacity(0.2),
+                        ? const Color(0xFF48bb78).withValues(alpha: 0.2)
+                        : const Color(0xFFecc94b).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(

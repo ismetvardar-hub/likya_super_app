@@ -15,7 +15,7 @@ export type ModelResult = {
 const DEEPSEEK_API_KEY = process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || process.env.DEEPSEEK_API_KEY || '';
 const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
 const OLLAMA_URL = process.env.NEXT_PUBLIC_OLLAMA_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5:7b';
+const OLLAMA_MODEL = process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b';
 
 // ============================================================================
 // DEEPSEEK (Birincil)

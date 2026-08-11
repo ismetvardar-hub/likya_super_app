@@ -46,7 +46,7 @@ class CompostScreen extends StatelessWidget {
                 gradient: AppTheme.ecoGradient,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: AppTheme.accentColor.withOpacity(0.35), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: AppTheme.accentColor.withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: const Column(
@@ -93,7 +93,7 @@ class CompostScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: isReady ? AppTheme.successColor.withOpacity(0.15) : AppTheme.warningColor.withOpacity(0.15),
+                              color: isReady ? AppTheme.successColor.withValues(alpha: 0.15) : AppTheme.warningColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

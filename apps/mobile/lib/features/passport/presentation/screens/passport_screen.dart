@@ -95,7 +95,7 @@ class PassportScreen extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: Row(
@@ -103,7 +103,7 @@ class PassportScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.menu_book, color: Colors.white, size: 36),
@@ -156,11 +156,11 @@ class PassportScreen extends StatelessWidget {
                     color: stamp.isCollected ? Colors.white : Colors.grey.shade100,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: stamp.isCollected ? AppTheme.secondaryColor.withOpacity(0.5) : Colors.grey.shade300,
+                      color: stamp.isCollected ? AppTheme.secondaryColor.withValues(alpha: 0.5) : Colors.grey.shade300,
                       width: stamp.isCollected ? 2 : 1,
                     ),
                     boxShadow: stamp.isCollected
-                        ? [BoxShadow(color: AppTheme.secondaryColor.withOpacity(0.12), blurRadius: 10)]
+                        ? [BoxShadow(color: AppTheme.secondaryColor.withValues(alpha: 0.12), blurRadius: 10)]
                         : [],
                   ),
                   child: Column(
@@ -169,7 +169,7 @@ class PassportScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: stamp.isCollected ? AppTheme.secondaryColor.withOpacity(0.1) : Colors.grey.shade200,
+                          color: stamp.isCollected ? AppTheme.secondaryColor.withValues(alpha: 0.1) : Colors.grey.shade200,
                           shape: BoxShape.circle,
                         ),
                         child: Text(

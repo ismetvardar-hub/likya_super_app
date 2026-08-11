@@ -53,7 +53,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: AppTheme.primaryColor.withOpacity(0.3),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.3),
                           blurRadius: 16,
                           offset: const Offset(0, 8),
                         ),
@@ -72,7 +72,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -145,7 +145,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
                   // Döngüsel Ekonomi İlerleme Kartı
                   Card(
-                    color: AppTheme.accentColor.withOpacity(0.1),
+                    color: AppTheme.accentColor.withValues(alpha: 0.1),
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -202,8 +202,8 @@ class _WalletScreenState extends State<WalletScreen> {
                         child: ListTile(
                           leading: CircleAvatar(
                             backgroundColor: isEarn
-                                ? AppTheme.successColor.withOpacity(0.15)
-                                : AppTheme.secondaryColor.withOpacity(0.15),
+                                ? AppTheme.successColor.withValues(alpha: 0.15)
+                                : AppTheme.secondaryColor.withValues(alpha: 0.15),
                             child: Icon(
                               isEarn ? Icons.arrow_downward : Icons.arrow_upward,
                               color: isEarn ? AppTheme.successColor : AppTheme.secondaryColor,

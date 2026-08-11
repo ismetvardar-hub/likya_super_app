@@ -80,7 +80,7 @@ class _CarbonCreditsScreenState extends State<CarbonCreditsScreen> {
                 gradient: AppTheme.ecoGradient,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: AppTheme.accentColor.withOpacity(0.4), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: AppTheme.accentColor.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: Column(
@@ -130,7 +130,7 @@ class _CarbonCreditsScreenState extends State<CarbonCreditsScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: isVerified ? AppTheme.successColor.withOpacity(0.15) : Colors.grey.shade200,
+                              color: isVerified ? AppTheme.successColor.withValues(alpha: 0.15) : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

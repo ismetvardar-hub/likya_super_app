@@ -69,7 +69,7 @@ class _AudioGuideScreenState extends State<AudioGuideScreen> {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.primaryColor.withOpacity(0.4),
+                    color: AppTheme.primaryColor.withValues(alpha: 0.4),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -81,7 +81,7 @@ class _AudioGuideScreenState extends State<AudioGuideScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(Icons.temple_buddhist, size: 64, color: Colors.white),
@@ -100,7 +100,7 @@ class _AudioGuideScreenState extends State<AudioGuideScreen> {
                   const SizedBox(height: 16),
                   Text(
                     currentTrack.narrativeSummary,
-                    style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12, height: 1.4),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.8), fontSize: 12, height: 1.4),
                     textAlign: TextAlign.center,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -118,7 +118,7 @@ class _AudioGuideScreenState extends State<AudioGuideScreen> {
               borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 20,
                   offset: const Offset(0, -6),
                 ),

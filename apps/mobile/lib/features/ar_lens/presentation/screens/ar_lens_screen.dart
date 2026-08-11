@@ -43,11 +43,11 @@ class _ARLensScreenState extends State<ARLensScreen> with SingleTickerProviderSt
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.view_in_ar_rounded, size: 80, color: Colors.white.withOpacity(0.15)),
+                  Icon(Icons.view_in_ar_rounded, size: 80, color: Colors.white.withValues(alpha: 0.15)),
                   const SizedBox(height: 12),
                   Text(
                     'Kamerayı Çevrenize Doğrultunuz',
-                    style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 13),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 13),
                   ),
                 ],
               ),
@@ -162,12 +162,12 @@ class _ARLensScreenState extends State<ARLensScreen> with SingleTickerProviderSt
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.75),
+            color: Colors.black.withValues(alpha: 0.75),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: color, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: color.withOpacity(0.3),
+                color: color.withValues(alpha: 0.3),
                 blurRadius: 10,
               ),
             ],

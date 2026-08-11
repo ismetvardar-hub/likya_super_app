@@ -103,7 +103,7 @@ class _WaterRefillScreenState extends State<WaterRefillScreen> {
                 ),
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: const Color(0xFF38B6FF).withOpacity(0.35), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: const Color(0xFF38B6FF).withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: const Column(
@@ -151,7 +151,7 @@ class _WaterRefillScreenState extends State<WaterRefillScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF38B6FF).withOpacity(0.15),
+                              color: const Color(0xFF38B6FF).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text('${st.temperatureCelsius}°C Soğuk', style: const TextStyle(color: Color(0xFF0F4C81), fontWeight: FontWeight.bold, fontSize: 11)),

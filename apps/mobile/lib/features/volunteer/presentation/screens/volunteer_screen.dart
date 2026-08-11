@@ -131,7 +131,7 @@ class _VolunteerScreenState extends State<VolunteerScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(task.clubName, style: const TextStyle(color: AppTheme.primaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
@@ -139,7 +139,7 @@ class _VolunteerScreenState extends State<VolunteerScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppTheme.successColor.withOpacity(0.15),
+                          color: AppTheme.successColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text('+${task.rewardEcoPoints} Puan', style: const TextStyle(color: AppTheme.successColor, fontSize: 11, fontWeight: FontWeight.bold)),

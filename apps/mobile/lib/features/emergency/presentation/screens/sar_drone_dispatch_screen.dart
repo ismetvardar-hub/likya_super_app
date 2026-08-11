@@ -40,7 +40,7 @@ class _SarDroneDispatchScreenState extends State<SarDroneDispatchScreen> {
               decoration: BoxDecoration(
                 color: Colors.black87,
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+                border: Border.all(color: Colors.redAccent.withValues(alpha: 0.5)),
               ),
               child: Stack(
                 children: [
@@ -51,7 +51,7 @@ class _SarDroneDispatchScreenState extends State<SarDroneDispatchScreen> {
                         Icon(
                           _isDroneDispatched ? Icons.flight_takeoff_rounded : Icons.radar_rounded,
                           size: 64,
-                          color: _isDroneDispatched ? Colors.greenAccent : Colors.redAccent.withOpacity(0.6),
+                          color: _isDroneDispatched ? Colors.greenAccent : Colors.redAccent.withValues(alpha: 0.6),
                         ),
                         const SizedBox(height: 12),
                         Text(

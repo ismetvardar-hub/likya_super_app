@@ -44,7 +44,7 @@ class ForestScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.accentColor.withOpacity(0.3),
+                    color: AppTheme.accentColor.withValues(alpha: 0.3),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -68,7 +68,7 @@ class ForestScreen extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Onarılan her 3 eşya ve 500 Eko-Puan Likya Yolu\'nda 1 fidana dönüşüyor.',
-                    style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 12),
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 12),
                   ),
                 ],
               ),
@@ -97,7 +97,7 @@ class ForestScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: AppTheme.successColor.withOpacity(0.15),
+                              color: AppTheme.successColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Text('Toprakla Buluştu 🌱', style: TextStyle(color: AppTheme.successColor, fontSize: 10, fontWeight: FontWeight.bold)),

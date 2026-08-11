@@ -91,7 +91,7 @@ class _PackagingDepositScreenState extends State<PackagingDepositScreen> {
                 gradient: AppTheme.sunsetGradient,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
-                  BoxShadow(color: AppTheme.secondaryColor.withOpacity(0.35), blurRadius: 16, offset: const Offset(0, 6)),
+                  BoxShadow(color: AppTheme.secondaryColor.withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
               child: const Column(
