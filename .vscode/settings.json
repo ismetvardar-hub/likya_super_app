@@ -1,0 +1,10 @@
+{
+  "ollama.url": "http://127.0.0.1:11434",
+  "ollama.model": "qwen2.5-coder:7b",
+  "cline.apiProvider": "ollama",
+  "cline.ollamaModelId": "qwen2.5-coder:7b",
+  "cline.ollamaBaseUrl": "http://127.0.0.1:11434",
+  "todo-tree.ripgrep.ripgrep": "/opt/homebrew/bin/rg",
+  "todo-tree.ripgrep.ripgrepPath": "/opt/homebrew/bin/rg",
+  "editor.formatOnSave": true
+}

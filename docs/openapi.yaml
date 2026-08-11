@@ -1,0 +1,91 @@
+openapi: 3.0.3
+info:
+  title: Likya Super-App Backend API
+  description: Official OpenAPI 3.0 specification for Likya Super-App Supabase Edge Functions, REST endpoints, and authentication workflows.
+  version: 1.0.0
+  contact:
+    name: Likya Super-App Engineering Team
+    email: dev@likya.org
+servers:
+  - url: https://your-project.supabase.co
+    description: Supabase Production & Local Gateway
+
+paths:
+  /functions/v1/verify-ticket:
+    post:
+      summary: Verify Gate QR Ticket
+      description: Validates attendee ticket QR code against backend database and marks ticket as used.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - qr_code
+              properties:
+                qr_code:
+                  type: string
+                  example: LIKYA-TICKET-2026-EVENT-001-USER-777
+      responses:
+        '200':
+          description: Ticket verified and redeemed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Ticket successfully verified
+                  ticket:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      status:
+                        type: string
+                        example: used
+        '400':
+          description: Invalid or already used ticket
+        '500':
+          description: Internal server error
+
+  /rest/v1/fair_products:
+    get:
+      summary: List Fair Trade Products
+      description: Returns active fair trade products with seller details.
+      parameters:
+        - name: select
+          in: query
+          schema:
+            type: string
+            default: "*"
+        - name: status
+          in: query
+          schema:
+            type: string
+            default: eq.active
+      responses:
+        '200':
+          description: A list of active products
+
+  /rest/v1/events:
+    get:
+      summary: List Campus Events
+      description: Returns published campus and Lycian cultural events.
+      responses:
+        '200':
+          description: A list of published events
+
+  /rest/v1/repair_donations:
+    get:
+      summary: List Circular Repair & Donation Requests
+      description: Returns ongoing repair workshop requests and completed donations.
+      responses:
+        '200':
+          description: A list of repair donation records

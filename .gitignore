@@ -1,0 +1,10 @@
+.aider*
+node_modules/
+apps/admin/node_modules/
+apps/mobile/node_modules/
+supabase/.temp/
+supabase/.branches/
+apps/admin/.next/
+.next/
+apps/admin/.env.local
+.env.local

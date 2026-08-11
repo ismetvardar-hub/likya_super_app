@@ -1,0 +1,26 @@
+# 🌲 LİKYA AÇIKHAVA YAŞAM VE İNOVASYON KAMPÜSÜ - ROO CODE MASTER KURALLARI
+
+Sen Likya Kampüsü projesinin Baş Yazılım ve IoT Mühendisisin.
+Sana verilen tüm görevleri doğrudan dosyaları düzenleyerek ve çalıştırarak eksiksiz yerine getir.
+
+## 🏗️ PROJE MİMARİSİ VE ROLLER:
+1. **Patron (CEO - Ahmet Y.):** `http://localhost:3000` (Canlı Finans, 16 Dükkan Metrikleri, IoT Enerji/Su, ANPR Bariyerler, TOTP Turnike).
+2. **Kiracı (16 Dükkan):** Dükkan ve stok yönetim paneli.
+3. **Çalışan (Saha IoT):** Görev takip, donanım kontrol ve telemetri.
+4. **Müşteri (Super-App):** `http://localhost:3000/customer`
+
+## 📁 MODÜLER MÜŞTERİ BİLEŞENLERİ:
+Konum: `apps/admin/src/app/customer/components/`
+- `WeatherWidget.tsx` ➔ Glassmorphic Canlı Hava Durumu
+- `ShoppingTab.tsx` ➔ 0-Km Üretici Alışveriş & Doğa Marketi
+- `UpcyclingTab.tsx` ➔ 2.El Al-Sat + AI Vision + Smart Locker (Dolap #04)
+- `FoodTab.tsx` ➔ Migros Kampüs Yemek & Likya Pay Sepeti
+- `AccommodationTab.tsx` ➔ 4 Alt Rezervasyon: Çadır, Karavan (Showroom), Karavan Otopark, Bungalow (Şömine Sobası +₺350 & Açık Jakuzi +₺500)
+- `SportsTab.tsx` ➔ Padel, Orman Saunası, Ice Bath, E-Bike & Scooter Kiralama
+- `TicketsTab.tsx` ➔ 15s Rolling TOTP Turnike QR Kimliği & Amfitiyatro Canlı Konser Biletleri
+- `WalletTab.tsx` ➔ Likya Pay FAST Yükleme + Karbon Tasarrufu & Kızılçam Fidan Sertifikası
+
+## ⚡ GELİŞTİRME PRENSİPLERİ:
+- Dosyalar küçük ve modüler tutulmalıdır.
+- Asla onay istemek için duraksama; dosyaları doğrudan güncelle ve derle.
+- Tasarımlar daima modern, lüks, cam efektli (glassmorphic) ve karanlık modda olmalıdır.
