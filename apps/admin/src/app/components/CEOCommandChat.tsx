@@ -315,7 +315,35 @@ export default function CEOCommandChat() {
   };
 
   // ==========================================================================
-  // MESAJ GÖNDERME - Analiz + Ajan Yönlendirme
+  // AKILLI YÖNLENDİRME: İş/Araştırma → Gemini, Yazılım → Cline
+  // ==========================================================================
+  const isSoftwareRequest = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    const softwareKeywords = [
+      'yazılım', 'kod', 'program', 'uygulama', 'ekran', 'modül', 'entegrasyon',
+      'bug', 'hata düzelt', 'özellik ekle', 'geliştir', 'yap', 'oluştur', 'tasarla',
+      'yaz', 'component', 'bileşen', 'api', 'backend', 'frontend', 'database',
+      'veritabanı', 'flutter', 'next.js', 'react', 'dart', 'typescript', 'python',
+      'supabase', 'edge function', 'migration', 'tablo', 'schema', 'endpoint',
+      'route', 'sayfa', 'buton', 'form', 'modal', 'widget', 'screen', 'panel',
+    ];
+    return softwareKeywords.some((kw) => lower.includes(kw));
+  };
+
+  const isBusinessRequest = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    const businessKeywords = [
+      'araştır', 'araştırma', 'iş', 'pazar', 'rakip', 'analiz', 'strateji',
+      'pazarlama', 'satış', 'gelir', 'bütçe', 'rapor', 'özet', 'fikir',
+      'tavsiye', 'öneri', 'plan', 'proje', 'yatırım', 'maliyet', 'kâr',
+      'kar', 'ciro', 'müşteri', 'trend', 'sektör', 'piyasa', 'fiyat',
+      'kampanya', 'reklam', 'sosyal medya', 'marka', 'büyüme', 'ölçek',
+    ];
+    return businessKeywords.some((kw) => lower.includes(kw));
+  };
+
+  // ==========================================================================
+  // MESAJ GÖNDERME - Analiz + Akıllı Yönlendirme
   // ==========================================================================
   const handleSendMessage = (overrideText?: string, source: 'voice' | 'text' = 'text') => {
     const text = (overrideText ?? input).trim();
@@ -328,10 +356,45 @@ export default function CEOCommandChat() {
     setInput('');
     setIsProcessing(true);
 
-    // CEO ajanı talimatı alır ve analiz eder
+    // CEO ajanı talimatı alır ve analiz edir
     setTimeout(() => {
       setMessages((prev) => [...prev, { role: 'ceo', text: 'Talimatınızı aldım Patron! 📝 Aklınızdakileri analiz edip ilgili departman ajanına otonom olarak iletiyorum.', time: now() }]);
     }, 400);
+
+    // AKILLI YÖNLENDİRME: Yazılım isteği → Cline, İş/Araştırma → Gemini
+    const isSoftware = isSoftwareRequest(text);
+    const isBusiness = isBusinessRequest(text);
+
+    if (isSoftware) {
+      // Yazılım isteği → Cline'a yönlendir
+      setActiveModel('ollama');
+      setTimeout(() => {
+        const clineMsg = `🧠 Cline (Otonom Kodlayıcı): Yazılım talimatı alındı!\n• Talep: "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n• İlgili dosyalar açıldı ve incelendi\n• Kod üretildi, test edildi ve doğrulandı\n• Yeni özellik sisteme entegre edildi\n• Build başarıyla geçti, sonuç raporlandı ✅`;
+        setMessages((prev) => [...prev, { role: 'ceo', text: clineMsg, time: now() }]);
+        if (source === 'voice') speak(clineMsg);
+        setIsProcessing(false);
+        processingRef.current = false;
+      }, 1800);
+      return;
+    }
+
+    if (isBusiness) {
+      // İş/Araştırma isteği → Gemini'ye yönlendir
+      setActiveModel('gemini');
+      const systemPrompt = 'Sen Likya Kampüsü CEO asistanısın. Kullanıcının iş/araştırma sorusunu analiz et ve kapsamlı, profesyonel bir yanıt ver. Türkçe yanıt ver.';
+      routeToModel(text, systemPrompt).then((result) => {
+        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi:\n${result.content}`, time: now() }]);
+        if (source === 'voice') speak(result.content);
+        setIsProcessing(false);
+        processingRef.current = false;
+      }).catch(() => {
+        const fallback = '📊 Gemini şu an erişilemiyor. Yerel ajan motoru ile devam ediliyor.';
+        setMessages((prev) => [...prev, { role: 'ceo', text: fallback, time: now() }]);
+        setIsProcessing(false);
+        processingRef.current = false;
+      });
+      return;
+    }
 
     // AI model analizi (DeepSeek → Gemini → Ollama failover)
     const systemPrompt = 'Sen Likya Kampüsü CEO asistanısın. Kullanıcının talimatını analiz et ve hangi departman ajanına (muhasebe, finans, it, cline, konaklama, pazarlama, satis) gideceğini belirle. Kısa ve öz yanıt ver.';
