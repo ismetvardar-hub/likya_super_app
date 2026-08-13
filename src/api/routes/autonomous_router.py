@@ -9,11 +9,13 @@ from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel, Field
 
 from src.services.autonomous_engine import AutonomousEngine
+from src.services.crisis_recovery_engine import CrisisRecoveryEngine, FeedbackPayload
 
 router = APIRouter(prefix="/api/v1/autonomous", tags=["autonomous"])
 
 # Global motor örneği
 engine = AutonomousEngine()
+crisis_engine = CrisisRecoveryEngine()
 
 
 class AutonomousRequest(BaseModel):
@@ -77,3 +79,10 @@ async def execute_autonomous(request: AutonomousRequest, background_tasks: Backg
     result["latency_ms"] = round((time.perf_counter() - start_time) * 1000, 2)
 
     return AutonomousResponse(**result)
+
+
+@router.post("/feedback")
+async def process_feedback(payload: FeedbackPayload) -> dict:
+    """Müşteri geri bildirimini işler ve kriz çözümü uygular."""
+    result = await crisis_engine.process_feedback(payload)
+    return result
