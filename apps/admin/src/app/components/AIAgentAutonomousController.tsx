@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCeoMindset, executeAutonomousEvent } from '../../services/apiClient';
 import { Bot, TrendingUp, Cpu, Zap, CheckCircle2, RefreshCw } from 'lucide-react';
 
 // ============================================================================
