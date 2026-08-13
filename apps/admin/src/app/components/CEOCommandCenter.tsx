@@ -44,9 +44,44 @@ const MODULES: ModuleItem[] = [
   { id: 'finance', name: 'Finans Ajanları', icon: <Bot size={16} />, color: '#00f2fe', description: 'Otonom muhasebe' },
 ];
 
+// Sohbet Konu Başlıkları (Chat History Threads)
+interface ChatThread {
+  id: string;
+  title: string;
+  messages: { role: 'user' | 'ceo'; text: string; time: string }[];
+}
+
+const CHAT_THREADS: ChatThread[] = [
+  {
+    id: 'thread-1',
+    title: 'Ekstrem Spor Kulüpleri',
+    messages: [
+      { role: 'user', text: 'Ekstrem spor kulüpleri için strateji öner', time: '10:15' },
+      { role: 'ceo', text: '📊 Gemini Analizi — Ekstrem Spor Kulüpleri\n\n🏢 Pazar Dinamikleri:\n• Türkiye\'de ekstrem spor kulüpleri hızla büyüyor\n• Padel, tırmanış ve su sporları popülerlik kazanıyor\n\n💡 Öneriler:\n1. Amatör spor kulübü fonu oluştur\n2. Upcycling ile ekipman havuzu kur\n3. Genç sporculara burs ver\n\n✅ Analiz tamamlandı.', time: '10:16' },
+    ],
+  },
+  {
+    id: 'thread-2',
+    title: 'Sinir Sistemi Testi',
+    messages: [
+      { role: 'user', text: 'Sinir sistemi bağlantısını test et', time: '11:30' },
+      { role: 'ceo', text: '🧠 Cline (Otonom Kodlayıcı) — Sinir Sistemi Testi\n\n🔍 Analiz:\n• Supabase bağlantısı kontrol edildi\n• LLM ModelRouter test edildi\n• API endpoint\'leri doğrulandı\n\n✅ Sonuç:\n• Tüm sistemler çevrimiçi\n• Bağlantılar başarılı', time: '11:31' },
+    ],
+  },
+  {
+    id: 'thread-3',
+    title: 'SaaS Stratejisi',
+    messages: [
+      { role: 'user', text: 'SaaS paketleme stratejisi hazırla', time: '14:00' },
+      { role: 'ceo', text: '📊 Gemini Analizi — SaaS Stratejisi\n\n📦 Paketler:\n• Starter: 990₺/ay\n• Pro: 2.490₺/ay\n• Enterprise: Özel\n\n🎯 Dağıtım:\n• Landing Page + 7 gün ücretsiz deneme\n• Cold Outreach metinleri\n• Auto-Marketing Agent\n\n✅ Strateji hazır.', time: '14:02' },
+    ],
+  },
+];
+
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [openCategory, setOpenCategory] = useState<string>('chat');
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'ceo'; text: string; time: string }[]>([
@@ -54,6 +89,25 @@ export default function CEOCommandCenter() {
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Konu başlığına tıklandığında o konunun mesajlarını yükle
+  const loadThread = (threadId: string) => {
+    const thread = CHAT_THREADS.find((t) => t.id === threadId);
+    if (thread) {
+      setActiveThreadId(threadId);
+      setActiveView('chat');
+      setMessages(thread.messages);
+    }
+  };
+
+  // Yeni sohbet başlat
+  const startNewChat = () => {
+    setActiveThreadId(null);
+    setActiveView('chat');
+    setMessages([
+      { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO. Talimatını yaz veya 🎤 sesli söyle.\n\nAkıllı Yönlendirme:\n• 🧠 Yazılım talepleri → Cline (Otonom Kodlayıcı)\n• 📊 Strateji/Pazar → Gemini Analizi\n• ⚙️ Operasyon → Departman Ajanları', time: '12:00' },
+    ]);
+  };
 
   // Mesajlar değiştiğinde otomatik aşağı kaydır
   useEffect(() => {
@@ -129,7 +183,7 @@ export default function CEOCommandCenter() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           {sidebarOpen && (
             <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>
-              📦 Modüller
+              🧠 Likya Komuta Merkezi
             </div>
           )}
           <button
@@ -139,6 +193,75 @@ export default function CEOCommandCenter() {
             {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
           </button>
         </div>
+
+        {/* 1. LİKYA CHAT - Ana Buton */}
+        <button
+          onClick={startNewChat}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: sidebarOpen ? '12px 14px' : '10px',
+            borderRadius: '12px',
+            border: activeView === 'chat' && !activeThreadId ? '1px solid #f59e0b' : '1px solid rgba(245,158,11,0.3)',
+            background: activeView === 'chat' && !activeThreadId ? 'rgba(245,158,11,0.15)' : 'rgba(245,158,11,0.05)',
+            color: activeView === 'chat' && !activeThreadId ? '#f59e0b' : '#e2e8f0',
+            cursor: 'pointer',
+            fontSize: '13px',
+            fontWeight: '700',
+            whiteSpace: 'nowrap',
+            marginBottom: '12px',
+            justifyContent: sidebarOpen ? 'flex-start' : 'center',
+          }}
+        >
+          <span>🧠</span>
+          {sidebarOpen && <span>Likya Chat</span>}
+        </button>
+
+        {/* 2. SOHBET KONU BAŞLIKLARI (CHAT HISTORY THREADS) */}
+        {sidebarOpen && (
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', padding: '0 4px' }}>
+              💬 Sohbet Geçmişi
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              {CHAT_THREADS.map((thread) => (
+                <button
+                  key={thread.id}
+                  onClick={() => loadThread(thread.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    border: activeThreadId === thread.id ? '1px solid #00f2fe' : '1px solid transparent',
+                    background: activeThreadId === thread.id ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.02)',
+                    color: activeThreadId === thread.id ? '#00f2fe' : '#94a3b8',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span>💬</span>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{thread.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 3. SİSTEM MODÜLLERİ */}
+        {sidebarOpen && (
+          <div style={{ marginBottom: '12px' }}>
+            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', padding: '0 4px' }}>
+              🏬 Sistem Modülleri
+            </div>
+          </div>
+        )}
 
         {/* Module List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', flex: 1 }}>
