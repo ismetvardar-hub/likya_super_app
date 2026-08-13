@@ -12,6 +12,7 @@ import WalletTab from './components/WalletTab';
 import AIChatModal from './components/AIChatModal';
 import CommunityEventsTab from './components/CommunityEventsTab';
 import GiftSystem from './components/GiftSystem';
+import ReviewTab from './components/ReviewTab';
 
 export default function CustomerSuperApp() {
   const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift'>('trendyol');
@@ -46,6 +47,7 @@ export default function CustomerSuperApp() {
   };
 
   const tabs = [
+    { id: 'review' as ActiveScreen, label: '⭐ Değerlendir', icon: '⭐' },
     { key: 'trendyol', icon: '🛍️', label: 'Alışveriş' },
     { key: 'dolap', icon: '♻️', label: '2.El Al-Sat' },
     { key: 'food', icon: '🍔', label: 'Yemek' },
