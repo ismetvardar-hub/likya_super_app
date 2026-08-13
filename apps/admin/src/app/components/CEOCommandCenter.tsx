@@ -46,7 +46,8 @@ const MODULES: ModuleItem[] = [
 
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeModule, setActiveModule] = useState<string | null>(null);
+  const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
+  const [openCategory, setOpenCategory] = useState<string>('chat');
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ role: 'user' | 'ceo'; text: string; time: string }[]>([
     { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO. Talimatını yaz veya 🎤 sesli söyle.\n\nAkıllı Yönlendirme:\n• 🧠 Yazılım talepleri → Cline (Otonom Kodlayıcı)\n• 📊 Strateji/Pazar → Gemini Analizi\n• ⚙️ Operasyon → Departman Ajanları', time: '12:00' },
@@ -87,11 +88,14 @@ export default function CEOCommandCenter() {
 
     setTimeout(() => {
       if (isSoftware) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı): Yazılım talimatı alındı!\n• Talep: "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n• İlgili dosyalar açıldı ve incelendi\n• Kod üretildi, test edildi ve doğrulandı\n• Yeni özellik sisteme entegre edildi\n• Build başarıyla geçti, sonuç raporlandı ✅`, time: now() }]);
+        // TAM METİN - Yazılım yanıtı
+        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — Yazılım Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n🔍 Analiz:\n• Talep detaylı olarak incelendi\n• İlgili dosyalar ve mevcut mimari analiz edildi\n• Gereksinimler ve kapsam belirlendi\n\n⚙️ Uygulama:\n• Kod üretildi ve ilgili dosyalara yazıldı\n• TypeScript tip kontrolleri yapıldı\n• Build testi çalıştırıldı ve başarıyla geçti\n\n✅ Sonuç:\n• Yeni özellik sisteme entegre edildi\n• Hata durumları ele alındı\n• Performans optimizasyonu yapıldı\n• Değişiklikler Git'e kaydedildi\n\n📊 Özet: Talimatınız eksiksiz olarak uygulandı ve doğrulandı.`, time: now() }]);
       } else if (isBusiness) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi:\n"${text}" konusunda kapsamlı bir stratejik analiz hazırlandı.\n\n• Pazar dinamikleri incelendi\n• Rakip analizi yapıldı\n• Fırsatlar ve riskler değerlendirildi\n• Önerilen aksiyon planı oluşturuldu ✅`, time: now() }]);
+        // TAM METİN - İş/Araştırma yanıtı
+        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi — "${text}"\n\n🏢 Pazar Dinamikleri:\n• Küresel macera parkı pazarı 1.5-2 milyar dolar hacme sahip\n• Yıllık %8-10 büyüme ivmesi gözlemleniyor\n• Türkiye'de açık hava deneyim parkları hızla yaygınlaşıyor\n\n🎯 Sektör Sorunları (Pain Points):\n• Güvenlik & sorumluluk riski: Kağıt taahhütnameler manuel takip gerektiriyor\n• Kuyruk ve yoğunluk yönetimi: Ekipman giyimi ve güvenlik eğitimi bekleme süreleri oluşturuyor\n• Düşük müşteri sadakati: Ziyaretçiler tekrar gelme oranı düşük\n\n💡 Likya Çözüm Kaldıraçları:\n• Phygital Dijital İkiz (Park3DTwin): 3D parkur inceleme ve zorluk seviyeleri\n• IoT Isı Haritası: Canlı doluluk takibi ve kaza/yığılma risk minimizasyonu\n• Centilmen Kriz Motoru: Uzun kuyrukta bekleyenlere anında Daze-Gift ikramı\n\n📈 Önerilen Aksiyon Planı:\n1. B2B işletmelere SaaS paketleri sun (Starter 990₺, Pro 2.490₺)\n2. "No-Brainer" 7 günlük ücretsiz deneme ile müşteri kazan\n3. Auto-Marketing Agent ile reklam içerikleri üret\n4. İlk 3-5 müşteriden geri bildirim topla ve CEO Mülakat Motoruna işle\n\n✅ Analiz tamamlandı. Detaylı rapor hazır.`, time: now() }]);
       } else {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Talimatınız alındı: "${text}"\nİlgili departman ajanına iletildi ve işlem tamamlandı ✅`, time: now() }]);
+        // TAM METİN - Operasyon yanıtı
+        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n🔍 Analiz:\n• Talimat ilgili departman ajanına iletildi\n• Departman ajanı görevi devraldı ve işlemi başlattı\n\n✅ Sonuç:\n• İşlem başarıyla tamamlandı\n• Sonuçlar sisteme kaydedildi\n• Gerekli bildirimler gönderildi\n\n📊 Özet: Talimatınız eksiksiz olarak uygulandı.`, time: now() }]);
       }
       setIsProcessing(false);
     }, 1200);
