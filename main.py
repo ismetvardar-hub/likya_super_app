@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.api.routes.autonomous_router import router as autonomous_router
+from src.api.routes.ceo_router import router as ceo_router
 
 app = FastAPI(
     title="Likya Super App API",
@@ -25,6 +26,9 @@ app.add_middleware(
 
 # Otonom router'ı ana uygulamaya ekle
 app.include_router(autonomous_router)
+
+# CEO router'ı ana uygulamaya ekle
+app.include_router(ceo_router)
 
 
 @app.get("/")
