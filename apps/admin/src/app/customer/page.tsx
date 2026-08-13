@@ -15,7 +15,7 @@ import GiftSystem from './components/GiftSystem';
 import ReviewTab from './components/ReviewTab';
 
 export default function CustomerSuperApp() {
-  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift'>('trendyol');
+  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift' | 'review'>('trendyol');
   const [walletBalance, setWalletBalance] = useState(1450.00);
   const [ecoPoints, setEcoPoints] = useState(320);
   const [cart, setCart] = useState<Array<{ id: string; name: string; price: number; qty: number }>>([]);
@@ -47,7 +47,7 @@ export default function CustomerSuperApp() {
   };
 
   const tabs = [
-    { id: 'review' as ActiveScreen, label: '⭐ Değerlendir', icon: '⭐' },
+    { key: 'review', icon: '⭐', label: 'Değerlendir' },
     { key: 'trendyol', icon: '🛍️', label: 'Alışveriş' },
     { key: 'dolap', icon: '♻️', label: '2.El Al-Sat' },
     { key: 'food', icon: '🍔', label: 'Yemek' },
@@ -97,6 +97,7 @@ export default function CustomerSuperApp() {
               {activeScreen === 'wallet' && '💳 Likya Pay & Cüzdan'}
               {activeScreen === 'community' && '👥 Topluluk & Etkinlikler'}
               {activeScreen === 'gift' && '🎁 Espirili İkram & Hediye'}
+              {activeScreen === 'review' && '⭐ Hizmet Değerlendirmesi'}
             </div>
           </div>
           <div
@@ -122,6 +123,7 @@ export default function CustomerSuperApp() {
           {activeScreen === 'tickets' && <TicketsTab qrHash={qrHash} qrCountdown={qrCountdown} />}
           {activeScreen === 'community' && <CommunityEventsTab />}
           {activeScreen === 'gift' && <GiftSystem />}
+          {activeScreen === 'review' && <ReviewTab />}
           {activeScreen === 'wallet' && <WalletTab walletBalance={walletBalance} setWalletBalance={setWalletBalance} ecoPoints={ecoPoints} setEcoPoints={setEcoPoints} />}
         </div>
 
