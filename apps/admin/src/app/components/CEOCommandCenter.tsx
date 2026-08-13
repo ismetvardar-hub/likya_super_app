@@ -149,7 +149,15 @@ export default function CEOCommandCenter() {
 
   const isBusinessRequest = (text: string): boolean => {
     const lower = text.toLowerCase();
-    const businessKeywords = ['araştır', 'araştırma', 'iş', 'pazar', 'rakip', 'analiz', 'strateji', 'pazarlama', 'satış', 'gelir', 'bütçe', 'rapor', 'özet', 'fikir', 'tavsiye', 'öneri', 'plan', 'proje', 'yatırım', 'maliyet', 'kâr', 'kar', 'ciro', 'müşteri', 'trend', 'sektör', 'piyasa', 'fiyat', 'kampanya', 'reklam', 'sosyal medya', 'marka', 'büyüme', 'ölçek'];
+    const businessKeywords = [
+      // BİLGİ/ARAŞTIRMA TALEPLERİ - KESİNLİKLE Gemini'ye yönlendirilir
+      'araştır', 'araştırma', 'nedir', 'incele', 'bilgi ver', 'iot nedir', 'sensor nedir',
+      'nasıl çalışır', 'ne işe yarar', 'açıkla', 'detaylandır', 'raporla', 'özetle',
+      'iş', 'pazar', 'rakip', 'analiz', 'strateji', 'pazarlama', 'satış', 'gelir',
+      'bütçe', 'rapor', 'özet', 'fikir', 'tavsiye', 'öneri', 'plan', 'proje',
+      'yatırım', 'maliyet', 'kâr', 'kar', 'ciro', 'müşteri', 'trend', 'sektör',
+      'piyasa', 'fiyat', 'kampanya', 'reklam', 'sosyal medya', 'marka', 'büyüme', 'ölçek',
+    ];
     return businessKeywords.some((kw) => lower.includes(kw));
   };
 
