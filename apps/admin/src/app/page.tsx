@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import CEOCommandChat from './components/CEOCommandChat';
+import CEOCommandCenter from './components/CEOCommandCenter';
 import AccountingModule from './components/AccountingModule';
 import AutonomousFinanceAgents from './components/AutonomousFinanceAgents';
 import HoldingAgentTeams from './components/HoldingAgentTeams';
@@ -86,8 +87,8 @@ export default function LikyaCampusCommandSystem() {
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b14', color: '#f8fafc', padding: '24px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-      {/* 🤖 LİKYA CEO KOMUT MERKEZİ - EN ÜSTTE */}
-      <CEOCommandChat />
+      {/* 🤖 LİKYA CEO COMMAND CENTER - 2 SAYFALI SPLIT LAYOUT */}
+      <CEOCommandCenter />
 
       {/* HIZLI ROL GEÇİŞ ÇUBUĞU (QUICK NAVIGATION BAR) */}
       <div
