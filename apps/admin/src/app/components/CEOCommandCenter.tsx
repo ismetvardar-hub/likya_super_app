@@ -2,6 +2,29 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot } from 'lucide-react';
+import Park3DTwin from './Park3DTwin';
+import IoTSensorMap from './IoTSensorMap';
+import AIAgentAutonomousController from './AIAgentAutonomousController';
+import LikyaCrew from './LikyaCrew';
+import PaymentIntegration from './PaymentIntegration';
+import SecurityIncidentAgent from './SecurityIncidentAgent';
+import AutoMarketingAgent from './AutoMarketingAgent';
+import DepartmentAgents from './DepartmentAgents';
+import HRPayrollAgent from './HRPayrollAgent';
+import FacilityMaintenanceAgent from './FacilityMaintenanceAgent';
+import SmartCaravanPark from './SmartCaravanPark';
+import SmartTentStore from './SmartTentStore';
+import LikyaMarketplace from './LikyaMarketplace';
+import RoomOnlyConcept from './RoomOnlyConcept';
+import AthletePerformanceAI from './AthletePerformanceAI';
+import StrategicRiskShield from './StrategicRiskShield';
+import SmartDestinationEngine from './SmartDestinationEngine';
+import SupplierManagement from './SupplierManagement';
+import DynamicLoyaltyPricing from './DynamicLoyaltyPricing';
+import SystemStressTestAndEdgeController from './SystemStressTestAndEdgeController';
+import MonitoringPanel from './MonitoringPanel';
+import AutonomousFinanceAgents from './AutonomousFinanceAgents';
+import AccountingModule from './AccountingModule';
 
 // ============================================================================
 // LİKYA CEO COMMAND CENTER - 2 SAYFALI SPLIT LAYOUT
@@ -330,17 +353,32 @@ export default function CEOCommandCenter() {
                 ← Likya Chat'e Dön
               </button>
             </div>
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px', color: '#94a3b8' }}>
-              <div style={{ fontSize: '48px' }}>{MODULES.find((m) => m.id === activeView)?.icon || '📦'}</div>
-              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#e2e8f0' }}>
-                {MODULES.find((m) => m.id === activeView)?.name || 'Modül'} Modülü
-              </div>
-              <div style={{ fontSize: '13px', textAlign: 'center', maxWidth: '400px' }}>
-                Bu modülün detaylı görünümü burada render edilecek. Modül bileşeni entegre edildiğinde içerik bu alanda görünecek.
-              </div>
-              <div style={{ fontSize: '11px', color: '#64748b' }}>
-                Modül ID: {activeView}
-              </div>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+              {/* GERÇEK MODÜL BİLEŞENLERİ - activeView'e göre render */}
+              {activeView === 'twin' && <Park3DTwin />}
+              {activeView === 'iot' && <IoTSensorMap />}
+              {activeView === 'ai' && <AIAgentAutonomousController />}
+              {activeView === 'crew' && <LikyaCrew />}
+              {activeView === 'payment' && <PaymentIntegration />}
+              {activeView === 'security' && <SecurityIncidentAgent />}
+              {activeView === 'marketing' && <AutoMarketingAgent />}
+              {activeView === 'dept' && <DepartmentAgents />}
+              {activeView === 'hr' && <HRPayrollAgent />}
+              {activeView === 'facility' && <FacilityMaintenanceAgent />}
+              {activeView === 'caravan' && <SmartCaravanPark />}
+              {activeView === 'tent' && <SmartTentStore />}
+              {activeView === 'market' && <LikyaMarketplace />}
+              {activeView === 'room' && <RoomOnlyConcept />}
+              {activeView === 'athlete' && <AthletePerformanceAI />}
+              {activeView === 'risk' && <StrategicRiskShield />}
+              {activeView === 'engine' && <SmartDestinationEngine />}
+              {activeView === 'supplier' && <SupplierManagement />}
+              {activeView === 'pricing' && <DynamicLoyaltyPricing />}
+              {activeView === 'stress' && <SystemStressTestAndEdgeController />}
+              {activeView === 'monitor' && <MonitoringPanel />}
+              {activeView === 'finance' && <AutonomousFinanceAgents />}
+              {activeView === 'legal' && <DepartmentAgents />}
+              {activeView === 'gift' && <AutoMarketingAgent />}
             </div>
           </div>
         )}
