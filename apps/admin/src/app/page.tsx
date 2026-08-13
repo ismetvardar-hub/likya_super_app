@@ -28,6 +28,7 @@ import HRPayrollAgent from './components/HRPayrollAgent';
 import FacilityMaintenanceAgent from './components/FacilityMaintenanceAgent';
 import SecurityIncidentAgent from './components/SecurityIncidentAgent';
 import DepartmentAgents from './components/DepartmentAgents';
+import AutoMarketingAgent from './components/AutoMarketingAgent';
 
 
 export default function LikyaCampusCommandSystem() {
@@ -361,6 +362,9 @@ export default function LikyaCampusCommandSystem() {
 
           {/* ⚖️ YENİ DEPARTMAN AJANLARI */}
           <DepartmentAgents />
+
+          {/* 📣 OTONOM PAZARLAMA AJANI */}
+          <AutoMarketingAgent />
         </div>
       )}
 
