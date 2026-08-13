@@ -86,6 +86,9 @@ export default function LikyaCampusCommandSystem() {
 
   return (
     <main style={{ minHeight: '100vh', background: '#070b14', color: '#f8fafc', padding: '24px', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      {/* 🤖 LİKYA CEO KOMUT MERKEZİ - EN ÜSTTE */}
+      <CEOCommandChat />
+
       {/* HIZLI ROL GEÇİŞ ÇUBUĞU (QUICK NAVIGATION BAR) */}
       <div
         style={{
@@ -582,7 +585,7 @@ export default function LikyaCampusCommandSystem() {
       )}
 
       {/* CEO KOMUT MERKEZİ - SESLİ & YAZILI CHAT BOX */}
-      <CEOCommandChat />
+      
     </main>
   );
 }

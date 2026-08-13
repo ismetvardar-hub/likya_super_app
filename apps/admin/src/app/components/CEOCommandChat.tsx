@@ -434,31 +434,32 @@ export default function CEOCommandChat() {
           </div>
         </div>
 
-        {/* Messages */}
+        {/* Messages - Sadece Likya CEO ve Kullanıcı mesajları gösterilir */}
         <div style={{ padding: '16px', maxHeight: '320px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {messages.map((m, i) => (
+          {messages.filter((m) => m.role === 'user' || m.role === 'ceo').map((m, i) => (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-              <div style={{ fontSize: '10px', color: getRoleColor(m.role), marginBottom: '2px', fontWeight: 'bold' }}>
-                {getAjanEmoji(m.role)} {getRoleLabel(m.role)} • {m.time}
+              <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
+                {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
               </div>
               <div style={{
                 maxWidth: '85%',
-                padding: '8px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                lineHeight: '1.5',
+                padding: '10px 14px',
+                borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                fontSize: '13px',
+                lineHeight: '1.6',
                 whiteSpace: 'pre-wrap',
-                background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'rgba(255,255,255,0.05)',
-                border: `1px solid ${getRoleColor(m.role)}33`,
+                background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
+                border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
                 color: '#e2e8f0',
+                boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
               }}>
                 {m.text}
               </div>
             </div>
           ))}
           {isProcessing && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#94a3b8' }}>
-              <span style={{ animation: 'pulse 1s infinite' }}>⚙️</span> Ajan çalışıyor...
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
+              <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO departman ajanlarına talimatınızı iletiyor...
             </div>
           )}
           <div ref={messagesEndRef} />
