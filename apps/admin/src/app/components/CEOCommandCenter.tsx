@@ -297,7 +297,7 @@ export default function CEOCommandCenter() {
       </div>
 
       {/* ================================================================ */}
-      {/* SAĞ: ODAKLANMIŞ LİKYA CEO SOHBET ODASI (DEDICATED WORKSPACE) */}
+      {/* SAĞ: DİNAMİK ANA ÇALIŞMA ALANI (MAIN CONTENT WORKSPACE) */}
       {/* ================================================================ */}
       <div style={{
         flex: 1,
@@ -308,98 +308,140 @@ export default function CEOCommandCenter() {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        {/* Chat Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
-            🎩
-          </div>
-          <div>
-            <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
-            <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Çevrimiçi • Akıllı Yönlendirme Aktif</div>
-          </div>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-            <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
-              🧠 Yazılım → Cline
-            </span>
-            <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(0,242,254,0.15)', color: '#00f2fe', border: '1px solid rgba(0,242,254,0.3)' }}>
-              📊 Strateji → Gemini
-            </span>
-          </div>
-        </div>
-
-        {/* Chat Messages Area - Dinamik */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
-          {messages.map((m, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-              <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
-                {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
+        {/* MODÜL GÖRÜNÜMÜ - activeView'e göre koşullu render */}
+        {activeView !== 'chat' && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(0,242,254,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
+                {MODULES.find((m) => m.id === activeView)?.icon || '📦'}
               </div>
-              <div style={{
-                maxWidth: '85%',
-                padding: '12px 16px',
-                borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                fontSize: '13px',
-                lineHeight: '1.6',
-                whiteSpace: 'pre-wrap',
-                background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
-                border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
-                color: '#e2e8f0',
-                boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
-              }}>
-                {m.text}
+              <div>
+                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
+                  {MODULES.find((m) => m.id === activeView)?.name || 'Modül'}
+                </div>
+                <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                  {MODULES.find((m) => m.id === activeView)?.description || ''}
+                </div>
+              </div>
+              <button
+                onClick={() => setActiveView('chat')}
+                style={{ marginLeft: 'auto', padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(245,158,11,0.3)', background: 'rgba(245,158,11,0.1)', color: '#f59e0b', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                ← Likya Chat'e Dön
+              </button>
+            </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px', color: '#94a3b8' }}>
+              <div style={{ fontSize: '48px' }}>{MODULES.find((m) => m.id === activeView)?.icon || '📦'}</div>
+              <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#e2e8f0' }}>
+                {MODULES.find((m) => m.id === activeView)?.name || 'Modül'} Modülü
+              </div>
+              <div style={{ fontSize: '13px', textAlign: 'center', maxWidth: '400px' }}>
+                Bu modülün detaylı görünümü burada render edilecek. Modül bileşeni entegre edildiğinde içerik bu alanda görünecek.
+              </div>
+              <div style={{ fontSize: '11px', color: '#64748b' }}>
+                Modül ID: {activeView}
               </div>
             </div>
-          ))}
-          {isProcessing && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
-              <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO talimatınızı işliyor...
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          </div>
+        )}
 
-        {/* Chat Input - Fonksiyonel */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-            🎤
-          </button>
-          <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-            🔊
-          </button>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyPress}
-            placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
-            style={{
-              flex: 1,
-              background: 'rgba(255,255,255,0.05)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              color: '#e2e8f0',
-              fontSize: '13px',
-              outline: 'none',
-            }}
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim() || isProcessing}
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              border: 'none',
-              background: 'linear-gradient(135deg, #e07a5f, #f27a1a)',
-              color: '#fff',
-              fontSize: '16px',
-              cursor: (!input.trim() || isProcessing) ? 'not-allowed' : 'pointer',
-              opacity: (!input.trim() || isProcessing) ? 0.5 : 1,
-            }}
-          >
-            ➤
-          </button>
-        </div>
+        {/* CHAT GÖRÜNÜMÜ - activeView === 'chat' olduğunda */}
+        {activeView === 'chat' && (
+          <>
+            {/* Chat Header */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
+                🎩
+              </div>
+              <div>
+                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
+                <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Çevrimiçi • Akıllı Yönlendirme Aktif</div>
+              </div>
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
+                  🧠 Yazılım → Cline
+                </span>
+                <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(0,242,254,0.15)', color: '#00f2fe', border: '1px solid rgba(0,242,254,0.3)' }}>
+                  📊 Strateji → Gemini
+                </span>
+              </div>
+            </div>
+
+            {/* Chat Messages Area - Dinamik */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
+              {messages.map((m, i) => (
+                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                  <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
+                    {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
+                  </div>
+                  <div style={{
+                    maxWidth: '85%',
+                    padding: '12px 16px',
+                    borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                    fontSize: '13px',
+                    lineHeight: '1.6',
+                    whiteSpace: 'pre-wrap',
+                    background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
+                    border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
+                    color: '#e2e8f0',
+                    boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
+                  }}>
+                    {m.text}
+                  </div>
+                </div>
+              ))}
+              {isProcessing && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
+                  <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO talimatınızı işliyor...
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Chat Input - Fonksiyonel */}
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
+                🎤
+              </button>
+              <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
+                🔊
+              </button>
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
+                style={{
+                  flex: 1,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '12px',
+                  padding: '12px 16px',
+                  color: '#e2e8f0',
+                  fontSize: '13px',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={handleSend}
+                disabled={!input.trim() || isProcessing}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #e07a5f, #f27a1a)',
+                  color: '#fff',
+                  fontSize: '16px',
+                  cursor: (!input.trim() || isProcessing) ? 'not-allowed' : 'pointer',
+                  opacity: (!input.trim() || isProcessing) ? 0.5 : 1,
+                }}
+              >
+                ➤
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
