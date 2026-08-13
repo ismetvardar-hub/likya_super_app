@@ -145,7 +145,7 @@ export default function CEOCommandCenter() {
           {MODULES.map((mod) => (
             <button
               key={mod.id}
-              onClick={() => setActiveModule(mod.id)}
+              onClick={() => setActiveView(mod.id)}
               title={mod.name}
               style={{
                 display: 'flex',
@@ -153,12 +153,12 @@ export default function CEOCommandCenter() {
                 gap: '10px',
                 padding: sidebarOpen ? '10px 12px' : '10px',
                 borderRadius: '10px',
-                border: activeModule === mod.id ? `1px solid ${mod.color}` : '1px solid transparent',
-                background: activeModule === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
-                color: activeModule === mod.id ? mod.color : '#94a3b8',
+                border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid transparent',
+                background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
+                color: activeView === mod.id ? mod.color : '#94a3b8',
                 cursor: 'pointer',
                 fontSize: '12px',
-                fontWeight: activeModule === mod.id ? '600' : '400',
+                fontWeight: activeView === mod.id ? '600' : '400',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.2s',
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
