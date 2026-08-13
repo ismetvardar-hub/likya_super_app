@@ -243,43 +243,7 @@ export default function CEOCommandCenter() {
           {sidebarOpen && <span>Likya Chat</span>}
         </button>
 
-        {/* 2. SOHBET KONU BAŞLIKLARI (CHAT HISTORY THREADS) */}
-        {sidebarOpen && (
-          <div style={{ marginBottom: '12px' }}>
-            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', padding: '0 4px' }}>
-              💬 Sohbet Geçmişi
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {CHAT_THREADS.map((thread) => (
-                <button
-                  key={thread.id}
-                  onClick={() => loadThread(thread.id)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    border: activeThreadId === thread.id ? '1px solid #00f2fe' : '1px solid transparent',
-                    background: activeThreadId === thread.id ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.02)',
-                    color: activeThreadId === thread.id ? '#00f2fe' : '#94a3b8',
-                    cursor: 'pointer',
-                    fontSize: '11px',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    textAlign: 'left',
-                  }}
-                >
-                  <span>💬</span>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{thread.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* 3. SİSTEM MODÜLLERİ */}
+        {/* 2. SİSTEM MODÜLLERİ */}
         {sidebarOpen && (
           <div style={{ marginBottom: '12px' }}>
             <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', padding: '0 4px' }}>
@@ -388,100 +352,147 @@ export default function CEOCommandCenter() {
 
         {/* CHAT GÖRÜNÜMÜ - activeView === 'chat' olduğunda */}
         {activeView === 'chat' && (
-          <>
-            {/* Chat Header */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
-                🎩
+          <div style={{ display: 'flex', gap: '16px', flex: 1, minHeight: 0 }}>
+            {/* SOL/ORTA: ANA CHAT THREAD */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+              {/* Chat Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
+                  🎩
+                </div>
+                <div>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
+                  <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Çevrimiçi • Akıllı Yönlendirme Aktif</div>
+                </div>
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                  <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
+                    🧠 Yazılım → Cline
+                  </span>
+                  <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(0,242,254,0.15)', color: '#00f2fe', border: '1px solid rgba(0,242,254,0.3)' }}>
+                    📊 Strateji → Gemini
+                  </span>
+                </div>
               </div>
-              <div>
-                <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
-                <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Çevrimiçi • Akıllı Yönlendirme Aktif</div>
-              </div>
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-                <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
-                  🧠 Yazılım → Cline
-                </span>
-                <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(0,242,254,0.15)', color: '#00f2fe', border: '1px solid rgba(0,242,254,0.3)' }}>
-                  📊 Strateji → Gemini
-                </span>
-              </div>
-            </div>
 
-            {/* Chat Messages Area - Dinamik */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
-              {messages.map((m, i) => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                  <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
-                    {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
+              {/* Chat Messages Area - Dinamik */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
+                {messages.map((m, i) => (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                    <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
+                      {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
+                    </div>
+                    <div style={{
+                      maxWidth: '85%',
+                      padding: '12px 16px',
+                      borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
+                      fontSize: '13px',
+                      lineHeight: '1.6',
+                      whiteSpace: 'pre-wrap',
+                      background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
+                      border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
+                      color: '#e2e8f0',
+                      boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
+                    }}>
+                      {m.text}
+                    </div>
                   </div>
-                  <div style={{
-                    maxWidth: '85%',
+                ))}
+                {isProcessing && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
+                    <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO talimatınızı işliyor...
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Chat Input - Fonksiyonel */}
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
+                  🎤
+                </button>
+                <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
+                  🔊
+                </button>
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
+                  style={{
+                    flex: 1,
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
                     padding: '12px 16px',
-                    borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                    fontSize: '13px',
-                    lineHeight: '1.6',
-                    whiteSpace: 'pre-wrap',
-                    background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
-                    border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
                     color: '#e2e8f0',
-                    boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
-                  }}>
-                    {m.text}
-                  </div>
-                </div>
-              ))}
-              {isProcessing && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
-                  <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO talimatınızı işliyor...
-                </div>
-              )}
-              <div ref={messagesEndRef} />
+                    fontSize: '13px',
+                    outline: 'none',
+                  }}
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={!input.trim() || isProcessing}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #e07a5f, #f27a1a)',
+                    color: '#fff',
+                    fontSize: '16px',
+                    cursor: (!input.trim() || isProcessing) ? 'not-allowed' : 'pointer',
+                    opacity: (!input.trim() || isProcessing) ? 0.5 : 1,
+                  }}
+                >
+                  ➤
+                </button>
+              </div>
             </div>
 
-            {/* Chat Input - Fonksiyonel */}
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-              <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-                🎤
-              </button>
-              <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-                🔊
-              </button>
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
-                style={{
-                  flex: 1,
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: '12px',
-                  padding: '12px 16px',
-                  color: '#e2e8f0',
-                  fontSize: '13px',
-                  outline: 'none',
-                }}
-              />
-              <button
-                onClick={handleSend}
-                disabled={!input.trim() || isProcessing}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '50%',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #e07a5f, #f27a1a)',
-                  color: '#fff',
-                  fontSize: '16px',
-                  cursor: (!input.trim() || isProcessing) ? 'not-allowed' : 'pointer',
-                  opacity: (!input.trim() || isProcessing) ? 0.5 : 1,
-                }}
-              >
-                ➤
-              </button>
+            {/* SAĞ: SOHBET GEÇMİŞİ PANELİ (RIGHT HISTORY SIDEBAR) */}
+            <div style={{
+              width: '240px',
+              background: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '12px',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              flexShrink: 0,
+              overflowY: 'auto',
+            }}>
+              <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px', fontWeight: 'bold' }}>
+                💬 Sohbet Geçmişi
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {CHAT_THREADS.map((thread) => (
+                  <button
+                    key={thread.id}
+                    onClick={() => loadThread(thread.id)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border: activeThreadId === thread.id ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
+                      background: activeThreadId === thread.id ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.02)',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: activeThreadId === thread.id ? '#00f2fe' : '#e2e8f0' }}>
+                      {thread.title}
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>
+                      {thread.messages.length} mesaj • {thread.messages[0].time}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
