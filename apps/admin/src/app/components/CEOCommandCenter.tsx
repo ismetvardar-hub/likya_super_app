@@ -239,11 +239,43 @@ export default function CEOCommandCenter() {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        {/* Sidebar Header */}
+        {/* Sidebar Header - Likya Logosu + Komuta Merkezi */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           {sidebarOpen && (
-            <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>
-              🧠 Likya Komuta Merkezi
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', whiteSpace: 'nowrap' }}>
+              {/* Likya SVG Logosu - Degrade Indigo/Cyan/Amber + Glow */}
+              <div style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(0,242,254,0.2), rgba(245,158,11,0.2))',
+                border: '1px solid rgba(0,242,254,0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 16px rgba(0,242,254,0.3), inset 0 0 8px rgba(245,158,11,0.1)',
+              }}>
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
+                  <defs>
+                    <linearGradient id="likyaLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#6366f1" />
+                      <stop offset="50%" stopColor="#00f2fe" />
+                      <stop offset="100%" stopColor="#f59e0b" />
+                    </linearGradient>
+                  </defs>
+                  {/* Antik dağ formu */}
+                  <path d="M4 20 L12 4 L20 20 Z" stroke="url(#likyaLogo)" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                  {/* Işık huzmesi */}
+                  <path d="M12 4 L12 20" stroke="url(#likyaLogo)" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+                  {/* L harfi */}
+                  <path d="M9 14 L9 20 L15 20" stroke="url(#likyaLogo)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  {/* Zemin */}
+                  <path d="M4 20 L20 20" stroke="url(#likyaLogo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+                </svg>
+              </div>
+              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#e2e8f0' }}>
+                Likya Komuta Merkezi
+              </div>
             </div>
           )}
           <button
