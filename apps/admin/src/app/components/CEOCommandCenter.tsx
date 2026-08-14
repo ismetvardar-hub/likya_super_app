@@ -108,6 +108,13 @@ const MODULES: ModuleItem[] = [
   { id: 'suno', name: 'Suno AI Ses & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Dinamik jingle & gamification', category: 'daze' },
 ];
 
+// Kullanılabilir AI Modelleri (Gemini Tarzı Model Seçici)
+const MODEL_OPTIONS = [
+  { id: 'flash', label: 'Flash', icon: '⚡', desc: 'Hızlı yanıt' },
+  { id: 'pro', label: 'Pro (Derin Düşünme)', icon: '🧠', desc: 'Analitik düşünme' },
+  { id: 'cline', label: 'Cline (Otonom Kodlayıcı)', icon: '🛠️', desc: 'Kod üretimi' },
+];
+
 // Sohbet Konu Başlıkları (Chat History Threads)
 interface ChatAttachment {
   name: string;
@@ -183,6 +190,8 @@ export default function CEOCommandCenter() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [selectedModel, setSelectedModel] = useState('flash');
+  const [modelMenuOpen, setModelMenuOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -678,14 +687,7 @@ export default function CEOCommandCenter() {
                   <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
                   <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Emrinizdeyim • Akıllı Yönlendirme Aktif</div>
                 </div>
-                <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-                  <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
-                    🧠 Yazılım → Cline
-                  </span>
-                  <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(0,242,254,0.15)', color: '#00f2fe', border: '1px solid rgba(0,242,254,0.3)' }}>
-                    📊 Strateji → Gemini
-                  </span>
-                </div>
+                {/* Model rozetleri kaldırıldı — sade başlık */}
               </div>
 
               {/* Chat Messages Area - Dinamik */}
@@ -865,12 +867,7 @@ export default function CEOCommandCenter() {
                 <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
                 <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
 
-                <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-                  🎤
-                </button>
-                <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
-                  🔊
-                </button>
+                {/* Sol taraftaki mikrofon/hoparlör kaldırıldı — solda sadece + butonu */}
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -878,6 +875,7 @@ export default function CEOCommandCenter() {
                   placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
                   style={{
                     flex: 1,
+                    minWidth: 0,
                     background: 'rgba(255,255,255,0.05)',
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: '12px',
@@ -887,6 +885,65 @@ export default function CEOCommandCenter() {
                     outline: 'none',
                   }}
                 />
+                {/* Model Seçici (Gemini Tarzı Dropdown) */}
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <button
+                    onClick={() => setModelMenuOpen(!modelMenuOpen)}
+                    title="Modeli değiştir"
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '6px',
+                      padding: '8px 12px', borderRadius: '12px', cursor: 'pointer',
+                      border: modelMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.15)',
+                      background: modelMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.04)',
+                      color: '#e2e8f0', fontSize: '11px', fontWeight: '600', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.icon} {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.label} ▾
+                  </button>
+                  {modelMenuOpen && (
+                    <div style={{
+                      position: 'absolute', bottom: '44px', right: 0, minWidth: '210px', zIndex: 45,
+                      background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
+                      borderRadius: '14px', padding: '6px', backdropFilter: 'blur(16px)',
+                      boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
+                      display: 'flex', flexDirection: 'column', gap: '2px',
+                    }}>
+                      {MODEL_OPTIONS.map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => { setSelectedModel(m.id); setModelMenuOpen(false); }}
+                          style={{
+                            display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px',
+                            borderRadius: '10px', border: 'none', cursor: 'pointer', textAlign: 'left',
+                            background: selectedModel === m.id ? 'rgba(0,242,254,0.1)' : 'transparent',
+                            color: selectedModel === m.id ? '#00f2fe' : '#e2e8f0',
+                            fontSize: '12px',
+                          }}
+                        >
+                          <span>{m.icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: '600' }}>{m.label}</div>
+                            <div style={{ fontSize: '9px', color: '#64748b' }}>{m.desc}</div>
+                          </div>
+                          {selectedModel === m.id && <span style={{ color: '#00f2fe' }}>✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Mikrofon (gönderin yanında) */}
+                <button
+                  title="Sesli komut"
+                  style={{
+                    width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
+                    border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)',
+                    color: '#94a3b8', fontSize: '16px', cursor: 'pointer',
+                  }}
+                >
+                  🎤
+                </button>
+
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || isProcessing}
