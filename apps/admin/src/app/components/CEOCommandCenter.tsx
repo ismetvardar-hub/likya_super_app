@@ -337,7 +337,9 @@ export default function CEOCommandCenter() {
         if (result.success) {
           setMessages((prev) => [...prev, {
             role: 'ceo',
-            text: `🧠 Efendim, isteğiniz başarıyla yerine getirildi! 😊\n\n📋 Talebiniz: "${text}"\n\n📁 İlgilendiğim dosya: ${result.file || 'belirlenemedi'}\n\n✅ Yapılan işlem: ${result.action || 'tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'başarıyla tamamlandı'}`,
+            text: result.answer
+              ? result.answer
+              : `🧠 Efendim, isteğiniz başarıyla yerine getirildi! 😊\n\n${result.motor === 'deepseek' ? '**[🧠 Cline/DeepSeek]** DeepSeek Coder motoru' : '**[⚡ Gemini/Ollama]** Gemini motoru'} çalıştı.\n\n📋 Talebiniz: "${text}"\n\n📁 İlgilendiğim dosya: ${result.file || 'belirlenemedi'}\n\n✅ Yapılan işlem: ${result.action || 'tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'başarıyla tamamlandı'}`,
             time: now(),
           }]);
         } else {

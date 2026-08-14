@@ -13,6 +13,77 @@ const PROJECT_ROOT = path.resolve(process.cwd(), process.cwd().endsWith('apps/ad
 const ALLOWED_EXTENSIONS = ['.tsx', '.ts', '.dart', '.py', '.js', '.jsx', '.css', '.md', '.json', '.yaml', '.yml', '.sql'];
 const DEFAULT_TARGET = 'apps/admin/src/app/components/CEOCommandCenter.tsx';
 const GEMINI_MODEL = 'gemini-3.5-flash';
+const DEEPSEEK_MODEL = 'deepseek-chat';
+const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+
+// ============================================================================
+// İDRAK & AKILLI YÖNLENDİRME (Intent Router)
+// Kanal A: Bilgi/Araştırma/Medya/Çeviri  -> Gemini / Ollama (multimodal)
+// Kanal B: Kodlama/Hata/ERP/Geliştirme   -> Cline & DeepSeek (kod motoru)
+// ============================================================================
+const CODE_KEYWORDS = [
+  'yazılım', 'kod', 'program', 'uygulama', 'ekran', 'modül', 'entegrasyon', 'bug', 'hata düzelt', 'hata ayıkla',
+  'debug', 'özellik ekle', 'geliştir', 'oluştur', 'tasarla', 'yaz', 'component', 'bileşen', 'api', 'backend',
+  'frontend', 'database', 'veritabanı', 'flutter', 'next.js', 'react', 'dart', 'typescript', 'python', 'supabase',
+  'edge function', 'migration', 'schema', 'endpoint', 'route', 'sayfa', 'buton', 'form', 'modal', 'widget',
+  'screen', 'panel', 'script', 'otomasyon', 'refactor', 'düzelt', 'dosya', 'kur', 'değiştir', 'ekle',
+];
+
+const RESEARCH_KEYWORDS = [
+  'araştır', 'araştırma', 'nedir', 'incele', 'bilgi ver', 'nasıl çalışır', 'ne işe yarar', 'açıkla',
+  'detaylandır', 'raporla', 'özetle', 'web', 'internet', 'arama', 'pazar', 'rakip', 'analiz', 'strateji',
+  'pazarlama', 'satış', 'gelir', 'bütçe', 'yatırım', 'maliyet', 'çevir', 'translate', 'fotoğraf', 'fotograf',
+  'video', 'görsel', 'medya', 'fikir', 'tavsiye', 'öneri', 'metin yaz', 'makale', 'trend', 'sektör', 'piyasa',
+  'kampanya', 'reklam', 'sosyal medya', 'hisse', 'borsa',
+];
+
+function classifyIntent(command: string): 'code' | 'research' {
+  const lower = command.toLowerCase();
+  const codeHits = CODE_KEYWORDS.filter((k) => lower.includes(k)).length;
+  const researchHits = RESEARCH_KEYWORDS.filter((k) => lower.includes(k)).length;
+  // Puanlama: kod ağır basıyorsa Kanal B, değilse Kanal A
+  return codeHits >= researchHits && codeHits > 0 ? 'code' : 'research';
+}
+
+// DeepSeek Coder/V3 — saf kod motoru (düşük maliyet, token verimli)
+async function generateWithDeepSeek(prompt: string): Promise<string> {
+  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
+  if (!apiKey) throw new Error('DeepSeek API anahtarı bulunamadı');
+  const response = await fetch(DEEPSEEK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: DEEPSEEK_MODEL,
+      messages: [
+        { role: 'system', content: "Sen Likya Kampüsü'nün baş yazılım mühendisisin. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür; açıklama, markdown veya kod bloğu işareti kullanma." },
+        { role: 'user', content: prompt },
+      ],
+      temperature: 0.4,
+      max_tokens: 8192,
+    }),
+  });
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`DeepSeek API hatası (${response.status}): ${errText.slice(0, 200)}`);
+  }
+  const data = await response.json();
+  const content = data?.choices?.[0]?.message?.content || '';
+  return extractCodeFromResponse(content);
+}
+
+// Gemini/Ollama — araştırma, medya ve çeviri hattı (centilmen üslup)
+async function generateResearchWithGemini(command: string): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+  if (!apiKey) throw new Error('Gemini API anahtarı bulunamadı');
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: GEMINI_MODEL,
+    generationConfig: { maxOutputTokens: 4096, temperature: 0.7 },
+  });
+  const prompt = `Sen Likya CEO'sun; centilmen, naif, sıcak ve hafif esprili bir kurucu ortak gibi konuşursun. Kullanıcının talebini değerlendir ve zengin, düzenli, okunaklı bir yanıt üret.\n\nKULLANICI TALEBİ: ${command}\n\nYanıt markdown formatında olsun (başlıklar, listeler). 'Efendim' hitabıyla başla. Asla soğuk veya robotik olma; araştırma bulgularını net ama sıcak bir dille sun.`;
+  const result = await model.generateContent(prompt);
+  return result.response.text().trim();
+}
 
 function isSafePath(filePath: string): boolean {
   const resolved = path.resolve(PROJECT_ROOT, filePath);
@@ -120,6 +191,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Komut boş olamaz' }, { status: 400 });
     }
 
+    // --- İDRAK ANALİZİ (Intent Router) ---
+    const hasExplicitFile = /[\w/.-]+\.(?:tsx|ts|dart|py|js|jsx|css|md|json|yaml|yml|sql)/i.test(command);
+    const intent: 'code' | 'research' = hasExplicitFile || !!body.file ? 'code' : classifyIntent(command);
+
+    // Kanal A: Araştırma/Medya/Çeviri — dosya hedefi yoksa Gemini/Ollama analiz yanıtı döndür
+    if (intent === 'research') {
+      try {
+        const answer = await generateResearchWithGemini(command);
+        return NextResponse.json({
+          success: true,
+          motor: 'gemini',
+          intent: 'research',
+          action: 'Gemini/Ollama analizi tamamlandı',
+          answer,
+          message: 'Multimodal araştırma hattı yanıtladı',
+        });
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('[CEO/Gemini] Araştırma hatası:', message);
+        return NextResponse.json({ success: false, motor: 'gemini', error: message }, { status: 500 });
+      }
+    }
+
     // --- HEDEF DOSYA TESPİTİ ---
     const targetFile = (body.file || resolveTargetFile(command)).replace(/^\/+/, '');
     if (!isSafePath(targetFile)) {
@@ -160,13 +254,28 @@ export async function POST(request: NextRequest) {
       existingContent = '';
     }
 
-    // --- b) GEMINI LLM İLE KOD DÜZENLEME ---
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+    // --- b) KOD ÜRETİMİ: DeepSeek (Kanal B) → Gemini fallback ---
+    const deepseekKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
+    const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
     let finalContent = '';
+    let motor: 'deepseek' | 'gemini' = 'deepseek';
 
-    if (apiKey) {
+    if (deepseekKey) {
       try {
-        const genAI = new GoogleGenerativeAI(apiKey);
+        finalContent = await generateWithDeepSeek(buildGeminiPrompt(command, targetFile, existingContent));
+        console.log(`[CEO/DeepSeek] ${targetFile} güncellendi (${finalContent.length} karakter)`);
+      } catch (e) {
+        console.error('[CEO/DeepSeek] LLM hatası, Gemini ye düşülüyor:', e instanceof Error ? e.message : String(e));
+        motor = 'gemini';
+      }
+    } else {
+      console.warn('[CEO/DeepSeek] API anahtarı bulunamadı, Gemini kullanılacak');
+      motor = 'gemini';
+    }
+
+    if (!finalContent.trim() && geminiKey) {
+      try {
+        const genAI = new GoogleGenerativeAI(geminiKey);
         const model = genAI.getGenerativeModel({
           model: GEMINI_MODEL,
           generationConfig: { maxOutputTokens: 65536, temperature: 0.7 },
@@ -178,8 +287,8 @@ export async function POST(request: NextRequest) {
         console.error('[CEO/Gemini] LLM hatası:', e instanceof Error ? e.message : String(e));
         finalContent = existingContent || fallbackTemplate(command, targetFile);
       }
-    } else {
-      console.warn('[CEO/Gemini] API anahtarı bulunamadı (GEMINI_API_KEY / NEXT_PUBLIC_GEMINI_API_KEY)');
+    } else if (!finalContent.trim()) {
+      console.warn('[CEO] API anahtarı bulunamadı; şablon kullanıldı');
       finalContent = existingContent || fallbackTemplate(command, targetFile);
     }
 
@@ -195,9 +304,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       file: targetFile,
+      motor,
+      intent: 'code',
       action: 'LLM tarafından güncellendi',
       bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
-      message: 'Gemini LLM ile güncellendi',
+      message: motor === 'deepseek' ? 'DeepSeek Coder ile güncellendi' : 'Gemini LLM ile güncellendi',
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
