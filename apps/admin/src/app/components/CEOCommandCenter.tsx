@@ -108,12 +108,22 @@ const MODULES: ModuleItem[] = [
   { id: 'suno', name: 'Suno AI Ses & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Dinamik jingle & gamification', category: 'daze' },
 ];
 
-// Kullanılabilir AI Modelleri (Gemini Tarzı Model Seçici)
+// Kullanılabilir AI Modelleri (Model Seçici)
 const MODEL_OPTIONS = [
   { id: 'flash', label: 'Flash', icon: '⚡', desc: 'Hızlı yanıt' },
   { id: 'pro', label: 'Pro (Derin Düşünme)', icon: '🧠', desc: 'Analitik düşünme' },
   { id: 'cline', label: 'Cline (Otonom Kodlayıcı)', icon: '🛠️', desc: 'Kod üretimi' },
 ];
+
+// Basit & güvenli Markdown vurgulayıcı (Gemini tarzı tipografi — **kalın** desteği)
+const renderMarkdown = (text: string) => {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={i} style={{ color: '#fff', fontWeight: '700' }}>{part.slice(2, -2)}</strong>
+      : <span key={i}>{part}</span>
+  );
+};
 
 // Sohbet Konu Başlıkları (Chat History Threads)
 interface ChatAttachment {
@@ -141,7 +151,7 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
     title: 'Ekstrem Spor Kulüpleri',
     messages: [
       { role: 'user', text: 'Ekstrem spor kulüpleri için strateji öner', time: '10:15' },
-      { role: 'ceo', text: '📊 Efendim, ekstrem spor kulüpleri konusunu Gemini ile birlikte masaya yatırdık. 😊\n\n🏢 Pazar biraz şöyle:\n• Türkiye\'de ekstrem spor kulüpleri hızla büyüyor\n• Padel, tırmanış ve su sporları ciddi ilgi görüyor\n\n💡 Size birkaç zarif öneri:\n1. Amatör spor kulübü fonu kurabiliriz\n2. Upcycling ile ekipman havuzu oluşturabiliriz\n3. Genç sporculara burs verebiliriz\n\nAnalizimiz hazır, isterseniz üzerinden birlikte geçelim.', time: '10:16' },
+      { role: 'ceo', text: '📊 Efendim, ekstrem spor kulüpleri konusunu Likya ile birlikte masaya yatırdık. 😊\n\n🏢 Pazar biraz şöyle:\n• Türkiye\'de ekstrem spor kulüpleri hızla büyüyor\n• Padel, tırmanış ve su sporları ciddi ilgi görüyor\n\n💡 Size birkaç zarif öneri:\n1. Amatör spor kulübü fonu kurabiliriz\n2. Upcycling ile ekipman havuzu oluşturabiliriz\n3. Genç sporculara burs verebiliriz\n\nAnalizimiz hazır, isterseniz üzerinden birlikte geçelim.', time: '10:16' },
     ],
   },
   {
@@ -237,7 +247,7 @@ export default function CEOCommandCenter() {
   const isBusinessRequest = (text: string): boolean => {
     const lower = text.toLowerCase();
     const businessKeywords = [
-      // BİLGİ/ARAŞTIRMA TALEPLERİ - KESİNLİKLE Gemini'ye yönlendirilir
+      // BİLGİ/ARAŞTIRMA TALEPLERİ - KESİNLİKLE Likya'ya yönlendirilir
       'araştır', 'araştırma', 'nedir', 'incele', 'bilgi ver', 'iot nedir', 'sensor nedir',
       'nasıl çalışır', 'ne işe yarar', 'açıkla', 'detaylandır', 'raporla', 'özetle',
       'iş', 'pazar', 'rakip', 'analiz', 'strateji', 'pazarlama', 'satış', 'gelir',
@@ -305,7 +315,7 @@ export default function CEOCommandCenter() {
       setTimeout(() => {
         setMessages((prev) => [...prev, {
           role: 'ceo',
-          text: `🌐 İzninizle bir an web radarlarımı devreye aldım, efendim. 😊\n\nEvet, şu an internette gerçek zamanlı araştırma yapabiliyorum!\n\n🔍 Kullanabileceğim kanallar:\n• 🌐 **Google Search & Gemini Deep Research:** Güncel pazar verileri, rakip analizleri ve global trendler\n• 🛰️ **OSINT Saha Radarı:** Canlı haber kaynakları ve açık kaynak istihbaratı\n• 💻 **Geliştirici & Teknoloji Ağları:** GitHub, NPM, PyPI ve güncel dokümantasyonlar\n\n💡 **Sizi ne mutlu ederse onu araştırayım:**\n- *"2025 ekstrem spor trendlerini web'de araştır."*\n- *"Padel tenis kortu yapım maliyetlerini listele."*\n- *"Google Cloud $350K hibe programı şartlarını güncel kaynaklardan bul."*\n\n🎯 Yeter ki siz söyleyin, web radarlarımı hemen sizin için çalıştırayım!`,
+          text: `🌐 İzninizle bir an web radarlarımı devreye aldım, efendim. 😊\n\nEvet, şu an internette gerçek zamanlı araştırma yapabiliyorum!\n\n🔍 Kullanabileceğim kanallar:\n• 🌐 **Google Search & Likya Deep Research:** Güncel pazar verileri, rakip analizleri ve global trendler\n• 🛰️ **OSINT Saha Radarı:** Canlı haber kaynakları ve açık kaynak istihbaratı\n• 💻 **Geliştirici & Teknoloji Ağları:** GitHub, NPM, PyPI ve güncel dokümantasyonlar\n\n💡 **Sizi ne mutlu ederse onu araştırayım:**\n- *"2025 ekstrem spor trendlerini web'de araştır."*\n- *"Padel tenis kortu yapım maliyetlerini listele."*\n- *"Google Cloud $350K hibe programı şartlarını güncel kaynaklardan bul."*\n\n🎯 Yeter ki siz söyleyin, web radarlarımı hemen sizin için çalıştırayım!`,
           time: now(),
         }]);
         setIsProcessing(false);
@@ -342,7 +352,7 @@ export default function CEOCommandCenter() {
         if (isSoftware) {
           setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
         } else if (isBusiness) {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Gemini'ye analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
+          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Likya'ya analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
         } else {
           setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
         }
@@ -352,7 +362,7 @@ export default function CEOCommandCenter() {
       if (isSoftware) {
         setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
       } else if (isBusiness) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Gemini'ye analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Likya'ya analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
       } else {
         setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
       }
@@ -614,7 +624,7 @@ export default function CEOCommandCenter() {
         flexDirection: 'column',
         overflowX: 'hidden',
       }}>
-        {/* MODÜL GÖRÜNÜMÜ - activeView'e göre koşullu render */}
+        {/* MODÜL GÖRÜMÜ - activeView'e göre koşullu render */}
         {activeView !== 'chat' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
@@ -687,7 +697,6 @@ export default function CEOCommandCenter() {
                   <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
                   <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Emrinizdeyim • Akıllı Yönlendirme Aktif</div>
                 </div>
-                {/* Model rozetleri kaldırıldı — sade başlık */}
               </div>
 
               {/* Chat Messages Area - Dinamik */}
@@ -747,26 +756,31 @@ export default function CEOCommandCenter() {
                 ) : (
                   <>
                 {messages.map((m, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-                    <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
-                      {m.role === 'user' ? '👤 Siz' : '🎩 Likya CEO'} • {m.time}
-                    </div>
+                  <div key={i} style={{
+                    display: 'flex',
+                    flexDirection: m.role === 'user' ? 'row-reverse' : 'row',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                  }}>
                     <div style={{
-                      maxWidth: '85%',
-                      padding: '12px 16px',
-                      borderRadius: m.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                      fontSize: '13px',
-                      lineHeight: '1.6',
-                      whiteSpace: 'pre-wrap',
-                      background: m.role === 'user' ? 'linear-gradient(135deg, rgba(0,242,254,0.15), rgba(72,187,120,0.15))' : 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05))',
-                      border: `1px solid ${m.role === 'user' ? 'rgba(0,242,254,0.3)' : 'rgba(245,158,11,0.3)'}`,
-                      color: '#e2e8f0',
-                      boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
+                      width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      background: m.role === 'user'
+                        ? 'linear-gradient(135deg, rgba(0,242,254,0.25), rgba(72,187,120,0.25))'
+                        : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                      fontSize: '15px',
+                      boxShadow: m.role === 'user' ? '0 0 10px rgba(0,242,254,0.15)' : '0 0 12px rgba(245,158,11,0.2)',
                     }}>
+                      {m.role === 'user' ? '👤' : '🎩'}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0, maxWidth: '85%' }}>
+                      <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '4px', fontWeight: '600', letterSpacing: '0.3px' }}>
+                        {m.role === 'user' ? 'Siz' : 'Likya CEO'} • {m.time}
+                      </div>
                       {m.attachment && (
                         <div style={{
-                          marginBottom: '8px', borderRadius: '10px', overflow: 'hidden',
-                          border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(13,19,34,0.6)',
+                          marginBottom: '10px', borderRadius: '10px', overflow: 'hidden',
+                          border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(13,19,34,0.5)',
                           maxWidth: '260px',
                         }}>
                           {m.attachment.type.startsWith('image/') ? (
@@ -778,7 +792,14 @@ export default function CEOCommandCenter() {
                           )}
                         </div>
                       )}
-                      {m.text}
+                      <div style={{
+                        fontSize: '14px',
+                        lineHeight: '1.7',
+                        whiteSpace: 'pre-wrap',
+                        color: m.role === 'user' ? '#e2e8f0' : '#cbd5e1',
+                      }}>
+                        {renderMarkdown(m.text)}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -808,160 +829,348 @@ export default function CEOCommandCenter() {
                 </div>
               )}
 
-              {/* Chat Input - Fonksiyonel */}
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                {/* Multimodal Ataş (+) Menü */}
-                <div style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+              {/* Chat Input - Web & Mobil Uyumlu */}
+              {isMobile ? (
+                <div style={{ display: 'flex', flexDirection: 'column', width: '100%', marginTop: '12px' }}>
+                  {/* Model Seçici - Girişin üstünde ortalanmış zarif bir pill */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px', position: 'relative' }}>
+                    <button
+                      onClick={() => setModelMenuOpen(!modelMenuOpen)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        background: 'rgba(30, 41, 59, 0.5)',
+                        color: '#cbd5e1',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        backdropFilter: 'blur(8px)',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <span>{MODEL_OPTIONS.find((m) => m.id === selectedModel)?.icon}</span>
+                      <span>{MODEL_OPTIONS.find((m) => m.id === selectedModel)?.label}</span>
+                      <span style={{ fontSize: '9px', color: '#64748b' }}>▾</span>
+                    </button>
+
+                    {modelMenuOpen && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '32px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        minWidth: '200px',
+                        zIndex: 100,
+                        background: 'rgba(13,19,34,0.98)',
+                        border: '1px solid rgba(0, 242, 254, 0.25)',
+                        borderRadius: '16px',
+                        padding: '6px',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        {MODEL_OPTIONS.map((m) => (
+                          <button
+                            key={m.id}
+                            onClick={() => { setSelectedModel(m.id); setModelMenuOpen(false); }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              padding: '10px',
+                              borderRadius: '10px',
+                              border: 'none',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              background: selectedModel === m.id ? 'rgba(0,242,254,0.1)' : 'transparent',
+                              color: selectedModel === m.id ? '#00f2fe' : '#e2e8f0',
+                              fontSize: '12px'
+                            }}
+                          >
+                            <span>{m.icon}</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: '600' }}>{m.label}</div>
+                              <div style={{ fontSize: '9px', color: '#64748b' }}>{m.desc}</div>
+                            </div>
+                            {selectedModel === m.id && <span style={{ color: '#00f2fe' }}>✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Likya Yuvarlak Giriş Kutusu */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: 'rgba(30, 41, 59, 0.6)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '28px',
+                    padding: '4px 6px 4px 12px',
+                    gap: '8px',
+                    boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.05)'
+                  }}>
+                    {/* Sol: + Butonu */}
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <button
+                        onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          color: '#94a3b8',
+                          fontSize: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        +
+                      </button>
+
+                      {attachMenuOpen && (
+                        <div style={{
+                          position: 'fixed',
+                          bottom: '72px',
+                          left: '12px',
+                          right: '12px',
+                          background: 'rgba(13,19,34,0.98)',
+                          border: '1px solid rgba(0,242,254,0.25)',
+                          borderRadius: '20px',
+                          padding: '16px 12px calc(env(safe-area-inset-bottom) + 16px)',
+                          backdropFilter: 'blur(16px)',
+                          boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '2px',
+                          zIndex: 110
+                        }}>
+                          {[
+                            { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
+                            { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
+                            { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
+                            { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
+                            { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
+                          ].map((item) => (
+                            <button
+                              key={item.label}
+                              onClick={item.onClick}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '12px',
+                                borderRadius: '12px',
+                                border: 'none',
+                                background: 'transparent',
+                                color: '#e2e8f0',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                fontSize: '13px'
+                              }}
+                            >
+                              <span style={{ fontSize: '18px' }}>{item.icon}</span>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: '600' }}>{item.label}</div>
+                                <div style={{ fontSize: '10px', color: '#64748b' }}>{item.desc}</div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Gizli Dosya/Görsel Girişleri */}
+                    <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
+                    <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+
+                    {/* Orta: Input */}
+                    <input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyPress}
+                      placeholder="Likya'ya sorun..."
+                      style={{
+                        flex: 1,
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#e2e8f0',
+                        fontSize: '14px',
+                        outline: 'none',
+                        padding: '8px 0'
+                      }}
+                    />
+
+                    {/* Sağ: Mikrofon ve Gönder Butonları */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <button
+                        title="Sesli komut"
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          background: 'transparent',
+                          color: '#94a3b8',
+                          fontSize: '18px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        🎤
+                      </button>
+
+                      {/* Gönder ok butonu kaldırıldı — Enter ile gönderiliyor */}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  {/* Multimodal Ataş (+) Menü */}
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+                      style={{
+                        width: '40px', height: '40px', borderRadius: '50%',
+                        border: attachMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.2)',
+                        background: attachMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.05)',
+                        color: attachMenuOpen ? '#00f2fe' : '#94a3b8',
+                        fontSize: '18px', fontWeight: 'bold', cursor: 'pointer',
+                      }}
+                    >
+                      +
+                    </button>
+
+                    {attachMenuOpen && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '48px',
+                        left: '0',
+                        width: '235px',
+                        background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
+                        borderRadius: '14px',
+                        padding: '8px',
+                        backdropFilter: 'blur(16px)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
+                        display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 40,
+                      }}>
+                        {[
+                          { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
+                          { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
+                          { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
+                          { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
+                          { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
+                        ].map((item) => (
+                          <button
+                            key={item.label}
+                            onClick={item.onClick}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '10px', border: 'none', background: 'transparent', color: '#e2e8f0', cursor: 'pointer', textAlign: 'left', fontSize: '12px' }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,242,254,0.08)')}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                          >
+                            <span style={{ fontSize: '15px' }}>{item.icon}</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: '600' }}>{item.label}</div>
+                              <div style={{ fontSize: '9px', color: '#64748b' }}>{item.desc}</div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Gizli Dosya/Görsel Girişleri */}
+                  <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
+                  <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+
+                  <input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
                     style={{
-                      width: '40px', height: '40px', borderRadius: '50%',
-                      border: attachMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.2)',
-                      background: attachMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.05)',
-                      color: attachMenuOpen ? '#00f2fe' : '#94a3b8',
-                      fontSize: '18px', fontWeight: 'bold', cursor: 'pointer',
+                      flex: 1,
+                      minWidth: 0,
+                      background: 'rgba(255,255,255,0.05)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      color: '#e2e8f0',
+                      fontSize: '13px',
+                      outline: 'none',
+                    }}
+                  />
+                  {/* Model Seçici (Likya Tarzı Dropdown) */}
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <button
+                      onClick={() => setModelMenuOpen(!modelMenuOpen)}
+                      title="Modeli değiştir"
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        padding: '8px 12px', borderRadius: '12px', cursor: 'pointer',
+                        border: modelMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.15)',
+                        background: modelMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.04)',
+                        color: '#e2e8f0', fontSize: '11px', fontWeight: '600', whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.icon} {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.label} ▾
+                    </button>
+                    {modelMenuOpen && (
+                      <div style={{
+                        position: 'absolute', bottom: '44px', right: 0, minWidth: '210px', zIndex: 45,
+                        background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
+                        borderRadius: '14px', padding: '6px', backdropFilter: 'blur(16px)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
+                        display: 'flex', flexDirection: 'column', gap: '2px',
+                      }}>
+                        {MODEL_OPTIONS.map((m) => (
+                          <button
+                            key={m.id}
+                            onClick={() => { setSelectedModel(m.id); setModelMenuOpen(false); }}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px',
+                              borderRadius: '10px', border: 'none', cursor: 'pointer', textAlign: 'left',
+                              background: selectedModel === m.id ? 'rgba(0,242,254,0.1)' : 'transparent',
+                              color: selectedModel === m.id ? '#00f2fe' : '#e2e8f0',
+                              fontSize: '12px',
+                            }}
+                          >
+                            <span>{m.icon}</span>
+                            <div style={{ flex: 1 }}>
+                              <div style={{ fontWeight: '600' }}>{m.label}</div>
+                              <div style={{ fontSize: '9px', color: '#64748b' }}>{m.desc}</div>
+                            </div>
+                            {selectedModel === m.id && <span style={{ color: '#00f2fe' }}>✓</span>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mikrofon (gönderin yanında) */}
+                  <button
+                    title="Sesli komut"
+                    style={{
+                      width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
+                      border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)',
+                      color: '#94a3b8', fontSize: '16px', cursor: 'pointer',
                     }}
                   >
-                    +
+                    🎤
                   </button>
 
-                  {attachMenuOpen && (
-                    <div style={{
-                      position: isMobile ? 'fixed' : 'absolute',
-                      bottom: isMobile ? '0' : '48px',
-                      left: '0', right: isMobile ? '0' : 'auto',
-                      width: isMobile ? '100%' : '235px',
-                      background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
-                      borderRadius: isMobile ? '20px 20px 0 0' : '14px',
-                      padding: isMobile ? '16px 12px calc(env(safe-area-inset-bottom) + 16px)' : '8px',
-                      backdropFilter: 'blur(16px)',
-                      boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
-                      display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 40,
-                    }}>
-                      {[
-                        { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
-                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
-                        { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
-                        { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
-                        { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
-                      ].map((item) => (
-                        <button
-                          key={item.label}
-                          onClick={item.onClick}
-                          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '10px', border: 'none', background: 'transparent', color: '#e2e8f0', cursor: 'pointer', textAlign: 'left', fontSize: '12px' }}
-                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,242,254,0.08)')}
-                          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                        >
-                          <span style={{ fontSize: '15px' }}>{item.icon}</span>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: '600' }}>{item.label}</div>
-                            <div style={{ fontSize: '9px', color: '#64748b' }}>{item.desc}</div>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  {/* Gönder ok butonu kaldırıldı — Enter ile gönderiliyor */}
                 </div>
-
-                {/* Gizli Dosya/Görsel Girişleri */}
-                <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
-                <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
-
-                {/* Sol taraftaki mikrofon/hoparlör kaldırıldı — solda sadece + butonu */}
-                <input
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyPress}
-                  placeholder="Patron, aklınızdakileri yazın... (örn: yazılım yap, pazar araştır, fatura kes)"
-                  style={{
-                    flex: 1,
-                    minWidth: 0,
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '12px',
-                    padding: '12px 16px',
-                    color: '#e2e8f0',
-                    fontSize: '13px',
-                    outline: 'none',
-                  }}
-                />
-                {/* Model Seçici (Gemini Tarzı Dropdown) */}
-                <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <button
-                    onClick={() => setModelMenuOpen(!modelMenuOpen)}
-                    title="Modeli değiştir"
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '6px',
-                      padding: '8px 12px', borderRadius: '12px', cursor: 'pointer',
-                      border: modelMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.15)',
-                      background: modelMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.04)',
-                      color: '#e2e8f0', fontSize: '11px', fontWeight: '600', whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.icon} {MODEL_OPTIONS.find((m) => m.id === selectedModel)?.label} ▾
-                  </button>
-                  {modelMenuOpen && (
-                    <div style={{
-                      position: 'absolute', bottom: '44px', right: 0, minWidth: '210px', zIndex: 45,
-                      background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
-                      borderRadius: '14px', padding: '6px', backdropFilter: 'blur(16px)',
-                      boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
-                      display: 'flex', flexDirection: 'column', gap: '2px',
-                    }}>
-                      {MODEL_OPTIONS.map((m) => (
-                        <button
-                          key={m.id}
-                          onClick={() => { setSelectedModel(m.id); setModelMenuOpen(false); }}
-                          style={{
-                            display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px',
-                            borderRadius: '10px', border: 'none', cursor: 'pointer', textAlign: 'left',
-                            background: selectedModel === m.id ? 'rgba(0,242,254,0.1)' : 'transparent',
-                            color: selectedModel === m.id ? '#00f2fe' : '#e2e8f0',
-                            fontSize: '12px',
-                          }}
-                        >
-                          <span>{m.icon}</span>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ fontWeight: '600' }}>{m.label}</div>
-                            <div style={{ fontSize: '9px', color: '#64748b' }}>{m.desc}</div>
-                          </div>
-                          {selectedModel === m.id && <span style={{ color: '#00f2fe' }}>✓</span>}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Mikrofon (gönderin yanında) */}
-                <button
-                  title="Sesli komut"
-                  style={{
-                    width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
-                    border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)',
-                    color: '#94a3b8', fontSize: '16px', cursor: 'pointer',
-                  }}
-                >
-                  🎤
-                </button>
-
-                <button
-                  onClick={handleSend}
-                  disabled={!input.trim() || isProcessing}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    border: 'none',
-                    background: 'linear-gradient(135deg, #e07a5f, #f27a1a)',
-                    color: '#fff',
-                    fontSize: '16px',
-                    cursor: (!input.trim() || isProcessing) ? 'not-allowed' : 'pointer',
-                    opacity: (!input.trim() || isProcessing) ? 0.5 : 1,
-                  }}
-                >
-                  ➤
-                </button>
-              </div>
+              )}
             </div>
 
             {/* SAĞ: SOHBET GEÇMİŞİ PANELİ (RIGHT HISTORY SIDEBAR) */}
