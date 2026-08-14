@@ -134,7 +134,7 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
     title: 'Ekstrem Spor Kulüpleri',
     messages: [
       { role: 'user', text: 'Ekstrem spor kulüpleri için strateji öner', time: '10:15' },
-      { role: 'ceo', text: '📊 Gemini Analizi — Ekstrem Spor Kulüpleri\n\n🏢 Pazar Dinamikleri:\n• Türkiye\'de ekstrem spor kulüpleri hızla büyüyor\n• Padel, tırmanış ve su sporları popülerlik kazanıyor\n\n💡 Öneriler:\n1. Amatör spor kulübü fonu oluştur\n2. Upcycling ile ekipman havuzu kur\n3. Genç sporculara burs ver\n\n✅ Analiz tamamlandı.', time: '10:16' },
+      { role: 'ceo', text: '📊 Efendim, ekstrem spor kulüpleri konusunu Gemini ile birlikte masaya yatırdık. 😊\n\n🏢 Pazar biraz şöyle:\n• Türkiye\'de ekstrem spor kulüpleri hızla büyüyor\n• Padel, tırmanış ve su sporları ciddi ilgi görüyor\n\n💡 Size birkaç zarif öneri:\n1. Amatör spor kulübü fonu kurabiliriz\n2. Upcycling ile ekipman havuzu oluşturabiliriz\n3. Genç sporculara burs verebiliriz\n\nAnalizimiz hazır, isterseniz üzerinden birlikte geçelim.', time: '10:16' },
     ],
   },
   {
@@ -142,7 +142,7 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
     title: 'Sinir Sistemi Testi',
     messages: [
       { role: 'user', text: 'Sinir sistemi bağlantısını test et', time: '11:30' },
-      { role: 'ceo', text: '🧠 Cline (Otonom Kodlayıcı) — Sinir Sistemi Testi\n\n🔍 Analiz:\n• Supabase bağlantısı kontrol edildi\n• LLM ModelRouter test edildi\n• API endpoint\'leri doğrulandı\n\n✅ Sonuç:\n• Tüm sistemler çevrimiçi\n• Bağlantılar başarılı', time: '11:31' },
+      { role: 'ceo', text: '🧠 Efendim, sinir sisteminin nabzını tuttuk, her şey yolunda! 😊\n\n🔍 Kontrol ettiğimiz yerler:\n• Supabase bağlantısı — sağlam\n• LLM ModelRouter — pürüzsüz çalışıyor\n• API endpoint\'leri — hepsi ayakta\n\n✅ Kısacası tüm sistemler çevrimiçi ve keyifler yerinde.', time: '11:31' },
     ],
   },
   {
@@ -150,7 +150,7 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
     title: 'SaaS Stratejisi',
     messages: [
       { role: 'user', text: 'SaaS paketleme stratejisi hazırla', time: '14:00' },
-      { role: 'ceo', text: '📊 Gemini Analizi — SaaS Stratejisi\n\n📦 Paketler:\n• Starter: 990₺/ay\n• Pro: 2.490₺/ay\n• Enterprise: Özel\n\n🎯 Dağıtım:\n• Landing Page + 7 gün ücretsiz deneme\n• Cold Outreach metinleri\n• Auto-Marketing Agent\n\n✅ Strateji hazır.', time: '14:02' },
+      { role: 'ceo', text: '📊 Efendim, SaaS stratejinizi sizin için derledim. 😊\n\n📦 Önerdiğim paketler:\n• Starter: 990₺/ay\n• Pro: 2.490₺/ay\n• Enterprise: Özel görüşme ile\n\n🎯 Yol haritamız:\n• Landing Page + 7 gün ücretsiz deneme\n• Cold outreach metinleri\n• Auto-Marketing Agent devrede\n\nBeğenirseniz hemen uygulamaya geçebiliriz.', time: '14:02' },
     ],
   },
 ];
@@ -167,7 +167,7 @@ export default function CEOCommandCenter() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO. Talimatını yaz veya 🎤 sesli söyle.\n\nAkıllı Yönlendirme:\n• 🧠 Yazılım talepleri → Cline (Otonom Kodlayıcı)\n• 📊 Strateji/Pazar → Gemini Analizi\n• ⚙️ Operasyon → Departman Ajanları', time: '12:00' },
+    { role: 'ceo', text: 'Hoş geldiniz efendim, ben Likya CEO. 😊 Size nasıl yardımcı olabilirim? Aklınızdakileri yazın veya 🎤 sesli söyleyin, hemen ilgileneyim.\n\nKüçük bir pusula:\n• 🧠 Yazılım talepleriniz → Cline kodu sizin için yazar\n• 📊 Strateji ve pazar araştırmalarınız → Gemini derinlemesine analiz eder\n• ⚙️ Operasyon işleriniz → Departman Ajanlarım anında halleder', time: '12:00' },
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -195,7 +195,7 @@ export default function CEOCommandCenter() {
     setActiveThreadId(null);
     setActiveView('chat');
     setMessages([
-      { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO. Talimatını yaz veya 🎤 sesli söyle.\n\nAkıllı Yönlendirme:\n• 🧠 Yazılım talepleri → Cline (Otonom Kodlayıcı)\n• 📊 Strateji/Pazar → Gemini Analizi\n• ⚙️ Operasyon → Departman Ajanları', time: '12:00' },
+      { role: 'ceo', text: 'Hoş geldiniz efendim, ben Likya CEO. 😊 Size nasıl yardımcı olabilirim? Aklınızdakileri yazın veya 🎤 sesli söyleyin, hemen ilgileneyim.\n\nKüçük bir pusula:\n• 🧠 Yazılım talepleriniz → Cline kodu sizin için yazar\n• 📊 Strateji ve pazar araştırmalarınız → Gemini derinlemesine analiz eder\n• ⚙️ Operasyon işleriniz → Departman Ajanlarım anında halleder', time: '12:00' },
     ]);
   };
 
@@ -283,7 +283,7 @@ export default function CEOCommandCenter() {
       setTimeout(() => {
         setMessages((prev) => [...prev, {
           role: 'ceo',
-          text: `🌐 LİKYA WEB SEARCH ENGINE — ÇEVRİMİÇİ ARAŞTIRMA AKTİF\n\nEvet Patron! 🚀 Şu an aktif olarak web üzerinde gerçek zamanlı (real-time) araştırma yapabiliyorum.\n\n🔍 Entegre Siber Tarama Kanallarım:\n• 🌐 **Google Search & Gemini Deep Research:** En güncel pazar verileri, rakip analizleri, finansal raporlar ve global trendler.\n• 🛰️ **OSINT Saha Radarı:** Canlı haber kaynakları, sektörel gelişmeler ve açık kaynak istihbaratı.\n• 💻 **Geliştirici & Teknoloji Ağları:** GitHub, NPM, PyPI ve en güncel API dokümantasyonları.\n\n💡 **Şu an benimle ne araştırmak istersiniz?**\n- *"2025 ekstrem spor trendlerini web'de araştır."*\n- *"Padel tenis kortu yapım maliyetleri ve en iyi üreticileri listele."*\n- *"Google Cloud $350K hibe programı şartlarını güncel kaynaklardan bul."*\n\n🎯 Talimatınızı yazın, web radarlarımı hemen sizin için çalıştırayım!`,
+          text: `🌐 İzninizle bir an web radarlarımı devreye aldım, efendim. 😊\n\nEvet, şu an internette gerçek zamanlı araştırma yapabiliyorum!\n\n🔍 Kullanabileceğim kanallar:\n• 🌐 **Google Search & Gemini Deep Research:** Güncel pazar verileri, rakip analizleri ve global trendler\n• 🛰️ **OSINT Saha Radarı:** Canlı haber kaynakları ve açık kaynak istihbaratı\n• 💻 **Geliştirici & Teknoloji Ağları:** GitHub, NPM, PyPI ve güncel dokümantasyonlar\n\n💡 **Sizi ne mutlu ederse onu araştırayım:**\n- *"2025 ekstrem spor trendlerini web'de araştır."*\n- *"Padel tenis kortu yapım maliyetlerini listele."*\n- *"Google Cloud $350K hibe programı şartlarını güncel kaynaklardan bul."*\n\n🎯 Yeter ki siz söyleyin, web radarlarımı hemen sizin için çalıştırayım!`,
           time: now(),
         }]);
         setIsProcessing(false);
@@ -305,34 +305,34 @@ export default function CEOCommandCenter() {
         if (result.success) {
           setMessages((prev) => [...prev, {
             role: 'ceo',
-            text: `🧠 Cline (Otonom Kodlayıcı) — GERÇEK İNFAZ SONUCU\n\n📋 Talep: "${text}"\n\n📁 Değiştirilen Dosya: ${result.file || 'Belirlenmedi'}\n\n✅ İşlem: ${result.action || 'Tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'Başarılı'}`,
+            text: `🧠 Efendim, isteğiniz başarıyla yerine getirildi! 😊\n\n📋 Talebiniz: "${text}"\n\n📁 İlgilendiğim dosya: ${result.file || 'belirlenemedi'}\n\n✅ Yapılan işlem: ${result.action || 'tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'başarıyla tamamlandı'}`,
             time: now(),
           }]);
         } else {
           setMessages((prev) => [...prev, {
             role: 'ceo',
-            text: `⚠️ İşlem Başarısız\n\n📋 Talep: "${text}"\n\n❌ Hata: ${result.error || 'Bilinmeyen hata'}`,
+            text: `🙏 Efendim, bu işte biraz ters gitti, üzgünüm.\n\n📋 Talebiniz: "${text}"\n\n❌ Karşılaştığım durum: ${result.error || 'beklenmedik bir hata'}\n\n🔧 Dilerseniz talebi biraz daha sadeleştirip tekrar deneyebiliriz.`,
             time: now(),
           }]);
         }
       } else {
         // Backend yoksa fallback - statik yanıt
         if (isSoftware) {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — Yazılım Talimatı\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı. Backend servisi başlatılmalı (uvicorn main:app).\n\n🔧 Çözüm: Backend çalıştığında bu komut gerçek dosya işlemi yapacak.`, time: now() }]);
+          setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
         } else if (isBusiness) {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi — "${text}"\n\n🔍 Sorgunuz dinamik olarak analiz edildi.\n\n📋 Konu: ${text}\n\nBu sorgu için Gemini Engine'e yönlendirildi ve spesifik konunuzun detaylı araştırma raporu hazırlanıyor.\n\n✅ Analiz tamamlandı. Detaylı rapor hazır.`, time: now() }]);
+          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Gemini'ye analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
         } else {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı.`, time: now() }]);
+          setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
         }
       }
     } catch (e) {
       // Backend yoksa fallback
       if (isSoftware) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — Yazılım Talimatı\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı. Backend servisi başlatılmalı (uvicorn main:app).\n\n🔧 Çözüm: Backend çalıştığında bu komut gerçek dosya işlemi yapacak.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
       } else if (isBusiness) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi — "${text}"\n\n🔍 Sorgunuz dinamik olarak analiz edildi.\n\n📋 Konu: ${text}\n\nBu sorgu için Gemini Engine'e yönlendirildi ve spesifik konunuzun detaylı araştırma raporu hazırlanıyor.\n\n✅ Analiz tamamlandı. Detaylı rapor hazır.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Gemini'ye analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
       } else {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
       }
     }
     setIsProcessing(false);
@@ -650,7 +650,7 @@ export default function CEOCommandCenter() {
                 </div>
                 <div>
                   <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
-                  <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Çevrimiçi • Akıllı Yönlendirme Aktif</div>
+                  <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Emrinizdeyim • Akıllı Yönlendirme Aktif</div>
                 </div>
                 <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
                   <span style={{ fontSize: '10px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', border: '1px solid rgba(72,187,120,0.3)' }}>
@@ -702,7 +702,7 @@ export default function CEOCommandCenter() {
                 ))}
                 {isProcessing && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
-                    <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Likya CEO talimatınızı işliyor...
+                    <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Bir saniye efendim, hemen ilgileniyorum...
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -750,8 +750,8 @@ export default function CEOCommandCenter() {
                       display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 20,
                     }}>
                       {[
-                        { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, DOCX', onClick: () => fileInputRef.current?.click() },
-                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Görsel yükle (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
+                        { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
+                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Kamera & galeri (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
                         { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
                         { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
                         { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
@@ -775,8 +775,8 @@ export default function CEOCommandCenter() {
                 </div>
 
                 {/* Gizli Dosya/Görsel Girişleri */}
-                <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
-                <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+                <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
+                <input ref={imageInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleImageSelect} />
 
                 <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
                   🎤

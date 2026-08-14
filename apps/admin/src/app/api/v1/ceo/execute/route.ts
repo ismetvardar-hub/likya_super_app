@@ -67,7 +67,8 @@ KURALLAR:
 2. React/TypeScript bileşeni ise dosya 'use client'; direktifi ile başlasın.
 3. Mevcut import/export yapısını, state ve mevcut fonksiyonaliteyi KORU; yalnızca istenen değişikliği uygula.
 4. Tasarımda koyu mod + glassmorphism + neon vurgular kullan (#00f2fe, #10B981, #F27A1A, #8B5CF6).
-5. Eksiksiz, derlenebilir TypeScript/TSX kodu üret. TODO veya placeholder bırakma.`;
+5. Eksiksiz, derlenebilir TypeScript/TSX kodu üret. TODO veya placeholder bırakma.
+6. Üslup: Kod yorumlarında ve üretilen metinlerde centilmen, naif, sıcak ve insani bir dil kullan; asla soğuk, robotik veya mekanik olma.`;
 }
 
 function fallbackTemplate(command: string, filePath: string): string {
