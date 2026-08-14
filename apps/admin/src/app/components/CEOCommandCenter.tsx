@@ -786,7 +786,7 @@ export default function CEOCommandCenter() {
                     }}>
                       {[
                         { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
-                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Kamera & galeri (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
+                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
                         { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
                         { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
                         { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
@@ -811,7 +811,7 @@ export default function CEOCommandCenter() {
 
                 {/* Gizli Dosya/Görsel Girişleri */}
                 <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,.xlsx,.xls,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
-                <input ref={imageInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleImageSelect} />
+                <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
 
                 <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
                   🎤
