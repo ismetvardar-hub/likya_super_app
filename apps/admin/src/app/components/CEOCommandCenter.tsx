@@ -183,9 +183,7 @@ export default function CEOCommandCenter() {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'ceo', text: 'Hoş geldiniz efendim, ben Likya CEO. 😊 Size nasıl yardımcı olabilirim? Aklınızdakileri yazın veya 🎤 sesli söyleyin, hemen ilgileneyim.\n\nKüçük bir pusula:\n• 🧠 Yazılım talepleriniz → Cline kodu sizin için yazar\n• 📊 Strateji ve pazar araştırmalarınız → Gemini derinlemesine analiz eder\n• ⚙️ Operasyon işleriniz → Departman Ajanlarım anında halleder', time: '12:00' },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -211,9 +209,7 @@ export default function CEOCommandCenter() {
   const startNewChat = () => {
     setActiveThreadId(null);
     setActiveView('chat');
-    setMessages([
-      { role: 'ceo', text: 'Hoş geldiniz efendim, ben Likya CEO. 😊 Size nasıl yardımcı olabilirim? Aklınızdakileri yazın veya 🎤 sesli söyleyin, hemen ilgileneyim.\n\nKüçük bir pusula:\n• 🧠 Yazılım talepleriniz → Cline kodu sizin için yazar\n• 📊 Strateji ve pazar araştırmalarınız → Gemini derinlemesine analiz eder\n• ⚙️ Operasyon işleriniz → Departman Ajanlarım anında halleder', time: '12:00' },
-    ]);
+    setMessages([]);
   };
 
   // Mesajlar değiştiğinde otomatik aşağı kaydır
@@ -694,6 +690,60 @@ export default function CEOCommandCenter() {
 
               {/* Chat Messages Area - Dinamik */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
+                {messages.length === 0 && !isProcessing ? (
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '18px', textAlign: 'center', padding: '24px', minHeight: '100%' }}>
+                    {/* Likya Neon Amblem */}
+                    <div style={{
+                      width: '76px', height: '76px', borderRadius: '24px',
+                      background: 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(0,242,254,0.25), rgba(245,158,11,0.25))',
+                      border: '1px solid rgba(0,242,254,0.4)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 0 30px rgba(0,242,254,0.35), inset 0 0 12px rgba(245,158,11,0.15)',
+                      animation: 'radarPulse 2s infinite',
+                    }}>
+                      <svg viewBox="0 0 24 24" width="40" height="40" fill="none">
+                        <defs>
+                          <linearGradient id="likyaHeroLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#6366f1" />
+                            <stop offset="50%" stopColor="#00f2fe" />
+                            <stop offset="100%" stopColor="#f59e0b" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M4 20 L12 4 L20 20 Z" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
+                        <path d="M12 4 L12 20" stroke="url(#likyaHeroLogo)" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+                        <path d="M9 14 L9 20 L15 20" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                        <path d="M4 20 L20 20" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+                      </svg>
+                    </div>
+                    <h2 style={{
+                      fontSize: '22px', fontWeight: 'bold', margin: 0,
+                      background: 'linear-gradient(135deg, #00f2fe, #a78bfa, #f59e0b)',
+                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                    }}>
+                      Size nasıl yardımcı olabilirim, Efendim?
+                    </h2>
+                    <p style={{ fontSize: '12px', color: '#64748b', maxWidth: '320px', margin: 0 }}>
+                      Aklınızdakileri yazın ya da size kolaylık olması için bir öneriye dokunun.
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center' }}>
+                      {['🚀 Hızlı Durum Özeti', '🛰️ Saha Radarı Analizi', '📊 Finans & Ciro Durumu'].map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setInput(s)}
+                          style={{
+                            padding: '10px 16px', borderRadius: '20px', cursor: 'pointer',
+                            border: '1px solid rgba(0,242,254,0.25)',
+                            background: 'rgba(0,242,254,0.06)', color: '#e2e8f0',
+                            fontSize: '12px', fontWeight: '600', transition: 'all 0.2s',
+                          }}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <>
                 {messages.map((m, i) => (
                   <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
                     <div style={{ fontSize: '10px', color: m.role === 'user' ? '#00f2fe' : '#f59e0b', marginBottom: '2px', fontWeight: 'bold' }}>
@@ -730,6 +780,8 @@ export default function CEOCommandCenter() {
                     </div>
                   </div>
                 ))}
+                  </>
+                )}
                 {isProcessing && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
                     <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Bir saniye efendim, hemen ilgileniyorum...
