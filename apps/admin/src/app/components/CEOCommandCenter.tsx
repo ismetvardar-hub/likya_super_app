@@ -423,10 +423,28 @@ export default function CEOCommandCenter() {
           })}
         </div>
 
-        {/* Sistem Sağlık Durumu Rozeti */}
+        {/* Sistem Sağlık Durumu Rozeti + Hızlı Senkronize Et */}
         {sidebarOpen && (
-          <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '10px', background: 'rgba(72,187,120,0.08)', border: '1px solid rgba(72,187,120,0.2)', fontSize: '10px', color: '#48bb78', fontWeight: '600', whiteSpace: 'nowrap' }}>
-            ● 21 Ajan Aktif | 221 Event Canlı
+          <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(72,187,120,0.08)', border: '1px solid rgba(72,187,120,0.2)', fontSize: '10px', color: '#48bb78', fontWeight: '600', whiteSpace: 'nowrap' }}>
+              ● 21 Ajan Aktif | 221 Event Canlı
+            </div>
+            <button
+              onClick={() => { window.location.reload(); }}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '10px',
+                border: '1px solid rgba(0,242,254,0.3)',
+                background: 'rgba(0,242,254,0.1)',
+                color: '#00f2fe',
+                fontSize: '11px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              ⚡ Hızlı Senkronize Et
+            </button>
           </div>
         )}
       </div>
