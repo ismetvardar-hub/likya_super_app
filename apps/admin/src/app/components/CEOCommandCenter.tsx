@@ -40,35 +40,60 @@ interface ModuleItem {
   icon: React.ReactNode;
   color: string;
   description: string;
+  category: string;
 }
 
+interface CategoryGroup {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+}
+
+const CATEGORIES: CategoryGroup[] = [
+  { id: 'core', name: 'Ana Komuta', icon: '🎛️', color: '#00f2fe' },
+  { id: 'daze', name: 'Daze Hub & İşletme', icon: '🍽️', color: '#f59e0b' },
+  { id: 'sports', name: 'Spor, Kampüs & Deneyim', icon: '🎾', color: '#34d399' },
+  { id: 'growth', name: 'Büyüme, Finans & Hukuk', icon: '💼', color: '#a78bfa' },
+  { id: 'infra', name: 'Altyapı, Güvenlik & IT', icon: '⚙️', color: '#60a5fa' },
+];
+
 const MODULES: ModuleItem[] = [
-  { id: 'mesh', name: '147 Agent Mesh', icon: <Network size={16} />, color: '#00f2fe', description: '12 Departmanlı Ajan Ağı + Multi-LLM' },
-  { id: 'campus', name: 'Kampüs Genel Bakış', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası' },
-  { id: 'twin', name: '3D Park Twin', icon: <Map size={16} />, color: '#00f2fe', description: '30-35 Dönüm dijital ikiz' },
-  { id: 'iot', name: 'IoT Sensör Haritası', icon: <Activity size={16} />, color: '#48bb78', description: 'Canlı ısı haritası' },
-  { id: 'ai', name: 'AI Otonom Kontrol', icon: <Cpu size={16} />, color: '#9f7aea', description: 'Revenue & Occupancy AI' },
-  { id: 'crew', name: 'Likya Crew', icon: <Users size={16} />, color: '#ecc94b', description: 'Personel operasyonu' },
-  { id: 'payment', name: 'Ödeme Entegrasyonu', icon: <CreditCard size={16} />, color: '#f27a1a', description: 'İyzico / POS' },
-  { id: 'security', name: 'Güvenlik Ajanı', icon: <Shield size={16} />, color: '#e07a5f', description: 'Olay yönetimi' },
-  { id: 'marketing', name: 'Auto-Marketing', icon: <Megaphone size={16} />, color: '#f59e0b', description: 'Reklam & kampanya' },
-  { id: 'gift', name: 'Daze-Gift', icon: <Gift size={16} />, color: '#fbbf24', description: 'İkram sistemi' },
-  { id: 'dept', name: 'Departman Ajanları', icon: <Building2 size={16} />, color: '#a78bfa', description: 'Legal, Guest, Energy, Vendor' },
-  { id: 'hr', name: 'HR & Bordro', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Özlük hakları' },
-  { id: 'facility', name: 'Tesis Bakım', icon: <Wrench size={16} />, color: '#60a5fa', description: 'Arıza yönetimi' },
-  { id: 'caravan', name: 'Karavan Parkı', icon: <Car size={16} />, color: '#34d399', description: 'Kullandıkça öde' },
-  { id: 'tent', name: 'Çadır Mağaza', icon: <Tent size={16} />, color: '#fbbf24', description: 'Deneyimle-satın al' },
-  { id: 'market', name: 'Pazaryeri', icon: <Store size={16} />, color: '#f87171', description: 'Phygital showroom' },
-  { id: 'room', name: 'Room Only', icon: <Home size={16} />, color: '#c084fc', description: 'Sadece oda' },
-  { id: 'athlete', name: 'Atlet AI', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyometrik performans' },
-  { id: 'risk', name: 'Risk Kalkanı', icon: <Shield size={16} />, color: '#f87171', description: 'Kritik görev' },
-  { id: 'engine', name: 'Smart Engine', icon: <Sparkles size={16} />, color: '#a78bfa', description: 'Otonom teslimat' },
-  { id: 'supplier', name: 'Tedarikçi', icon: <Boxes size={16} />, color: '#34d399', description: 'Reçete portalı' },
-  { id: 'pricing', name: 'Dinamik Fiyat', icon: <TrendingUp size={16} />, color: '#fbbf24', description: 'Sadakat & fiyat' },
-  { id: 'stress', name: 'Stres Testi', icon: <Activity size={16} />, color: '#f87171', description: 'Edge functions' },
-  { id: 'monitor', name: 'İzleme Paneli', icon: <Activity size={16} />, color: '#60a5fa', description: 'Loglama' },
-  { id: 'legal', name: 'LegalRisk', icon: <Scale size={16} />, color: '#a78bfa', description: 'Hukuk & KVKK' },
-  { id: 'finance', name: 'Finans Ajanları', icon: <Bot size={16} />, color: '#00f2fe', description: 'Otonom muhasebe' },
+  // 🎛️ ANA KOMUTA (Executive Core)
+  { id: 'campus', name: 'CEO Kokpiti', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası', category: 'core' },
+  { id: 'mesh', name: '21 Ajan Mesh', icon: <Network size={16} />, color: '#00f2fe', description: '21 Departmanlı Ajan Ağı + Multi-LLM', category: 'core' },
+
+  // 🍽️ DAZE HUB & İŞLETME
+  { id: 'crew', name: 'Daze Crew', icon: <Users size={16} />, color: '#ecc94b', description: 'Personel & Vardiya', category: 'daze' },
+  { id: 'pricing', name: 'Borsa & Fiyatlama', icon: <TrendingUp size={16} />, color: '#fbbf24', description: 'Dinamik fiyat & talep', category: 'daze' },
+  { id: 'supplier', name: 'Stok & Tedarik', icon: <Boxes size={16} />, color: '#34d399', description: 'Depo & otomatik satınalma', category: 'daze' },
+  { id: 'gift', name: 'Daze-Gift', icon: <Gift size={16} />, color: '#fbbf24', description: 'İkram sistemi', category: 'daze' },
+
+  // 🎾 SPOR, KAMPÜS & DENEYİM
+  { id: 'athlete', name: 'Sports Vision', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyomekanik AI analiz', category: 'sports' },
+  { id: 'caravan', name: 'Konaklama & Karavan', icon: <Car size={16} />, color: '#34d399', description: 'Otel, karavan & kort slotları', category: 'sports' },
+  { id: 'tent', name: 'Çadır Mağaza', icon: <Tent size={16} />, color: '#fbbf24', description: 'Deneyimle-satın al', category: 'sports' },
+  { id: 'market', name: 'Pazaryeri', icon: <Store size={16} />, color: '#f87171', description: 'Phygital showroom', category: 'sports' },
+  { id: 'room', name: 'Room Only', icon: <Home size={16} />, color: '#c084fc', description: 'Sadece oda', category: 'sports' },
+  { id: 'twin', name: '3D Park Twin', icon: <Map size={16} />, color: '#00f2fe', description: '30-35 Dönüm dijital ikiz', category: 'sports' },
+  { id: 'iot', name: 'IoT Sensör Haritası', icon: <Activity size={16} />, color: '#48bb78', description: 'Canlı ısı haritası', category: 'sports' },
+  { id: 'ai', name: 'AI Otonom Kontrol', icon: <Cpu size={16} />, color: '#9f7aea', description: 'Revenue & Occupancy AI', category: 'sports' },
+  { id: 'engine', name: 'Smart Engine', icon: <Sparkles size={16} />, color: '#a78bfa', description: 'Otonom teslimat', category: 'sports' },
+
+  // 💼 BÜYÜME, FİNANS & HUKUK
+  { id: 'finance', name: 'Finans & KDV', icon: <Bot size={16} />, color: '#00f2fe', description: 'Nakit akışı & muhasebe', category: 'growth' },
+  { id: 'marketing', name: 'Auto-Marketing', icon: <Megaphone size={16} />, color: '#f59e0b', description: 'Reklam & kampanya', category: 'growth' },
+  { id: 'legal', name: 'LegalRisk', icon: <Scale size={16} />, color: '#a78bfa', description: 'Hukuk & KVKK', category: 'growth' },
+  { id: 'dept', name: 'Departman Ajanları', icon: <Building2 size={16} />, color: '#a78bfa', description: 'Legal, Guest, Energy, Vendor', category: 'growth' },
+  { id: 'hr', name: 'HR & Bordro', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Özlük hakları', category: 'growth' },
+  { id: 'payment', name: 'Ödeme Entegrasyonu', icon: <CreditCard size={16} />, color: '#f27a1a', description: 'İyzico / POS', category: 'growth' },
+  { id: 'risk', name: 'Risk Kalkanı', icon: <Shield size={16} />, color: '#f87171', description: 'Kritik görev', category: 'growth' },
+
+  // ⚙️ ALTYAPI, GÜVENLİK & IT
+  { id: 'facility', name: 'Tesis & Saha Bakım', icon: <Wrench size={16} />, color: '#60a5fa', description: 'Arıza & hijyen', category: 'infra' },
+  { id: 'security', name: 'Saha Güvenliği', icon: <Shield size={16} />, color: '#e07a5f', description: 'IoT alarm & kaza önleme', category: 'infra' },
+  { id: 'stress', name: 'Stres Testi', icon: <Activity size={16} />, color: '#f87171', description: 'Edge functions', category: 'infra' },
+  { id: 'monitor', name: 'İzleme Paneli', icon: <Activity size={16} />, color: '#60a5fa', description: 'Loglama', category: 'infra' },
 ];
 
 // Sohbet Konu Başlıkları (Chat History Threads)
@@ -253,7 +278,7 @@ export default function CEOCommandCenter() {
           {sidebarOpen && <span>Likya Chat</span>}
         </button>
 
-        {/* 2. SİSTEM MODÜLLERİ */}
+        {/* 2. SİSTEM MODÜLLERİ - GRUPLU AKORDİYON */}
         {sidebarOpen && (
           <div style={{ marginBottom: '12px' }}>
             <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px', padding: '0 4px' }}>
@@ -262,37 +287,84 @@ export default function CEOCommandCenter() {
           </div>
         )}
 
-        {/* Module List */}
+        {/* Module List - 5 Kategorili Akordiyon */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', flex: 1 }}>
-          {MODULES.map((mod) => (
-            <button
-              key={mod.id}
-              onClick={() => setActiveView(mod.id)}
-              title={mod.name}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: sidebarOpen ? '10px 12px' : '10px',
-                borderRadius: '10px',
-                border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid transparent',
-                background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
-                color: activeView === mod.id ? mod.color : '#94a3b8',
-                cursor: 'pointer',
-                fontSize: '12px',
-                fontWeight: activeView === mod.id ? '600' : '400',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-              }}
-            >
-              <span style={{ color: mod.color }}>{mod.icon}</span>
-              {sidebarOpen && (
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{mod.name}</span>
-              )}
-            </button>
-          ))}
+          {CATEGORIES.map((cat) => {
+            const catModules = MODULES.filter((m) => m.category === cat.id);
+            const isOpen = openCategory === cat.id;
+            const hasActive = catModules.some((m) => m.id === activeView);
+            return (
+              <div key={cat.id} style={{ marginBottom: '4px' }}>
+                {/* Kategori Başlığı (Accordion Header) */}
+                <button
+                  onClick={() => setOpenCategory(isOpen ? '' : cat.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    padding: '8px 10px',
+                    borderRadius: '10px',
+                    border: 'none',
+                    background: hasActive ? `${cat.color}15` : 'rgba(255,255,255,0.03)',
+                    color: hasActive ? cat.color : '#94a3b8',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  <span>{cat.icon}</span>
+                  <span style={{ flex: 1, textAlign: 'left' }}>{cat.name}</span>
+                  <span style={{ fontSize: '9px', color: '#64748b' }}>{catModules.length}</span>
+                  <span style={{ fontSize: '10px', color: '#64748b' }}>{isOpen ? '▾' : '▸'}</span>
+                </button>
+
+                {/* Kategori İçeriği (Accordion Body) */}
+                {isOpen && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px', paddingLeft: '8px' }}>
+                    {catModules.map((mod) => (
+                      <button
+                        key={mod.id}
+                        onClick={() => setActiveView(mod.id)}
+                        title={mod.name}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '8px 10px',
+                          borderRadius: '8px',
+                          border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid transparent',
+                          borderLeft: activeView === mod.id ? `3px solid ${mod.color}` : '3px solid transparent',
+                          background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.02)',
+                          color: activeView === mod.id ? mod.color : '#94a3b8',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                          fontWeight: activeView === mod.id ? '600' : '400',
+                          whiteSpace: 'nowrap',
+                          transition: 'all 0.2s',
+                          boxShadow: activeView === mod.id ? `0 0 12px ${mod.color}30` : 'none',
+                        }}
+                      >
+                        <span style={{ color: mod.color }}>{mod.icon}</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{mod.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
+
+        {/* Sistem Sağlık Durumu Rozeti */}
+        {sidebarOpen && (
+          <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '10px', background: 'rgba(72,187,120,0.08)', border: '1px solid rgba(72,187,120,0.2)', fontSize: '10px', color: '#48bb78', fontWeight: '600', whiteSpace: 'nowrap' }}>
+            ● 21 Ajan Aktif | 221 Event Canlı
+          </div>
+        )}
       </div>
 
       {/* ================================================================ */}
