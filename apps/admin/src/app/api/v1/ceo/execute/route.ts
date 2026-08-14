@@ -259,6 +259,7 @@ export async function POST(request: NextRequest) {
     const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
     let finalContent = '';
     let motor: 'deepseek' | 'gemini' = 'deepseek';
+    let healed = false;
 
     if (deepseekKey) {
       try {
@@ -267,10 +268,12 @@ export async function POST(request: NextRequest) {
       } catch (e) {
         console.error('[CEO/DeepSeek] LLM hatası, Gemini ye düşülüyor:', e instanceof Error ? e.message : String(e));
         motor = 'gemini';
+        healed = true; // OTONOM ONARIM: harici motor düştü, dahili motor devraldı
       }
     } else {
       console.warn('[CEO/DeepSeek] API anahtarı bulunamadı, Gemini kullanılacak');
       motor = 'gemini';
+      healed = true;
     }
 
     if (!finalContent.trim() && geminiKey) {
@@ -305,6 +308,7 @@ export async function POST(request: NextRequest) {
       success: true,
       file: targetFile,
       motor,
+      healed,
       intent: 'code',
       action: 'LLM tarafından güncellendi',
       bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
