@@ -155,6 +155,21 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
   },
 ];
 
+// Mobil/Tablet tespiti için media query hook'u (native app deneyimi)
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    setMatches(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, [query]);
+
+  return matches;
+}
+
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
@@ -166,6 +181,8 @@ export default function CEOCommandCenter() {
   const [pendingAttachment, setPendingAttachment] = useState<ChatAttachment | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'ceo', text: 'Hoş geldiniz efendim, ben Likya CEO. 😊 Size nasıl yardımcı olabilirim? Aklınızdakileri yazın veya 🎤 sesli söyleyin, hemen ilgileneyim.\n\nKüçük bir pusula:\n• 🧠 Yazılım talepleriniz → Cline kodu sizin için yazar\n• 📊 Strateji ve pazar araştırmalarınız → Gemini derinlemesine analiz eder\n• ⚙️ Operasyon işleriniz → Departman Ajanlarım anında halleder', time: '12:00' },
   ]);
@@ -346,7 +363,18 @@ export default function CEOCommandCenter() {
   };
 
   return (
-    <div style={{ display: 'flex', gap: '16px', minHeight: '600px', marginTop: '16px' }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      gap: isMobile ? '0' : '16px',
+      minHeight: isMobile ? 'calc(100dvh - 150px)' : '600px',
+      marginTop: isMobile ? '0' : '16px',
+      width: '100%',
+      maxWidth: '100vw',
+      overflowX: 'hidden',
+      paddingTop: 'env(safe-area-inset-top)',
+      paddingBottom: isMobile ? 'calc(env(safe-area-inset-bottom) + 72px)' : 0,
+    }}>
       {/* radarPulse & radarSpin keyframes - CANLI RADAR + radar animasyonları */}
       <style>{`
         @keyframes radarPulse {
@@ -362,6 +390,7 @@ export default function CEOCommandCenter() {
       {/* SOL: AÇILIR/KAPANIR MODÜL MENÜSÜ (SIDEBAR) */}
       {/* ================================================================ */}
       <div style={{
+        display: isMobile ? 'none' : 'flex',
         width: sidebarOpen ? '260px' : '48px',
         background: 'rgba(13, 19, 34, 0.9)',
         border: '1px solid rgba(255,255,255,0.1)',
@@ -370,7 +399,6 @@ export default function CEOCommandCenter() {
         transition: 'width 0.3s ease',
         overflow: 'hidden',
         flexShrink: 0,
-        display: 'flex',
         flexDirection: 'column',
       }}>
         {/* Sidebar Header - Likya Logosu + Komuta Merkezi */}
@@ -572,12 +600,14 @@ export default function CEOCommandCenter() {
       {/* ================================================================ */}
       <div style={{
         flex: 1,
+        width: '100%',
         background: 'rgba(13, 19, 34, 0.9)',
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: '16px',
-        padding: '24px',
+        border: isMobile ? 'none' : '1px solid rgba(255,255,255,0.1)',
+        borderRadius: isMobile ? '12px' : '16px',
+        padding: isMobile ? '12px' : '24px',
         display: 'flex',
         flexDirection: 'column',
+        overflowX: 'hidden',
       }}>
         {/* MODÜL GÖRÜNÜMÜ - activeView'e göre koşullu render */}
         {activeView !== 'chat' && (
@@ -640,7 +670,7 @@ export default function CEOCommandCenter() {
 
         {/* CHAT GÖRÜNÜMÜ - activeView === 'chat' olduğunda */}
         {activeView === 'chat' && (
-          <div style={{ display: 'flex', gap: '16px', flex: 1, minHeight: 0 }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0' : '16px', flex: 1, minHeight: 0 }}>
             {/* SOL/ORTA: ANA CHAT THREAD */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               {/* Chat Header */}
@@ -743,11 +773,16 @@ export default function CEOCommandCenter() {
 
                   {attachMenuOpen && (
                     <div style={{
-                      position: 'absolute', bottom: '48px', left: '0', width: '235px',
-                      background: 'rgba(13,19,34,0.96)', border: '1px solid rgba(0,242,254,0.25)',
-                      borderRadius: '14px', padding: '8px', backdropFilter: 'blur(16px)',
+                      position: isMobile ? 'fixed' : 'absolute',
+                      bottom: isMobile ? '0' : '48px',
+                      left: '0', right: isMobile ? '0' : 'auto',
+                      width: isMobile ? '100%' : '235px',
+                      background: 'rgba(13,19,34,0.98)', border: '1px solid rgba(0,242,254,0.25)',
+                      borderRadius: isMobile ? '20px 20px 0 0' : '14px',
+                      padding: isMobile ? '16px 12px calc(env(safe-area-inset-bottom) + 16px)' : '8px',
+                      backdropFilter: 'blur(16px)',
                       boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
-                      display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 20,
+                      display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 40,
                     }}>
                       {[
                         { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
@@ -827,7 +862,7 @@ export default function CEOCommandCenter() {
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '12px',
               padding: '16px',
-              display: 'flex',
+              display: isMobile ? 'none' : 'flex',
               flexDirection: 'column',
               flexShrink: 0,
               overflowY: 'auto',
@@ -914,6 +949,76 @@ export default function CEOCommandCenter() {
                 ))}
               </div>
             </div>
+          </div>
+        )}
+
+        {/* MODÜL ÇEKMECESİ (Mobil - Bottom Drawer) */}
+        {isMobile && mobileMenuOpen && (
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 60,
+            background: 'rgba(13,19,34,0.98)',
+            backdropFilter: 'blur(16px)',
+            display: 'flex', flexDirection: 'column',
+            paddingTop: 'env(safe-area-inset-top)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>📊 Modüller</div>
+              <button onClick={() => setMobileMenuOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer', fontSize: '14px' }}>✕</button>
+            </div>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px calc(env(safe-area-inset-bottom) + 16px)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {MODULES.map((mod) => (
+                <button
+                  key={mod.id}
+                  onClick={() => { setActiveView(mod.id); setMobileMenuOpen(false); }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px',
+                    borderRadius: '12px', cursor: 'pointer', textAlign: 'left',
+                    background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
+                    border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid rgba(255,255,255,0.06)',
+                    color: activeView === mod.id ? mod.color : '#e2e8f0',
+                  }}
+                >
+                  <span style={{ color: mod.color, display: 'flex' }}>{mod.icon}</span>
+                  <span style={{ fontSize: '13px', fontWeight: '600' }}>{mod.name}</span>
+                  <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#64748b' }}>{mod.description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* MOBİL ALT BAR (Bottom Navigation) */}
+        {isMobile && (
+          <div style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
+            display: 'flex', justifyContent: 'space-around', alignItems: 'center',
+            background: 'rgba(13,19,34,0.96)',
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            backdropFilter: 'blur(16px)',
+            padding: '8px 4px',
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+          }}>
+            {[
+              { icon: '💬', label: 'Chat', active: activeView === 'chat', onClick: () => setActiveView('chat') },
+              { icon: '📊', label: 'Modüller', active: mobileMenuOpen, onClick: () => setMobileMenuOpen(true) },
+              { icon: '🛰️', label: 'Radar', active: activeView === 'osint', onClick: () => setActiveView('osint') },
+              { icon: '⚙️', label: 'Ayarlar', active: activeView === 'monitor', onClick: () => setActiveView('monitor') },
+            ].map((tab) => (
+              <button
+                key={tab.label}
+                onClick={tab.onClick}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px',
+                  padding: '6px 14px', borderRadius: '10px', cursor: 'pointer',
+                  background: tab.active ? 'rgba(0,242,254,0.1)' : 'transparent',
+                  border: 'none', color: tab.active ? '#00f2fe' : '#94a3b8',
+                  fontSize: '10px', fontWeight: tab.active ? '700' : '500',
+                }}
+              >
+                <span style={{ fontSize: '17px' }}>{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
           </div>
         )}
       </div>
