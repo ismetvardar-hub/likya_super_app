@@ -4,15 +4,15 @@ import path from 'path';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // ============================================================================
-// LİKYA CEO YEREL İNFAZ ROUTE'U (Next.js App Router)
-// FastAPI/Uvicorn bağımlılığı olmadan doğrudan dosya yazma/okuma
+// LİKYA CEO GEMINI LLM KOD DÜZENLEME MOTORU (Next.js App Router)
+// Akış: doğal dil komutu -> hedef dosya tespiti -> fs.readFile -> Gemini -> fs.writeFile
 // ============================================================================
 
-// Dinamik PROJECT_ROOT çözümlemesi - hangi dizinden çalıştırılırsa çalıştırılsın
 const PROJECT_ROOT = path.resolve(process.cwd(), process.cwd().endsWith('apps/admin') ? '../..' : '.');
 
 const ALLOWED_EXTENSIONS = ['.tsx', '.ts', '.dart', '.py', '.js', '.jsx', '.css', '.md', '.json', '.yaml', '.yml', '.sql'];
-const ALLOWED_DIRS = ['apps', 'src', 'scripts', 'supabase', 'docs'];
+const DEFAULT_TARGET = 'apps/admin/src/app/components/CEOCommandCenter.tsx';
+const GEMINI_MODEL = 'gemini-3.5-flash';
 
 function isSafePath(filePath: string): boolean {
   const resolved = path.resolve(PROJECT_ROOT, filePath);
@@ -20,214 +20,183 @@ function isSafePath(filePath: string): boolean {
 }
 
 function isAllowedExtension(filePath: string): boolean {
-  const ext = path.extname(filePath);
-  return ALLOWED_EXTENSIONS.includes(ext);
+  return ALLOWED_EXTENSIONS.includes(path.extname(filePath).toLowerCase());
 }
 
-function analyzeCommand(command: string): { action: string; file_path?: string; directory?: string } {
-  const lower = command.toLowerCase();
-
-  // Dosya yazma komutu tespiti
-  const writePatterns = [
-    /(?:oluştur|yaz|ekle|güncelle|değiştir|tasarla)\s+(?:bir\s+)?(?:dosya|bileşen|component|ekran|modül|widget|screen)\s+([\w/.-]+)/,
-    /(?:oluştur|yaz|ekle)\s+([\w/.-]+\.(?:tsx|ts|dart|py|js|jsx|css|md|json|sql))/,
-  ];
-  for (const pattern of writePatterns) {
-    const match = lower.match(pattern);
-    if (match) {
-      let filePath = match[1];
-      if (!ALLOWED_EXTENSIONS.some((ext) => filePath.endsWith(ext))) {
-        filePath = `apps/admin/src/app/components/${filePath}.tsx`;
-      }
-      return { action: 'write_file', file_path: filePath };
+/**
+ * Komut içinden hedef dosyayı tespit eder.
+ * 1) Uzantılı dosya adı (komutun herhangi bir yerinde): "CEOCommandCenter.tsx dosyasına ..."
+ * 2) "X dosyasına/bileşenine ..." kalıbı -> components/ altına çözümle
+ * 3) Hiçbiri yoksa varsayılan hedef (CEOCommandCenter.tsx)
+ */
+function resolveTargetFile(command: string): string {
+  // 1) En güçlü eşleşme: uzantılı dosya adı
+  const filePattern = /([\w/.-]+\.(?:tsx|ts|dart|py|js|jsx|css|md|json|yaml|yml|sql))/i;
+  const fileMatch = command.match(filePattern);
+  if (fileMatch) {
+    const raw = fileMatch[1].replace(/[.,;:!?'"]+$/g, '');
+    // Tam yol zaten verilmişse olduğu gibi kullan
+    if (raw.startsWith('apps/') || raw.startsWith('src/') || raw.startsWith('supabase/') || raw.startsWith('scripts/') || raw.startsWith('docs/')) {
+      return raw;
     }
+    // Sadece dosya adı verilmişse components/ altına çözümle
+    return `apps/admin/src/app/components/${raw.replace(/^.*[\\/]/, '')}`;
   }
 
-  // Dosya okuma komutu tespiti
-  const readPatterns = [
-    /(?:oku|incele|göster|aç)\s+(?:dosyayı\s+)?([\w/.-]+\.(?:tsx|ts|dart|py|js|jsx|css|md|json|sql))/,
-  ];
-  for (const pattern of readPatterns) {
-    const match = lower.match(pattern);
-    if (match) {
-      return { action: 'read_file', file_path: match[1] };
-    }
+  // 2) "X dosyasına/bileşenine ... ekle/güncelle" kalıbı
+  const namedPattern = /(?:dosya|bileşen|component|ekran|modül|widget)\s*(?:sına|sine|na|ne|ya|ye)?\s+([A-Za-z][\w-]*)/i;
+  const namedMatch = command.match(namedPattern);
+  if (namedMatch && namedMatch[1].toLowerCase() !== 'oluştur' && namedMatch[1].toLowerCase() !== 'yaz') {
+    return `apps/admin/src/app/components/${namedMatch[1]}.tsx`;
   }
 
-  // Dosya listeleme komutu
-  if (lower.includes('listele') || lower.includes('dosyaları göster')) {
-    return { action: 'list_files', directory: 'apps/admin/src/app/components' };
-  }
+  // 3) Varsayılan hedef
+  return DEFAULT_TARGET;
+}
 
-  return { action: 'analyze_only' };
+function buildGeminiPrompt(command: string, targetFile: string, existingContent: string): string {
+  return `Bu React bileşenini kullanıcının şu talimatına göre güncelle: "${command}"
+
+HEDEF DOSYA: ${targetFile}
+
+MEVCUT DOSYA İÇERİĞİ:
+${existingContent || '(Dosya mevcut değil, sıfırdan oluşturulacak.)'}
+
+KURALLAR:
+1. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür. Markdown kod bloğu işareti kullanma, açıklama veya yorum YAZMA.
+2. React/TypeScript bileşeni ise dosya 'use client'; direktifi ile başlasın.
+3. Mevcut import/export yapısını, state ve mevcut fonksiyonaliteyi KORU; yalnızca istenen değişikliği uygula.
+4. Tasarımda koyu mod + glassmorphism + neon vurgular kullan (#00f2fe, #10B981, #F27A1A, #8B5CF6).
+5. Eksiksiz, derlenebilir TypeScript/TSX kodu üret. TODO veya placeholder bırakma.`;
+}
+
+function fallbackTemplate(command: string, filePath: string): string {
+  return `// ${filePath} - Likya CEO tarafından oluşturuldu
+'use client';
+
+import React from 'react';
+
+export default function GeneratedComponent() {
+  return (
+    <div style={{
+      padding: '20px',
+      background: 'rgba(255,255,255,0.03)',
+      borderRadius: '16px',
+      border: '1px solid rgba(255,255,255,0.1)',
+    }}>
+      <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
+        🎯 Likya CEO Komutuyla Oluşturuldu
+      </h2>
+      <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '8px' }}>
+        Komut: ${command}
+      </p>
+    </div>
+  );
+}
+`;
+}
+
+function extractCodeFromResponse(text: string): string {
+  // Markdown kod bloğu sarmalayıcılarını temizle
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^```(?:tsx|ts|jsx|js|typescript|javascript|dart|python)?\s*/i, '');
+  cleaned = cleaned.replace(/\s*```$/i, '');
+  return cleaned.trim();
 }
 
 export async function POST(request: NextRequest) {
   try {
     // Güvenli JSON parse
-    let body: { command?: string };
+    let body: { command?: string; file?: string };
     try {
       body = await request.json();
     } catch {
       return NextResponse.json({ success: false, error: 'Geçersiz JSON gövdesi' }, { status: 400 });
     }
-    const command = body.command || '';
 
+    const command = (body.command || '').trim();
     if (!command) {
       return NextResponse.json({ success: false, error: 'Komut boş olamaz' }, { status: 400 });
     }
 
-    const analysis = analyzeCommand(command);
-
-    if (analysis.action === 'write_file' && analysis.file_path) {
-      const filePath = analysis.file_path;
-      if (!isSafePath(filePath)) {
-        return NextResponse.json({ success: false, error: 'Güvenli olmayan yol' }, { status: 400 });
-      }
-      if (!isAllowedExtension(filePath)) {
-        return NextResponse.json({ success: false, error: 'İzin verilmeyen dosya türü' }, { status: 400 });
-      }
-
-      const fullPath = path.resolve(PROJECT_ROOT, filePath);
-
-      // Gemini LLM ile kod üretimi
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
-      let finalContent = '';
-
-      if (apiKey) {
-        try {
-          const genAI = new GoogleGenerativeAI(apiKey);
-          const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-          // Hedef dosyayı oku (varsa)
-          let existingContent = '';
-          try {
-            existingContent = await fs.readFile(fullPath, 'utf-8');
-          } catch {
-            existingContent = '';
-          }
-
-          const prompt = `Sen Likya Kampüsü'nün baş yazılım mühendisisin. Kullanıcının şu talimatına göre dosyayı güncelle:
-
-TALİMAT: ${command}
-
-HEDEF DOSYA: ${filePath}
-
-MEVCUT İÇERİK:
-${existingContent || '(Dosya yok, yeni oluşturulacak)'}
-
-KURALLAR:
-1. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür.
-2. Açıklama, yorum veya markdown kullanma.
-3. TypeScript/React bileşeni ise 'use client' direktifi ile başla.
-4. Koyu mod, glassmorphism ve neon renkler (#00f2fe, #10B981, #F27A1A, #8B5CF6) kullan.
-5. Eksiksiz ve çalışan kod üret.`;
-
-          const result = await model.generateContent(prompt);
-          finalContent = result.response.text().trim();
-        } catch (e) {
-          // Gemini başarısız olursa basit şablon kullan
-          finalContent = `// ${filePath} - Likya CEO tarafından oluşturuldu
-'use client';
-
-import React from 'react';
-
-export default function GeneratedComponent() {
-  return (
-    <div style={{
-      padding: '20px',
-      background: 'rgba(255,255,255,0.03)',
-      borderRadius: '16px',
-      border: '1px solid rgba(255,255,255,0.1)',
-    }}>
-      <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
-        🎯 Likya CEO Komutuyla Oluşturuldu
-      </h2>
-      <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '8px' }}>
-        Komut: ${command}
-      </p>
-    </div>
-  );
-}
-`;
-        }
-      } else {
-        // API key yoksa basit şablon
-        finalContent = `// ${filePath} - Likya CEO tarafından oluşturuldu
-'use client';
-
-import React from 'react';
-
-export default function GeneratedComponent() {
-  return (
-    <div style={{
-      padding: '20px',
-      background: 'rgba(255,255,255,0.03)',
-      borderRadius: '16px',
-      border: '1px solid rgba(255,255,255,0.1)',
-    }}>
-      <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
-        🎯 Likya CEO Komutuyla Oluşturuldu
-      </h2>
-      <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '8px' }}>
-        Komut: ${command}
-      </p>
-    </div>
-  );
-}
-`;
-      }
-
-      await fs.mkdir(path.dirname(fullPath), { recursive: true });
-      await fs.writeFile(fullPath, finalContent, 'utf-8');
-
-      return NextResponse.json({
-        success: true,
-        file: filePath,
-        action: apiKey ? 'LLM tarafından güncellendi' : 'written',
-        bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
-        message: apiKey ? 'Gemini LLM ile güncellendi' : 'Dosya başarıyla oluşturuldu',
-      });
+    // --- HEDEF DOSYA TESPİTİ ---
+    const targetFile = (body.file || resolveTargetFile(command)).replace(/^\/+/, '');
+    if (!isSafePath(targetFile)) {
+      return NextResponse.json({ success: false, error: 'Güvenli olmayan yol' }, { status: 400 });
+    }
+    if (!isAllowedExtension(targetFile)) {
+      return NextResponse.json({ success: false, error: 'İzin verilmeyen dosya türü' }, { status: 400 });
     }
 
-    if (analysis.action === 'read_file' && analysis.file_path) {
-      const filePath = analysis.file_path;
-      if (!isSafePath(filePath)) {
-        return NextResponse.json({ success: false, error: 'Güvenli olmayan yol' }, { status: 400 });
-      }
-      const fullPath = path.resolve(PROJECT_ROOT, filePath);
+    const fullPath = path.resolve(PROJECT_ROOT, targetFile);
+    const lower = command.toLowerCase();
+
+    // --- OKUMA KOMUTU ---
+    if (/(\boku\b|\bincele\b|\bgöster\b)/.test(lower) || lower.includes('dosyayı oku')) {
       try {
         const content = await fs.readFile(fullPath, 'utf-8');
-        return NextResponse.json({
-          success: true,
-          file: filePath,
-          action: 'read',
-          content: content.slice(0, 5000),
-        });
+        return NextResponse.json({ success: true, file: targetFile, action: 'read', content: content.slice(0, 5000) });
       } catch {
-        return NextResponse.json({ success: false, error: `Dosya bulunamadı: ${filePath}` }, { status: 404 });
+        return NextResponse.json({ success: false, error: `Dosya bulunamadı: ${targetFile}` }, { status: 404 });
       }
     }
 
-    if (analysis.action === 'list_files' && analysis.directory) {
-      const dirPath = analysis.directory;
-      const fullPath = path.resolve(PROJECT_ROOT, dirPath);
+    // --- LİSTELEME KOMUTU ---
+    if (lower.includes('listele') || lower.includes('dosyaları göster')) {
       try {
-        const files = await fs.readdir(fullPath);
-        return NextResponse.json({
-          success: true,
-          directory: dirPath,
-          files: files.slice(0, 100),
-        });
+        const files = await fs.readdir(path.dirname(fullPath));
+        return NextResponse.json({ success: true, directory: path.dirname(fullPath), files: files.slice(0, 100) });
       } catch {
-        return NextResponse.json({ success: false, error: `Dizin bulunamadı: ${dirPath}` }, { status: 404 });
+        return NextResponse.json({ success: false, error: 'Dizin bulunamadı' }, { status: 404 });
       }
     }
 
+    // --- a) HEDEF DOSYAYI OKU ---
+    let existingContent = '';
+    try {
+      existingContent = await fs.readFile(fullPath, 'utf-8');
+    } catch {
+      existingContent = '';
+    }
+
+    // --- b) GEMINI LLM İLE KOD DÜZENLEME ---
+    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+    let finalContent = '';
+
+    if (apiKey) {
+      try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({
+          model: GEMINI_MODEL,
+          generationConfig: { maxOutputTokens: 65536, temperature: 0.7 },
+        });
+        const result = await model.generateContent(buildGeminiPrompt(command, targetFile, existingContent));
+        finalContent = extractCodeFromResponse(result.response.text());
+        console.log(`[CEO/Gemini] ${targetFile} güncellendi (${finalContent.length} karakter)`);
+      } catch (e) {
+        console.error('[CEO/Gemini] LLM hatası:', e instanceof Error ? e.message : String(e));
+        finalContent = existingContent || fallbackTemplate(command, targetFile);
+      }
+    } else {
+      console.warn('[CEO/Gemini] API anahtarı bulunamadı (GEMINI_API_KEY / NEXT_PUBLIC_GEMINI_API_KEY)');
+      finalContent = existingContent || fallbackTemplate(command, targetFile);
+    }
+
+    if (!finalContent.trim()) {
+      return NextResponse.json({ success: false, error: 'LLM boş içerik döndürdü' }, { status: 500 });
+    }
+
+    // --- c) DOSYAYA YAZ ---
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+    await fs.writeFile(fullPath, finalContent, 'utf-8');
+
+    // --- d) BAŞARI YANITI ---
     return NextResponse.json({
-      success: false,
-      action: 'analyze_only',
-      message: 'Komut analiz edildi. Dosya işlemi belirlenemedi.',
+      success: true,
+      file: targetFile,
+      action: 'LLM tarafından güncellendi',
+      bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
+      message: 'Gemini LLM ile güncellendi',
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

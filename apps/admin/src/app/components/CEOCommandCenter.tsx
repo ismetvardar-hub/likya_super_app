@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music } from 'lucide-react';
 import Park3DTwin from './Park3DTwin';
 import IoTSensorMap from './IoTSensorMap';
 import AIAgentAutonomousController from './AIAgentAutonomousController';
@@ -27,6 +27,11 @@ import AutonomousFinanceAgents from './AutonomousFinanceAgents';
 import AccountingModule from './AccountingModule';
 import CampusOverviewModule from './CampusOverviewModule';
 import AgentMeshIntegration from './AgentMeshIntegration';
+import AgentTelemetryPanel from './AgentTelemetryPanel';
+import OSINTSahaRadar from './OSINTSahaRadar';
+import GoogleCloudHibe from './GoogleCloudHibe';
+import GlobalSaaSFatura from './GlobalSaaSFatura';
+import SunoJingleBar from './SunoJingleBar';
 
 // ============================================================================
 // LİKYA CEO COMMAND CENTER - 2 SAYFALI SPLIT LAYOUT
@@ -94,6 +99,13 @@ const MODULES: ModuleItem[] = [
   { id: 'security', name: 'Saha Güvenliği', icon: <Shield size={16} />, color: '#e07a5f', description: 'IoT alarm & kaza önleme', category: 'infra' },
   { id: 'stress', name: 'Stres Testi', icon: <Activity size={16} />, color: '#f87171', description: 'Edge functions', category: 'infra' },
   { id: 'monitor', name: 'İzleme Paneli', icon: <Activity size={16} />, color: '#60a5fa', description: 'Loglama', category: 'infra' },
+
+  // 🧠 YENİ STRATEJİK MODÜLLER (5'i 1 Arada Mega Entegrasyon)
+  { id: 'telemetry', name: 'Ajan Orkestrasyonu & Telemetri', icon: <Cpu size={16} />, color: '#00f2fe', description: 'Multi-agent LLM canlı metrikleri', category: 'core' },
+  { id: 'osint', name: 'OSINT & Saha Radarı', icon: <Radar size={16} />, color: '#f87171', description: 'Çevre güvenliği & SAR alarmı', category: 'infra' },
+  { id: 'gcp', name: 'Google Cloud Hibe Asistanı', icon: <Cloud size={16} />, color: '#60a5fa', description: '350K$ AI cloud hibe motoru', category: 'growth' },
+  { id: 'saas', name: 'Global SaaS & USD Fatura', icon: <CreditCard size={16} />, color: '#34d399', description: 'Stripe / ABD LLC köprüsü', category: 'growth' },
+  { id: 'suno', name: 'Suno AI Ses & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Dinamik jingle & gamification', category: 'daze' },
 ];
 
 // Sohbet Konu Başlıkları (Chat History Threads)
@@ -256,6 +268,17 @@ export default function CEOCommandCenter() {
 
   return (
     <div style={{ display: 'flex', gap: '16px', minHeight: '600px', marginTop: '16px' }}>
+      {/* radarPulse & radarSpin keyframes - CANLI RADAR + radar animasyonları */}
+      <style>{`
+        @keyframes radarPulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 8px #48bb78; }
+          50% { opacity: 0.35; box-shadow: 0 0 2px #48bb78; }
+        }
+        @keyframes radarSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
       {/* ================================================================ */}
       {/* SOL: AÇILIR/KAPANIR MODÜL MENÜSÜ (SIDEBAR) */}
       {/* ================================================================ */}
@@ -527,6 +550,11 @@ export default function CEOCommandCenter() {
               {activeView === 'finance' && <AutonomousFinanceAgents />}
               {activeView === 'legal' && <DepartmentAgents />}
               {activeView === 'gift' && <AutoMarketingAgent />}
+              {activeView === 'telemetry' && <AgentTelemetryPanel />}
+              {activeView === 'osint' && <OSINTSahaRadar />}
+              {activeView === 'gcp' && <GoogleCloudHibe />}
+              {activeView === 'saas' && <GlobalSaaSFatura />}
+              {activeView === 'suno' && <SunoJingleBar />}
             </div>
           </div>
         )}
