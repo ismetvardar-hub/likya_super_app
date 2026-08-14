@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Radar, Camera, Wind, AlertTriangle, MapPin, ShieldCheck, Droplets, Sun } from 'lucide-react';
+import { Radar, Camera, Wind, AlertTriangle, MapPin, ShieldCheck, Droplets, Sun, Radio } from 'lucide-react';
 
 // ============================================================================
 // LİKYA OSINT SAHA RADARI & ÇEVRE GÜVENLİĞİ
@@ -27,10 +27,15 @@ const CAMERAS: CameraFeed[] = [
 
 export default function OSINTSahaRadar() {
   const [sarActive, setSarActive] = useState(false);
+  const [droneActive, setDroneActive] = useState(false);
 
   const triggerSar = () => {
     setSarActive(true);
     setTimeout(() => setSarActive(false), 5000);
+  };
+
+  const toggleDrone = () => {
+    setDroneActive(!droneActive);
   };
 
   return (
@@ -135,25 +140,68 @@ export default function OSINTSahaRadar() {
             </div>
           </div>
 
-          {/* SAR Alarm Butonu */}
-          <button
-            onClick={triggerSar}
-            style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-              padding: '16px', borderRadius: '14px', cursor: 'pointer',
-              border: sarActive ? '1px solid #f87171' : '1px solid rgba(248,113,113,0.4)',
-              background: sarActive ? 'rgba(248,113,113,0.25)' : 'rgba(248,113,113,0.08)',
-              color: '#f87171', fontSize: '14px', fontWeight: 'bold',
-              boxShadow: sarActive ? '0 0 30px rgba(248,113,113,0.4)' : 'none',
-              transition: 'all 0.3s',
-            }}
-          >
-            <AlertTriangle size={20} />
-            {sarActive ? '🚨 SAR ALARMI AKTİF — EKİP YÖNLENDİRİLDİ' : 'Tek Tıkla SAR (Arama-Kurtarma) Alarmı'}
-          </button>
+          {/* Aksiyon Butonları Grubu */}
+          <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+            {/* SAR Alarm Butonu */}
+            <button
+              onClick={triggerSar}
+              style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                padding: '16px 12px', borderRadius: '14px', cursor: 'pointer',
+                border: sarActive ? '1px solid #f87171' : '1px solid rgba(248,113,113,0.4)',
+                background: sarActive ? 'rgba(248,113,113,0.25)' : 'rgba(248,113,113,0.08)',
+                color: '#f87171', fontSize: '13px', fontWeight: 'bold',
+                boxShadow: sarActive ? '0 0 30px rgba(248,113,113,0.4)' : 'none',
+                transition: 'all 0.3s',
+              }}
+            >
+              <AlertTriangle size={18} />
+              {sarActive ? 'SAR AKTİF' : 'SAR Alarmı'}
+            </button>
+
+            {/* Dron Filosu Canlı Takip Butonu */}
+            <button
+              onClick={toggleDrone}
+              style={{
+                flex: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                padding: '16px 12px', borderRadius: '14px', cursor: 'pointer',
+                border: droneActive ? '1px solid #00f2fe' : '1px solid rgba(0, 242, 254, 0.4)',
+                background: droneActive ? 'rgba(0, 242, 254, 0.25)' : 'rgba(0, 242, 254, 0.08)',
+                color: '#00f2fe', fontSize: '13px', fontWeight: 'bold',
+                boxShadow: droneActive ? '0 0 30px rgba(0, 242, 254, 0.4)' : 'none',
+                transition: 'all 0.3s',
+              }}
+            >
+              <Radio size={18} />
+              Dron Filosu Canlı Takip
+            </button>
+          </div>
+
+          {/* Bildirimler */}
           {sarActive && (
             <div style={{ padding: '10px 14px', borderRadius: '10px', background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)', fontSize: '11px', color: '#fca5a5' }}>
               📡 Acil durum protokolü başlatıldı: GPS konumları paylaşıldı, kamera kayıtları kilitlendi, jandarma/sahil güvenlik hattına bildirim gönderildi.
+            </div>
+          )}
+
+          {droneActive && (
+            <div style={{
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'rgba(0, 242, 254, 0.1)',
+              border: '1px solid rgba(0, 242, 254, 0.3)',
+              fontSize: '11px',
+              color: '#00f2fe',
+              boxShadow: '0 0 15px rgba(0, 242, 254, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontWeight: '500'
+            }}>
+              <span>🛸</span>
+              <span>3 Kurtarma Dronu Havada — Termal Tarama Aktif (%94 Kapsama)</span>
             </div>
           )}
         </div>
@@ -183,4 +231,3 @@ export default function OSINTSahaRadar() {
     </div>
   );
 }
-
