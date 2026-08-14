@@ -26,6 +26,7 @@ import MonitoringPanel from './MonitoringPanel';
 import AutonomousFinanceAgents from './AutonomousFinanceAgents';
 import AccountingModule from './AccountingModule';
 import CampusOverviewModule from './CampusOverviewModule';
+import AgentMeshIntegration from './AgentMeshIntegration';
 
 // ============================================================================
 // LİKYA CEO COMMAND CENTER - 2 SAYFALI SPLIT LAYOUT
@@ -42,6 +43,7 @@ interface ModuleItem {
 }
 
 const MODULES: ModuleItem[] = [
+  { id: 'mesh', name: '147 Agent Mesh', icon: <Network size={16} />, color: '#00f2fe', description: '12 Departmanlı Ajan Ağı + Multi-LLM' },
   { id: 'campus', name: 'Kampüs Genel Bakış', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası' },
   { id: 'twin', name: '3D Park Twin', icon: <Map size={16} />, color: '#00f2fe', description: '30-35 Dönüm dijital ikiz' },
   { id: 'iot', name: 'IoT Sensör Haritası', icon: <Activity size={16} />, color: '#48bb78', description: 'Canlı ısı haritası' },
@@ -329,6 +331,7 @@ export default function CEOCommandCenter() {
             </div>
             <div style={{ flex: 1, overflowY: 'auto' }}>
               {/* GERÇEK MODÜL BİLEŞENLERİ - activeView'e göre render */}
+              {activeView === 'mesh' && <AgentMeshIntegration />}
               {activeView === 'campus' && <CampusOverviewModule />}
               {activeView === 'twin' && <Park3DTwin />}
               {activeView === 'iot' && <IoTSensorMap />}
