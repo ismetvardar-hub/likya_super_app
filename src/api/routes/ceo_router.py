@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from src.services.ceo_brain import CEOBrain
 from src.services.ceo_interview import CEOInterviewEngine
 from src.services.ceo_orchestrator import CEOOrchestrator
+from src.services.tool_execution_engine import tool_engine
 
 router = APIRouter(prefix="/api/v1/ceo", tags=["ceo"])
 
@@ -23,6 +24,12 @@ class AnswerRequest(BaseModel):
 
     question_id: str
     answer: str
+
+
+class ExecuteRequest(BaseModel):
+    """CEO infaz istek şeması."""
+
+    command: str
 
 
 @router.get("/next-question")
@@ -41,3 +48,10 @@ async def process_answer(request: AnswerRequest) -> dict:
 async def get_mindset() -> dict:
     """Şu anki CEO yapay zeka profilini ve kurallarını listeler."""
     return brain.get_mindset()
+
+
+@router.post("/execute")
+async def execute_command(request: ExecuteRequest) -> dict:
+    """Kullanıcının chat'ten gönderdiği komutu analiz eder ve gerçek dosya işlemi yapar."""
+    result = tool_engine.execute(request.command)
+    return result
