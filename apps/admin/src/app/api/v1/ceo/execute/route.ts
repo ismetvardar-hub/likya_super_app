@@ -7,7 +7,8 @@ import path from 'path';
 // FastAPI/Uvicorn bağımlılığı olmadan doğrudan dosya yazma/okuma
 // ============================================================================
 
-const PROJECT_ROOT = path.resolve(process.cwd(), '../..'); // apps/admin -> proje kökü
+// Dinamik PROJECT_ROOT çözümlemesi - hangi dizinden çalıştırılırsa çalıştırılsın
+const PROJECT_ROOT = path.resolve(process.cwd(), process.cwd().endsWith('apps/admin') ? '../..' : '.');
 
 const ALLOWED_EXTENSIONS = ['.tsx', '.ts', '.dart', '.py', '.js', '.jsx', '.css', '.md', '.json', '.yaml', '.yml', '.sql'];
 const ALLOWED_DIRS = ['apps', 'src', 'scripts', 'supabase', 'docs'];
@@ -62,7 +63,13 @@ function analyzeCommand(command: string): { action: string; file_path?: string; 
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    // Güvenli JSON parse
+    let body: { command?: string };
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ success: false, error: 'Geçersiz JSON gövdesi' }, { status: 400 });
+    }
     const command = body.command || '';
 
     if (!command) {
@@ -157,6 +164,7 @@ export default function GeneratedComponent() {
       message: 'Komut analiz edildi. Dosya işlemi belirlenemedi.',
     });
   } catch (error) {
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
