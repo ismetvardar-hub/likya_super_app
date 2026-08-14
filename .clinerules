@@ -34,3 +34,8 @@ You are a Lead Software Engineer powered by DeepSeek. You write production-ready
 - Müşteri Ekranları Modülerdir: apps/admin/src/app/customer/components/ (WeatherWidget, ShoppingTab, UpcyclingTab, FoodTab, AccommodationTab, SportsTab, TicketsTab, WalletTab).
 - Tasarım: Koyu mod, Glassmorphism, canlı neon renkler (#00f2fe, #10B981, #F27A1A, #8B5CF6).
 - Asla TODO bırakma; eksiksiz çalışan fonksiyonel kod üret.
+
+## 🚀 OTONOM İLERLEME & KESİNTİSİZ AKIŞ (AUTO-PILOT MODE)
+1. Arka planda çalışan uzun süreli komutlarda (server, build, tunnel, test vb.) durup kullanıcı onayı BEKLEME; işlemi arka plana al (background execution) ve bir sonraki adıma otonom olarak devam et.
+2. Dosya değişikliklerini, derleme kontrollerini (tsc/build), sağlık kontrollerini ve testleri ara onay sormadan uçtan uca tamamla.
+3. Kullanıcıya yalnızca tüm süreç eksiksiz bittiğinde nihai sonucu centilmen, sıcak bir özet olarak raporla (süreç içi minör durumlarda kesintisiz akışa devam et).
