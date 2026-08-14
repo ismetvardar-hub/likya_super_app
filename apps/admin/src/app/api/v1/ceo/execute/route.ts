@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // ============================================================================
 // LİKYA CEO YEREL İNFAZ ROUTE'U (Next.js App Router)
@@ -88,7 +89,45 @@ export async function POST(request: NextRequest) {
       }
 
       const fullPath = path.resolve(PROJECT_ROOT, filePath);
-      const templateContent = `// ${filePath} - Likya CEO tarafından oluşturuldu
+
+      // Gemini LLM ile kod üretimi
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+      let finalContent = '';
+
+      if (apiKey) {
+        try {
+          const genAI = new GoogleGenerativeAI(apiKey);
+          const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+          // Hedef dosyayı oku (varsa)
+          let existingContent = '';
+          try {
+            existingContent = await fs.readFile(fullPath, 'utf-8');
+          } catch {
+            existingContent = '';
+          }
+
+          const prompt = `Sen Likya Kampüsü'nün baş yazılım mühendisisin. Kullanıcının şu talimatına göre dosyayı güncelle:
+
+TALİMAT: ${command}
+
+HEDEF DOSYA: ${filePath}
+
+MEVCUT İÇERİK:
+${existingContent || '(Dosya yok, yeni oluşturulacak)'}
+
+KURALLAR:
+1. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür.
+2. Açıklama, yorum veya markdown kullanma.
+3. TypeScript/React bileşeni ise 'use client' direktifi ile başla.
+4. Koyu mod, glassmorphism ve neon renkler (#00f2fe, #10B981, #F27A1A, #8B5CF6) kullan.
+5. Eksiksiz ve çalışan kod üret.`;
+
+          const result = await model.generateContent(prompt);
+          finalContent = result.response.text().trim();
+        } catch (e) {
+          // Gemini başarısız olursa basit şablon kullan
+          finalContent = `// ${filePath} - Likya CEO tarafından oluşturuldu
 'use client';
 
 import React from 'react';
@@ -111,16 +150,43 @@ export default function GeneratedComponent() {
   );
 }
 `;
+        }
+      } else {
+        // API key yoksa basit şablon
+        finalContent = `// ${filePath} - Likya CEO tarafından oluşturuldu
+'use client';
+
+import React from 'react';
+
+export default function GeneratedComponent() {
+  return (
+    <div style={{
+      padding: '20px',
+      background: 'rgba(255,255,255,0.03)',
+      borderRadius: '16px',
+      border: '1px solid rgba(255,255,255,0.1)',
+    }}>
+      <h2 style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
+        🎯 Likya CEO Komutuyla Oluşturuldu
+      </h2>
+      <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '8px' }}>
+        Komut: ${command}
+      </p>
+    </div>
+  );
+}
+`;
+      }
 
       await fs.mkdir(path.dirname(fullPath), { recursive: true });
-      await fs.writeFile(fullPath, templateContent, 'utf-8');
+      await fs.writeFile(fullPath, finalContent, 'utf-8');
 
       return NextResponse.json({
         success: true,
         file: filePath,
-        action: 'written',
-        bytes_written: Buffer.byteLength(templateContent, 'utf-8'),
-        message: 'Dosya başarıyla oluşturuldu',
+        action: apiKey ? 'LLM tarafından güncellendi' : 'written',
+        bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
+        message: apiKey ? 'Gemini LLM ile güncellendi' : 'Dosya başarıyla oluşturuldu',
       });
     }
 

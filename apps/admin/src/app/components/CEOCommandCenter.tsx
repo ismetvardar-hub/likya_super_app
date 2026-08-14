@@ -305,8 +305,24 @@ export default function CEOCommandCenter() {
                   <path d="M4 20 L20 20" stroke="url(#likyaLogo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
                 </svg>
               </div>
-              <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#e2e8f0' }}>
-                Likya Komuta Merkezi
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#e2e8f0' }}>
+                  Likya Komuta Merkezi
+                </div>
+                {/* CANLI RADAR - Yanıp Sönen Canlı Durum İndikatörü */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span style={{
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    background: '#48bb78',
+                    boxShadow: '0 0 8px #48bb78',
+                    animation: 'radarPulse 1.5s infinite',
+                  }} />
+                  <span style={{ fontSize: '9px', color: '#48bb78', fontWeight: '700', letterSpacing: '0.5px' }}>
+                    CANLI RADAR
+                  </span>
+                </div>
               </div>
             </div>
           )}
