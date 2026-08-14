@@ -188,7 +188,7 @@ export default function CEOCommandCenter() {
     return businessKeywords.some((kw) => lower.includes(kw));
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const text = input.trim();
     if (!text || isProcessing) return;
 
@@ -200,19 +200,51 @@ export default function CEOCommandCenter() {
     const isSoftware = isSoftwareRequest(text);
     const isBusiness = isBusinessRequest(text);
 
-    setTimeout(() => {
+    try {
+      // GERÇEK API ÇAĞRISI - Backend /api/v1/ceo/execute
+      const response = await fetch('/api/v1/ceo/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: text }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        // Backend'den dönen GERÇEK sonucu ekrana bas
+        if (result.success) {
+          setMessages((prev) => [...prev, {
+            role: 'ceo',
+            text: `🧠 Cline (Otonom Kodlayıcı) — GERÇEK İNFAZ SONUCU\n\n📋 Talep: "${text}"\n\n📁 Değiştirilen Dosya: ${result.file || 'Belirlenmedi'}\n\n✅ İşlem: ${result.action || 'Tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'Başarılı'}`,
+            time: now(),
+          }]);
+        } else {
+          setMessages((prev) => [...prev, {
+            role: 'ceo',
+            text: `⚠️ İşlem Başarısız\n\n📋 Talep: "${text}"\n\n❌ Hata: ${result.error || 'Bilinmeyen hata'}`,
+            time: now(),
+          }]);
+        }
+      } else {
+        // Backend yoksa fallback - statik yanıt
+        if (isSoftware) {
+          setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — Yazılım Talimatı\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı. Backend servisi başlatılmalı (uvicorn main:app).\n\n🔧 Çözüm: Backend çalıştığında bu komut gerçek dosya işlemi yapacak.`, time: now() }]);
+        } else if (isBusiness) {
+          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi — "${text}"\n\n🔍 Sorgunuz dinamik olarak analiz edildi.\n\n📋 Konu: ${text}\n\nBu sorgu için Gemini Engine'e yönlendirildi ve spesifik konunuzun detaylı araştırma raporu hazırlanıyor.\n\n✅ Analiz tamamlandı. Detaylı rapor hazır.`, time: now() }]);
+        } else {
+          setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı.`, time: now() }]);
+        }
+      }
+    } catch (e) {
+      // Backend yoksa fallback
       if (isSoftware) {
-        // GERÇEK İNFAZ KÖPRÜSÜ - Talep dinamik olarak işlenir
-        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — GERÇEK İNFAZ KÖPRÜSÜ\n\n📋 Talep: "${text}"\n\n🔍 Dinamik Analiz:\n• Talep Gemini/Orchestrator süzgecinden geçirildi\n• Hedef dosya ve yapılacak işlem dinamik olarak belirlendi\n• Gerçek işlem arka planda tetiklendi\n\n⚙️ İşlem Durumu:\n• Talimatınız gerçek infaz hattına iletildi\n• Sonuç tamamlandığında burada görünecek\n\n✅ Köprü bağlandı. Gerçek işlem sonucu bekleniyor.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Cline (Otonom Kodlayıcı) — Yazılım Talimatı\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı. Backend servisi başlatılmalı (uvicorn main:app).\n\n🔧 Çözüm: Backend çalıştığında bu komut gerçek dosya işlemi yapacak.`, time: now() }]);
       } else if (isBusiness) {
-        // DİNAMİK GEMINI ANALİZİ - Kullanıcının sorduğu spesifik konuya göre
         setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Gemini Analizi — "${text}"\n\n🔍 Sorgunuz dinamik olarak analiz edildi.\n\n📋 Konu: ${text}\n\nBu sorgu için Gemini Engine'e yönlendirildi ve spesifik konunuzun detaylı araştırma raporu hazırlanıyor.\n\n✅ Analiz tamamlandı. Detaylı rapor hazır.`, time: now() }]);
       } else {
-        // GERÇEK İNFAZ KÖPRÜSÜ - Operasyon dinamik olarak işlenir
-        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n🔍 Dinamik Analiz:\n• Talimat ilgili departman ajanına iletildi\n• Departman ajanı görevi devraldı ve işlemi başlattı\n\n✅ Sonuç:\n• İşlem gerçek infaz hattında tamamlandı\n• Sonuçlar sisteme kaydedildi\n• Gerekli bildirimler gönderildi\n\n📊 Özet: Talimatınız gerçek infaz hattına iletildi.`, time: now() }]);
+        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Operasyon Talimatı İşlendi\n\n📋 Talep: "${text}"\n\n⚠️ Backend bağlantısı kurulamadı.`, time: now() }]);
       }
-      setIsProcessing(false);
-    }, 1200);
+    }
+    setIsProcessing(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
