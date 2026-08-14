@@ -25,18 +25,27 @@ interface ModelOption {
 }
 
 const AGENT_NODES: AgentNode[] = [
-  { id: 'A-01', name: 'Auto-Marketing', role: 'Reklam & Kampanya', status: 'active', connections: 12 },
-  { id: 'A-02', name: 'Finans', role: 'Tahsilat & Bütçe', status: 'active', connections: 10 },
-  { id: 'A-03', name: 'Tesis Bakım', role: 'Arıza & Bakım', status: 'active', connections: 8 },
-  { id: 'A-04', name: 'Daze Chef', role: 'Mutfak & Menü', status: 'active', connections: 6 },
-  { id: 'A-05', name: 'Daze Crew', role: 'Personel & Vardiya', status: 'active', connections: 9 },
-  { id: 'A-06', name: 'LegalRisk', role: 'Hukuk & KVKK', status: 'active', connections: 5 },
-  { id: 'A-07', name: 'GuestExperience', role: 'Müşteri Memnuniyeti', status: 'active', connections: 11 },
-  { id: 'A-08', name: 'EnergySustainability', role: 'Yeşil Enerji', status: 'active', connections: 7 },
-  { id: 'A-09', name: 'VendorPerformance', role: 'Kiracı Performans', status: 'active', connections: 6 },
-  { id: 'A-10', name: 'SecurityIncident', role: 'Güvenlik & Olay', status: 'active', connections: 8 },
-  { id: 'A-11', name: 'HRPayroll', role: 'Bordro & Özlük', status: 'active', connections: 5 },
-  { id: 'A-12', name: 'FacilityMaintenance', role: 'Tesis Yönetimi', status: 'active', connections: 7 },
+  { id: 'A-01', name: 'Auto-Marketing', role: 'Pazarlama, Reklam & Sosyal Medya', status: 'active', connections: 12 },
+  { id: 'A-02', name: 'B2B Sales & Growth', role: 'SaaS Paket Satışları & Lead Takibi', status: 'active', connections: 10 },
+  { id: 'A-03', name: 'Finans & Muhasebe', role: 'KDV, Bütçe, Tahsilat & Nakit Akışı', status: 'active', connections: 15 },
+  { id: 'A-04', name: 'Konaklama & Rezervasyon', role: 'Otel, Karavan, Çadır & Kort Slotları', status: 'active', connections: 14 },
+  { id: 'A-05', name: 'Tesis & Saha Bakım', role: 'Arıza, Onarım, Hijyen & Tesis Bakımı', status: 'active', connections: 15 },
+  { id: 'A-06', name: 'Daze Chef', role: 'Mutfak, Reçete Mühendisliği, Menü & 120sn Sayaç', status: 'active', connections: 8 },
+  { id: 'A-07', name: 'Stok & Depo Lojistiği', role: 'Hammadde, Otomatik Satınalma & Raf Yönetimi', status: 'active', connections: 9 },
+  { id: 'A-08', name: 'Daze Crew', role: 'Personel Vardiya, Performans Puanı & Saatlik Bordro', status: 'active', connections: 14 },
+  { id: 'A-09', name: 'LegalRisk', role: 'Hukuk, KVKK, İptal/İade & Yasal Risk Kalkanı', status: 'active', connections: 6 },
+  { id: 'A-10', name: 'Centilmen Kriz & Deneyim', role: '1-5 Yıldız Yorumlar & Daze-Gift Masada İkram', status: 'active', connections: 12 },
+  { id: 'A-11', name: 'IT & Creative Tech', role: 'Yazılım Geliştirme, Post, Video, Animasyon & Kodlama', status: 'active', connections: 16 },
+  { id: 'A-12', name: 'Enerji & Sürdürülebilirlik', role: 'Yeşil Enerji, Güneş Panelleri & IoT Tasarruf', status: 'active', connections: 8 },
+  { id: 'A-13', name: 'Tedarikçi & Kiracı Performans', role: 'Toptancı & Kiracı Sözleşme Değerlendirme', status: 'active', connections: 7 },
+  { id: 'A-14', name: 'Güvenlik & Acil Olay', role: 'Parkur Güvenliği, Kaza Önleme & IoT Alarmları', status: 'active', connections: 10 },
+  { id: 'A-15', name: 'Borsa & Dinamik Fiyatlama', role: 'Dinamik Fiyatlandırma, Talep Dengesi & Happy Hour', status: 'active', connections: 11 },
+  { id: 'A-16', name: 'Topluluk & Ekstrem Spor', role: 'Padel, Tırmanış, Konser & Turnuva Biletleme', status: 'active', connections: 9 },
+  { id: 'A-17', name: 'Upcycling & Spor Fonu', role: '2. El Ekipman Havuzu & Sporcu Burs Fonu', status: 'active', connections: 8 },
+  { id: 'A-18', name: 'Daze Vision Yaşam Koçu', role: 'Müşteri Beslenme, Kıyafet & Aktivite Önerileri', status: 'active', connections: 7 },
+  { id: 'A-19', name: 'Daze-Reminder & Termal', role: 'WhatsApp Bildirimi & 2dk Termal Dolap Koruması', status: 'active', connections: 9 },
+  { id: 'A-20', name: 'Franchise & Şube Büyüme', role: 'Şube Başvurusu, Royalti & Yatırımcı Analizi', status: 'active', connections: 8 },
+  { id: 'A-21', name: 'Sports Vision & Kondisyon', role: 'Kamera Biyomekanik Analiz, Antrenör Denetimi & Taktik', status: 'active', connections: 13 },
 ];
 
 const MODELS: ModelOption[] = [
@@ -49,7 +58,7 @@ const MODELS: ModelOption[] = [
 export default function AgentMeshIntegration() {
   const [activeModel, setActiveModel] = useState('gemini');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-  const [meshStatus, setMeshStatus] = useState('147 Ajan Bağlı');
+  const [meshStatus, setMeshStatus] = useState('21 Departman Ajanı Aktif • 221 Event-Bus Bağlantısı');
 
   const totalConnections = AGENT_NODES.reduce((sum, a) => sum + a.connections, 0);
 
@@ -62,7 +71,7 @@ export default function AgentMeshIntegration() {
             <Network size={20} color="#00f2fe" />
             147 Multi-Agent Mesh
           </h2>
-          <p style={{ fontSize: '12px', color: '#94a3b8' }}>12 Departmanlı Ajan Ağı • Event-Bus Bağlantılı</p>
+          <p style={{ fontSize: '12px', color: '#94a3b8' }}>21 Departmanlı Ajan Ağı • Event-Bus Bağlantılı</p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <span style={{ padding: '6px 12px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', borderRadius: '10px', fontSize: '11px', fontWeight: 'bold' }}>
@@ -132,7 +141,7 @@ export default function AgentMeshIntegration() {
       {/* 12 Departmanlı Ajan Ağı */}
       <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '16px' }}>
         <div style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <GitBranch size={16} color="#34d399" /> 12 Departmanlı Ajan Ağı (147 Agent Mesh)
+          <GitBranch size={16} color="#34d399" /> 21 Departmanlı Ajan Ağı (147 Agent Mesh)
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '8px' }}>
           {AGENT_NODES.map((agent) => (
