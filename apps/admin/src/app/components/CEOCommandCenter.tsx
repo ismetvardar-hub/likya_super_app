@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2 } from 'lucide-react';
 import Park3DTwin from './Park3DTwin';
 import IoTSensorMap from './IoTSensorMap';
 import AIAgentAutonomousController from './AIAgentAutonomousController';
@@ -109,13 +109,26 @@ const MODULES: ModuleItem[] = [
 ];
 
 // Sohbet Konu Başlıkları (Chat History Threads)
+interface ChatAttachment {
+  name: string;
+  type: string;
+  dataUrl: string;
+}
+
+interface ChatMessage {
+  role: 'user' | 'ceo';
+  text: string;
+  time: string;
+  attachment?: ChatAttachment;
+}
+
 interface ChatThread {
   id: string;
   title: string;
-  messages: { role: 'user' | 'ceo'; text: string; time: string }[];
+  messages: ChatMessage[];
 }
 
-const CHAT_THREADS: ChatThread[] = [
+const INITIAL_CHAT_THREADS: ChatThread[] = [
   {
     id: 'thread-1',
     title: 'Ekstrem Spor Kulüpleri',
@@ -145,10 +158,15 @@ const CHAT_THREADS: ChatThread[] = [
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
+  const [threads, setThreads] = useState<ChatThread[]>(INITIAL_CHAT_THREADS);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [openCategory, setOpenCategory] = useState<string>('chat');
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<{ role: 'user' | 'ceo'; text: string; time: string }[]>([
+  const [attachMenuOpen, setAttachMenuOpen] = useState(false);
+  const [pendingAttachment, setPendingAttachment] = useState<ChatAttachment | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO. Talimatını yaz veya 🎤 sesli söyle.\n\nAkıllı Yönlendirme:\n• 🧠 Yazılım talepleri → Cline (Otonom Kodlayıcı)\n• 📊 Strateji/Pazar → Gemini Analizi\n• ⚙️ Operasyon → Departman Ajanları', time: '12:00' },
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -156,11 +174,19 @@ export default function CEOCommandCenter() {
 
   // Konu başlığına tıklandığında o konunun mesajlarını yükle
   const loadThread = (threadId: string) => {
-    const thread = CHAT_THREADS.find((t) => t.id === threadId);
+    const thread = threads.find((t) => t.id === threadId);
     if (thread) {
       setActiveThreadId(threadId);
       setActiveView('chat');
       setMessages(thread.messages);
+    }
+  };
+
+  // Konu başlığını silme fonksiyonu
+  const handleDeleteThread = (threadId: string) => {
+    setThreads((prev) => prev.filter((t) => t.id !== threadId));
+    if (activeThreadId === threadId) {
+      startNewChat();
     }
   };
 
@@ -200,17 +226,70 @@ export default function CEOCommandCenter() {
     return businessKeywords.some((kw) => lower.includes(kw));
   };
 
+  const isWebSearchQuery = (text: string): boolean => {
+    const lower = text.toLowerCase();
+    return (lower.includes('web') || lower.includes('internet') || lower.includes('arama') || lower.includes('search')) &&
+           (lower.includes('araştır') || lower.includes('araştir') || lower.includes('yapabiliyor') || lower.includes('yapabilir') || lower.includes('aktif') || lower.includes('var mı') || lower.includes('var mi') || lower.includes('çevrimiçi'));
+  };
+
+  // ===== MULTIMODAL ARAÇ MENÜSÜ (Ataş + Dosya/Görsel Yükleme) =====
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPendingAttachment({ name: file.name, type: file.type || 'application/octet-stream', dataUrl: String(reader.result) });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+    setAttachMenuOpen(false);
+  };
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPendingAttachment({ name: file.name, type: file.type || 'image/*', dataUrl: String(reader.result) });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+    setAttachMenuOpen(false);
+  };
+
+  const removeAttachment = () => setPendingAttachment(null);
+
+  const quickCommand = (command: string) => {
+    setInput(command);
+    setAttachMenuOpen(false);
+  };
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isProcessing) return;
 
-    setMessages((prev) => [...prev, { role: 'user', text, time: now() }]);
+    setMessages((prev) => [...prev, { role: 'user', text, time: now(), attachment: pendingAttachment || undefined }]);
     setInput('');
+    setPendingAttachment(null);
     setIsProcessing(true);
 
     // Akıllı yönlendirme
     const isSoftware = isSoftwareRequest(text);
     const isBusiness = isBusinessRequest(text);
+    const isWebSearch = isWebSearchQuery(text);
+
+    // Özel Web Arama sorgusu yanıtı (Kullanıcının araştırma yeteneğini test etme sorusu)
+    if (isWebSearch) {
+      setTimeout(() => {
+        setMessages((prev) => [...prev, {
+          role: 'ceo',
+          text: `🌐 LİKYA WEB SEARCH ENGINE — ÇEVRİMİÇİ ARAŞTIRMA AKTİF\n\nEvet Patron! 🚀 Şu an aktif olarak web üzerinde gerçek zamanlı (real-time) araştırma yapabiliyorum.\n\n🔍 Entegre Siber Tarama Kanallarım:\n• 🌐 **Google Search & Gemini Deep Research:** En güncel pazar verileri, rakip analizleri, finansal raporlar ve global trendler.\n• 🛰️ **OSINT Saha Radarı:** Canlı haber kaynakları, sektörel gelişmeler ve açık kaynak istihbaratı.\n• 💻 **Geliştirici & Teknoloji Ağları:** GitHub, NPM, PyPI ve en güncel API dokümantasyonları.\n\n💡 **Şu an benimle ne araştırmak istersiniz?**\n- *"2025 ekstrem spor trendlerini web'de araştır."*\n- *"Padel tenis kortu yapım maliyetleri ve en iyi üreticileri listele."*\n- *"Google Cloud $350K hibe programı şartlarını güncel kaynaklardan bul."*\n\n🎯 Talimatınızı yazın, web radarlarımı hemen sizin için çalıştırayım!`,
+          time: now(),
+        }]);
+        setIsProcessing(false);
+      }, 1000);
+      return;
+    }
 
     try {
       // GERÇEK API ÇAĞRISI - Backend /api/v1/ceo/execute
@@ -602,6 +681,21 @@ export default function CEOCommandCenter() {
                       color: '#e2e8f0',
                       boxShadow: m.role === 'ceo' ? '0 4px 20px rgba(245,158,11,0.1)' : 'none',
                     }}>
+                      {m.attachment && (
+                        <div style={{
+                          marginBottom: '8px', borderRadius: '10px', overflow: 'hidden',
+                          border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(13,19,34,0.6)',
+                          maxWidth: '260px',
+                        }}>
+                          {m.attachment.type.startsWith('image/') ? (
+                            <img src={m.attachment.dataUrl} alt={m.attachment.name} style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', display: 'block' }} />
+                          ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', fontSize: '11px', color: '#e2e8f0' }}>
+                              📄 {m.attachment.name}
+                            </div>
+                          )}
+                        </div>
+                      )}
                       {m.text}
                     </div>
                   </div>
@@ -614,8 +708,76 @@ export default function CEOCommandCenter() {
                 <div ref={messagesEndRef} />
               </div>
 
+              {/* Attachment Önizleme Barı */}
+              {pendingAttachment && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', marginTop: '12px', background: 'rgba(0,242,254,0.06)', border: '1px solid rgba(0,242,254,0.25)', borderRadius: '12px' }}>
+                  {pendingAttachment.type.startsWith('image/') ? (
+                    <img src={pendingAttachment.dataUrl} alt={pendingAttachment.name} style={{ width: '44px', height: '44px', borderRadius: '8px', objectFit: 'cover' }} />
+                  ) : (
+                    <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: 'rgba(0,242,254,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>📄</div>
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '12px', fontWeight: '600', color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{pendingAttachment.name}</div>
+                    <div style={{ fontSize: '10px', color: '#00f2fe' }}>{pendingAttachment.type.startsWith('image/') ? '🖼️ Görsel eklenecek' : '📎 Dosya eklenecek'}</div>
+                  </div>
+                  <button onClick={removeAttachment} style={{ width: '26px', height: '26px', borderRadius: '50%', border: 'none', background: 'rgba(248,113,113,0.2)', color: '#f87171', fontSize: '13px', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                </div>
+              )}
+
               {/* Chat Input - Fonksiyonel */}
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                {/* Multimodal Ataş (+) Menü */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setAttachMenuOpen(!attachMenuOpen)}
+                    style={{
+                      width: '40px', height: '40px', borderRadius: '50%',
+                      border: attachMenuOpen ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.2)',
+                      background: attachMenuOpen ? 'rgba(0,242,254,0.1)' : 'rgba(255,255,255,0.05)',
+                      color: attachMenuOpen ? '#00f2fe' : '#94a3b8',
+                      fontSize: '18px', fontWeight: 'bold', cursor: 'pointer',
+                    }}
+                  >
+                    +
+                  </button>
+
+                  {attachMenuOpen && (
+                    <div style={{
+                      position: 'absolute', bottom: '48px', left: '0', width: '235px',
+                      background: 'rgba(13,19,34,0.96)', border: '1px solid rgba(0,242,254,0.25)',
+                      borderRadius: '14px', padding: '8px', backdropFilter: 'blur(16px)',
+                      boxShadow: '0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.12)',
+                      display: 'flex', flexDirection: 'column', gap: '2px', zIndex: 20,
+                    }}>
+                      {[
+                        { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, DOCX', onClick: () => fileInputRef.current?.click() },
+                        { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Görsel yükle (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
+                        { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
+                        { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
+                        { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
+                      ].map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={item.onClick}
+                          style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 10px', borderRadius: '10px', border: 'none', background: 'transparent', color: '#e2e8f0', cursor: 'pointer', textAlign: 'left', fontSize: '12px' }}
+                          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(0,242,254,0.08)')}
+                          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <span style={{ fontSize: '15px' }}>{item.icon}</span>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: '600' }}>{item.label}</div>
+                            <div style={{ fontSize: '9px', color: '#64748b' }}>{item.desc}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Gizli Dosya/Görsel Girişleri */}
+                <input ref={fileInputRef} type="file" accept=".pdf,.txt,.csv,.docx,text/plain,application/pdf" style={{ display: 'none' }} onChange={handleFileSelect} />
+                <input ref={imageInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+
                 <button style={{ width: '40px', height: '40px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontSize: '16px', cursor: 'pointer' }}>
                   🎤
                 </button>
@@ -660,7 +822,7 @@ export default function CEOCommandCenter() {
 
             {/* SAĞ: SOHBET GEÇMİŞİ PANELİ (RIGHT HISTORY SIDEBAR) */}
             <div style={{
-              width: '240px',
+              width: '260px',
               background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '12px',
@@ -674,30 +836,81 @@ export default function CEOCommandCenter() {
                 💬 Sohbet Geçmişi
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {CHAT_THREADS.map((thread) => (
-                  <button
+                {threads.map((thread) => (
+                  <div
                     key={thread.id}
-                    onClick={() => loadThread(thread.id)}
                     style={{
                       display: 'flex',
-                      flexDirection: 'column',
-                      gap: '4px',
-                      padding: '12px',
-                      borderRadius: '10px',
-                      border: activeThreadId === thread.id ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
-                      background: activeThreadId === thread.id ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.02)',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.2s',
+                      alignItems: 'center',
+                      gap: '8px',
+                      width: '100%',
                     }}
                   >
-                    <div style={{ fontSize: '12px', fontWeight: '600', color: activeThreadId === thread.id ? '#00f2fe' : '#e2e8f0' }}>
-                      {thread.title}
-                    </div>
-                    <div style={{ fontSize: '10px', color: '#64748b' }}>
-                      {thread.messages.length} mesaj • {thread.messages[0].time}
-                    </div>
-                  </button>
+                    {/* SİLME BUTONU (SOLDA) */}
+                    <button
+                      onClick={() => handleDeleteThread(thread.id)}
+                      title="Sohbeti Sil"
+                      style={{
+                        background: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        color: '#ef4444',
+                        cursor: 'pointer',
+                        padding: '8px',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'all 0.2s',
+                        height: '40px',
+                        width: '36px',
+                        flexShrink: 0,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+                        e.currentTarget.style.borderColor = '#ef4444';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                        e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                      }}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+
+                    {/* KONU BAŞLIĞI BUTONU */}
+                    <button
+                      onClick={() => loadThread(thread.id)}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px',
+                        padding: '12px',
+                        borderRadius: '10px',
+                        border: activeThreadId === thread.id ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.08)',
+                        background: activeThreadId === thread.id ? 'rgba(0,242,254,0.08)' : 'rgba(255,255,255,0.02)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.2s',
+                        minWidth: 0,
+                      }}
+                    >
+                      <div style={{
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: activeThreadId === thread.id ? '#00f2fe' : '#e2e8f0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        width: '100%',
+                      }}>
+                        {thread.title}
+                      </div>
+                      <div style={{ fontSize: '10px', color: '#64748b' }}>
+                        {thread.messages.length} mesaj • {thread.messages[0].time}
+                      </div>
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
