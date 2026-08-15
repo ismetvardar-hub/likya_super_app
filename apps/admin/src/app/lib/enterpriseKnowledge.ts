@@ -145,6 +145,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'Otonom Vardiya Motoru (hr/shiftDispatchEngine.ts): 1) Yoğunluk analizi — departman yoğunluğu %75+ veya rezervasyon %80+ → +2 personel, %50+/%55+ → +1, etkinlik flag +1; aciliyet KRİTİK/YÜKSEK/ORTA/DÜŞÜK. 2) Skorlama — Performans %50 + Güvenilirlik %30 + Bütçe uyumu %20 + müsaitlik bonusu 15 puan; tavan bütçenin %80 üzeri saatlik ücret cezalandırılır. 3) İki taraflı otonom davet — WhatsApp şablonu (saatlik ₺ + prim + EVET/HAYIR yönlendirmesi); KABUL → takvim + QR kartı (LKY|INV-...|ONAYLI), RET → alternatif gün/saat sorgusu → Availability Pool hafızası. 4) LikyaCrew (skill + vardiya + XP + müşteri memnuniyeti) ve HRPayrollAgent (maaş + prim + fazla mesai) ile uyumludur. STRIX güvenlik kalkanı (/api/v1/ceo/memory 20 req/dk, /api/v1/ceo/notify 10 req/dk) API rotalarına entegredir.',
   },
 
+  {
+    id: 'praison-hud-tools',
+    title: 'PraisonAI İşgücü, Sci-Fi HUD & AI Araç Matrisi',
+    icon: '🦾',
+    keywords: ['praison', 'ajan', 'orkestrasyon', 'research', 'plan', 'execute', 'sci-fi', 'hud', 'kilit', 'hud access node', 'tool registry', 'araç', 'router', 'görev', 'metin', 'kod', 'görsel', 'analiz'],
+    content:
+      'PraisonAI Çoklu Ajan Orkestrasyonu (lib/ai/praisonOrchestrator.ts): ResearchAgent (veri analizi, risk düşük/orta/yüksek) → PlanAgent (3 adımlı aksiyon planı, ACİL/NORMAL/DÜŞÜK) → ExecuteAgent (STOK→ERP, VARDİYA→HR davet, BİLDİRİM→VIP hattı, MÜZİK→DJ BPM, TESİS→Sentinel bakım) zinciri. Sci-Fi HUD Access Node (components/SciFiLockScreen.tsx): kuantum/neon grid + terminal veri akışı + PIN + güvenlik jetonu onay animasyonu, Session Lock + 5 hatalı denemede 30sn kilit (layout ta PatronLock yerine geçti). AI Araç & Model Yönlendirici (lib/ai/toolRegistry.ts): 8 görev tipi (METİN/KOD/GÖRSEL/ANALİZ/SES/VERİ/ÇEVİRİ/ÖZET) için 23 araçlık kayıt defteri; detectTaskType komuttan tipi tahmin eder, selectToolForTask anahtar yoksa yerel kural motoruna (Plan Z) düşer; örn. kod→DeepSeek V3, analiz→Speed Radar, çeviri→Gemini Translate.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

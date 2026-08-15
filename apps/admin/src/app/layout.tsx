@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import PatronLock from './components/PatronLock';
+import SciFiLockScreen from './components/SciFiLockScreen';
 import PWARegister from './components/PWARegister';
 
 export const metadata: Metadata = {
@@ -61,11 +61,11 @@ export default function RootLayout({
       </head>
       <body>
         <PWARegister />
-        <PatronLock>
+        <SciFiLockScreen>
           <div className="dashboard-container">
             {children}
           </div>
-        </PatronLock>
+        </SciFiLockScreen>
       </body>
     </html>
   );
