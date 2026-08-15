@@ -12,6 +12,59 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// ----------------------------------------------------------------------------
+// ☁️ BULUT ÇALIŞMA ZAMANI TESPİTİ — Vercel serverless'te yerel Ollama yasak
+// ----------------------------------------------------------------------------
+export function isCloudRuntime(): boolean {
+  return typeof window === 'undefined' && !!process.env.VERCEL;
+}
+
+// ----------------------------------------------------------------------------
+// ⚙️ DETERMİNİSTİK YEREL KURAL MOTORU (Plan Z)
+// Bulutta API anahtarları boşsa "fetch failed" yerine kurallı sistem yanıtı
+// döndürülür — kullanıcıya asla çıplak ağ hatası gösterilmez.
+// ----------------------------------------------------------------------------
+function deterministicFallbackResponse(prompt: string, mode: MatrixMode): string {
+  if (mode === 'code') {
+    return (
+      '// ⚠️ LİKYA KURAL MOTORU (Plan Z): Bulut ortamında kod üretimi için API anahtarı tanımlı değil.\n' +
+      '// Vercel ortamına GEMINI_API_KEY / DEEPSEEK_API_KEY ekleyin veya yerel geliştirmede çalıştırın.\n' +
+      '// Güvenlik kalkanı devrede: bu yanıt doğrulanamadığı için diske yazılmayacaktır.'
+    );
+  }
+
+  const lower = prompt.toLowerCase();
+  if (/(kvkk|rıza|muvafakat|veli onay|gizlilik)/.test(lower)) {
+    return 'Efendim, KVKK (6698) md.5/1-a açık rıza ve md.10 aydınlatma şablonlarımız hazırdır. 18 yaş altı sporcular için veli muvafakatnamesi zorunludur; satın alınmayan medya 48 saat içinde otonom imha edilir, rızası olmayan üçüncü kişilerin yüzleri otomatik bulanıklaştırılır. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(stok|reçete|erp|bordro|prim)/.test(lower)) {
+    return 'Efendim, ERP omurgamız reçete hammadde tüketimini atomik stok kontrolüyle yapar; alt sınırın altında DÜŞÜK/KRİTİK/TÜKENDİ uyarıları üretir. Daze Crew bordrosu mesai (%150), haftasonu (%200) ve vardiya primini (%22 kesinti sonrası) hesaplar. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(vardiya|işe davet|personel|müsaitlik|availability)/.test(lower)) {
+    return 'Efendim, Otonom Vardiya Motoru yoğunluk analiziyle personel ihtiyacını tespit eder; performans %50 + güvenilirlik %30 + bütçe %20 skorlamasıyla en uygun adayı WhatsApp davetiyle bulur. KABUL → QR kart, RET → müsaitlik havuzuna kayıt. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(donanım|şartname|tedarik|satın alma|veo|pixellot)/.test(lower)) {
+    return 'Efendim, Donanım Motoru endüstriyel bileşenleri (4K 180° kamera, Jetson Orin, Polar H10) doğrudan tedarik eder; kapalı kutu sistemlere (Veo/Spiideo/Pixellot) kıyasla 5 yıllık TCO hesabında ortalama %65 maliyet avantajı sunar. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(hız|radar|sprint|vuruş|km)/.test(lower)) {
+    return 'Efendim, Radar motorumuz kamera kalibrasyonuyla (kale 7.32m referans) piksel hareketini km/s hıza çevirir; 250 km/s üzeri ölçümler fiziksel olarak geçersiz işaretlenir. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(güvenlik|rate.?limit|enjeksiyon|cors|kalkan)/.test(lower)) {
+    return 'Efendim, STRIX güvenlik denetçimiz API rotalarında kayan pencere rate-limit, SQL/NoSQL/XSS enjeksiyon kalkanı ve CORS denetimi yapar; /memory 20 istek/dk, /notify 10 istek/dk ile korunur. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(üslup|klişe|centilmen|stop.?slop)/.test(lower)) {
+    return 'Efendim, Stop-Slop filtremiz 30+ yapay zeka klişesini temizler ve kaba ifadeleri gizler; yanıtlar sade ve centilmen bir dille üretilir. (Sistem yanıtı — bulut kural motoru)';
+  }
+  if (/(uptime|turnike|meteoroloji|hava|yedekleme|sentinel)/.test(lower)) {
+    return 'Efendim, Daze Sentinel turnike/IoT cihazlarını izler (uptime yüzdesi), meteorolojiye göre saha riski ve DJ tempo BPM önerir, yedekleme zamanlama + saklama politikasını yönetir. (Sistem yanıtı — bulut kural motoru)';
+  }
+  return 'Efendim, bulut ortamında canlı AI sağlayıcılarına ulaşamadım (API anahtarları tanımlı değil). Deterministik kural motoru devrede — bu yanıt Likya modüllerinden (KVKK, ERP, vardiya, donanım, radar, güvenlik, sentinel) üretilmiştir. Canlı yapay zeka için Vercel ortamına GEMINI_API_KEY / GROQ_API_KEY eklenmesi yeterlidir.';
+}
+
+function callDeterministicFallback(prompt: string, mode: MatrixMode): Promise<string> {
+  return Promise.resolve(deterministicFallbackResponse(prompt, mode));
+}
+
 export type MatrixMode = 'code' | 'research';
 
 export interface MatrixPlan {
@@ -141,6 +194,10 @@ async function callOpenAI(model: string, systemPrompt: string, prompt: string): 
 // Yerel Ollama çağrısı (bağımsız, internet gerektirmez)
 // ----------------------------------------------------------------------------
 async function callOllama(model: string, prompt: string, timeoutMs = 90000): Promise<string> {
+  // ☁️ Bulutta (Vercel serverless) localhost/Ollama yok — patlamak yerine atla
+  if (isCloudRuntime()) {
+    throw new Error('Bulut ortamında (Vercel) yerel Ollama kullanılamaz — Plan F atlandı');
+  }
   const ollamaUrl = process.env.NEXT_PUBLIC_OLLAMA_URL || 'http://localhost:11434';
   const response = await fetchWithTimeout(
     `${ollamaUrl}/api/generate`,
@@ -242,10 +299,17 @@ function buildCodePlans(): MatrixPlan[] {
       run: (p) => callOpenAICompatible('https://api.mistral.ai/v1', mistralKey, 'codestral-latest', CODE_SYSTEM_PROMPT, p),
     });
   }
-  // Son plan: Yerel Ollama — her zaman dene (bağımsız)
+  // Plan F: Yerel Ollama — YALNIZCA bulut OLMAYAN ortamda (Vercel'de localhost yok)
+  if (!isCloudRuntime()) {
+    plans.push({
+      letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
+      run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+    });
+  }
+  // Plan Z: Deterministik kural motoru — bulutta anahtar yoksa "fetch failed" yerine sistem yanıtı
   plans.push({
-    letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
-    run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+    letter: 'Z', name: 'Likya Kural Motoru', badge: '[⚙️ Plan Z: Kural Motoru]',
+    run: (p) => callDeterministicFallback(p, 'code'),
   });
   return plans;
 }
@@ -288,9 +352,17 @@ function buildResearchPlans(): MatrixPlan[] {
       run: (p) => callOpenAICompatible('https://openrouter.ai/api/v1', openrouterKey, 'meta-llama/llama-3.3-70b-instruct:free', CHAT_SYSTEM_PROMPT, p),
     });
   }
+  // Plan F: Yerel Ollama — YALNIZCA bulut OLMAYAN ortamda (Vercel'de localhost yok)
+  if (!isCloudRuntime()) {
+    plans.push({
+      letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
+      run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+    });
+  }
+  // Plan Z: Deterministik kural motoru — asla "fetch failed" dönmez
   plans.push({
-    letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
-    run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+    letter: 'Z', name: 'Likya Kural Motoru', badge: '[⚙️ Plan Z: Kural Motoru]',
+    run: (p) => callDeterministicFallback(p, 'research'),
   });
   return plans;
 }
