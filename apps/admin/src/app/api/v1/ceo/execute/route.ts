@@ -309,13 +309,38 @@ function validateGeneratedCode(filePath: string, content: string, existingConten
       return { ok: false, error: `Derleyici hatası — yazma iptal edildi: ${e instanceof Error ? e.message : String(e)}` };
     }
 
-    // --- 🔍 Kesinti (truncation) koruması ---
-    // Büyük mevcut dosya %50'den fazla küçülüyorsa LLM dosyayı kesmiş demektir.
-    if (existingContent && existingContent.length > 8000 && content.length < existingContent.length * 0.5) {
-      const pct = Math.round((content.length / existingContent.length) * 100);
+    // --- 🧩 MODÜL BÜTÜNLÜĞÜ KORUMASI (LLM parça/JSX bloğu yazarsa) ---
+    // Patron vakası: logoya düzenleme isteyince LLM, dosyanın tamamı yerine
+    // yalnızca JSX bloğu üretti. Küçük dosyalarda (>8k) kesinti guardı devreye
+    // girmiyordu; modül yapısı (import/export) kaybı bu açığı kapatır.
+    if (existingContent && existingContent.trim().length > 0) {
+      const existingHasModule = /(^|\n)\s*(import|export)\s/.test(existingContent);
+      const newHasModule = /(^|\n)\s*(import|export)\s/.test(content);
+      if (existingHasModule && !newHasModule) {
+        return {
+          ok: false,
+          error:
+            'Modül bütünlüğü bozuldu: mevcut dosyada import/export yapısı var ama yeni içerikte hiç yok — LLM dosyanın tamamı yerine yalnızca JSX bloğu üretti. Yazma iptal edildi.',
+        };
+      }
+    }
+
+    // --- 📏 KESİNTİ (truncation) KORUMASI ---
+    // a) Küçük dosya (≥300 karakter): %40'ın altına inerse parçalı yazım riski.
+    // b) Büyük dosya (>8k): %50'nin altına inerse LLM dosyayı kesmiştir.
+    const existingLen = existingContent ? existingContent.trim().length : 0;
+    if (existingContent && existingLen >= 300 && content.length < existingLen * 0.4) {
+      const pct = Math.round((content.length / existingLen) * 100);
       return {
         ok: false,
-        error: `Çıktı orijinalin %${pct}'i (${existingContent.length}→${content.length} karakter) — LLM dosyayı kesti. Yazma iptal edildi.`,
+        error: `Çıktı orijinalin %${pct}'i (${existingLen}→${content.length} karakter) — LLM dosyayı kesti ya da parçalı yazdı. Yazma iptal edildi.`,
+      };
+    }
+    if (existingContent && existingLen > 8000 && content.length < existingLen * 0.5) {
+      const pct = Math.round((content.length / existingLen) * 100);
+      return {
+        ok: false,
+        error: `Çıktı orijinalin %${pct}'i (${existingLen}→${content.length} karakter) — LLM dosyayı kesti. Yazma iptal edildi.`,
       };
     }
   }
