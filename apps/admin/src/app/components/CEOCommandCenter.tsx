@@ -186,6 +186,130 @@ const MODULES: ModuleItem[] = [
   { id: 'music', name: 'Likya Müzik & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Akustik frekans istasyonu & gamification', category: 'daze' },
 ];
 
+// ============================================================================
+// ➕ DİNAMİK MODÜL OLUŞTURUCU & SÜRÜKLE-BIRAK DÜZEN (Persistence: localStorage)
+// ============================================================================
+interface CustomModule {
+  id: string;
+  name: string;
+  icon: string;          // emoji
+  color: string;
+  description: string;
+  route: string;
+  category: string;      // domain id
+}
+
+const LS_CUSTOM_MODULES = 'likya_custom_modules_v1';
+const LS_DOMAIN_ORDER = 'likya_domain_order_v1';
+
+// Varsayılan düzen: MODULE_DOMAINS'ten üretilir
+function defaultDomainOrder(): Record<string, string[]> {
+  const order: Record<string, string[]> = {};
+  for (const dom of MODULE_DOMAINS) order[dom.id] = [...dom.moduleIds];
+  return order;
+}
+
+// localStorage'dan düzeni yükle (bozuk/eksikse varsayılana düş)
+function loadDomainOrder(): Record<string, string[]> {
+  try {
+    const raw = localStorage.getItem(LS_DOMAIN_ORDER);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Record<string, string[]>;
+      const defaults = defaultDomainOrder();
+      // Tüm varsayılan modüller korunur, yeni domain id'leri de eklenir
+      const merged: Record<string, string[]> = {};
+      for (const dom of MODULE_DOMAINS) {
+        const saved = parsed[dom.id];
+        const defIds = defaults[dom.id];
+        const present = Array.isArray(saved) ? saved.filter((id) => defIds.includes(id) || id.startsWith('custom-')) : [];
+        for (const id of defIds) if (!present.includes(id)) present.push(id);
+        merged[dom.id] = present;
+      }
+      return merged;
+    }
+  } catch {
+    // localStorage erişilemezse sessizce varsayılan
+  }
+  return defaultDomainOrder();
+}
+
+function loadCustomModules(): CustomModule[] {
+  try {
+    const raw = localStorage.getItem(LS_CUSTOM_MODULES);
+    if (raw) {
+      const parsed = JSON.parse(raw) as CustomModule[];
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch {
+    // boş dön
+  }
+  return [];
+}
+
+// ➕ Yeni Modül Oluşturma Modalı
+const EMOJI_PRESETS = ['🧩', '📊', '⚡', '🎯', '🧠', '🏆', '📈', '🔔', '🛰️', '🎪', '🧭', '💡'];
+
+function ModuleCreateModal({ onClose, onSave }: { onClose: () => void; onSave: (name: string, icon: string, category: string, description: string, route: string) => void }) {
+  const [name, setName] = useState('');
+  const [icon, setIcon] = useState('🧩');
+  const [category, setCategory] = useState(MODULE_DOMAINS[0].id);
+  const [description, setDescription] = useState('');
+  const [route, setRoute] = useState('');
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 90, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(5,10,20,0.8)', backdropFilter: 'blur(8px)', padding: '16px',
+    }} onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()} style={{
+        width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '22px',
+        background: '#0f172a', border: '1px solid rgba(0,242,254,0.3)', boxShadow: '0 30px 60px rgba(0,0,0,0.6)',
+        display: 'flex', flexDirection: 'column', gap: '14px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ fontSize: '15px', fontWeight: 800, color: '#fff' }}>➕ Yeni Modül Ekle</div>
+          <button onClick={onClose} style={{ width: '30px', height: '30px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer' }}>✕</button>
+        </div>
+
+        <label style={{ fontSize: '10px', color: '#64748b' }}>MODÜL ADI</label>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="örn. E-Spor Ligi"
+          style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0', fontSize: '13px', outline: 'none' }} />
+
+        <label style={{ fontSize: '10px', color: '#64748b' }}>İKON (emoji veya yazın)</label>
+        <input value={icon} onChange={(e) => setIcon(e.target.value)} maxLength={4}
+          style={{ width: '60px', padding: '8px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#fff', fontSize: '18px', outline: 'none', textAlign: 'center' }} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+          {EMOJI_PRESETS.map((e) => (
+            <button key={e} onClick={() => setIcon(e)} style={{ fontSize: '18px', padding: '6px 9px', borderRadius: '8px', cursor: 'pointer', border: icon === e ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.12)', background: icon === e ? 'rgba(0,242,254,0.15)' : 'rgba(255,255,255,0.04)' }}>{e}</button>
+          ))}
+        </div>
+
+        <label style={{ fontSize: '10px', color: '#64748b' }}>AİT OLDUĞU KATEGORİ</label>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}
+          style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0', fontSize: '13px', outline: 'none' }}>
+          {MODULE_DOMAINS.map((d) => (
+            <option key={d.id} value={d.id} style={{ background: '#0f172a', color: d.color }}>{d.icon} {d.name}</option>
+          ))}
+        </select>
+
+        <label style={{ fontSize: '10px', color: '#64748b' }}>AÇIKLAMA</label>
+        <input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Modülün görevi kısaca"
+          style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0', fontSize: '13px', outline: 'none' }} />
+
+        <label style={{ fontSize: '10px', color: '#64748b' }}>BAĞLANTI ROTASI (opsiyonel)</label>
+        <input value={route} onChange={(e) => setRoute(e.target.value)} placeholder="örn. /espor-ligi"
+          style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', color: '#e2e8f0', fontSize: '13px', outline: 'none', fontFamily: 'monospace' }} />
+
+        <button onClick={() => onSave(name, icon, category, description, route)}
+          style={{ padding: '12px', borderRadius: '12px', cursor: 'pointer', border: '1px solid rgba(0,242,254,0.6)', background: 'linear-gradient(135deg, rgba(0,242,254,0.25), rgba(167,139,250,0.2))', color: '#fff', fontSize: '13px', fontWeight: 800 }}>
+          ✨ Modülü Ekle
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
 // Kullanılabilir AI Modelleri (Model Seçici)
 const MODEL_OPTIONS = [
   { id: 'flash', label: 'Flash', icon: '⚡', desc: 'Hızlı yanıt' },
@@ -304,6 +428,73 @@ export default function CEOCommandCenter() {
   const [openCategory, setOpenCategory] = useState<string>('chat');
   const [filterDomain, setFilterDomain] = useState<string>('all'); // mobil modül filtresi
   const [openMobileDomain, setOpenMobileDomain] = useState<string | null>('biz'); // mobil akordiyon
+
+  // ➕ Dinamik modül & sürükle-bırak durumu
+  const [customModules, setCustomModules] = useState<CustomModule[]>(loadCustomModules);
+  const [domainOrder, setDomainOrder] = useState<Record<string, string[]>>(loadDomainOrder);
+  const [showModuleModal, setShowModuleModal] = useState(false);
+  const [dragState, setDragState] = useState<{ id: string; fromDomain: string } | null>(null);
+  const [dropHint, setDropHint] = useState<{ domain: string; index: number } | null>(null);
+
+  // 💾 Kalıcı hafıza: her değişiklik localStorage'a yazılır
+  useEffect(() => {
+    try { localStorage.setItem(LS_CUSTOM_MODULES, JSON.stringify(customModules)); } catch { /* sessiz */ }
+  }, [customModules]);
+  useEffect(() => {
+    try { localStorage.setItem(LS_DOMAIN_ORDER, JSON.stringify(domainOrder)); } catch { /* sessiz */ }
+  }, [domainOrder]);
+
+  // Bir domain'in modül listesi (varsayılan + kullanıcı düzeni + özel modüller)
+  const getDomainIds = (domId: string): string[] => domainOrder[domId] ?? MODULE_DOMAINS.find((d) => d.id === domId)?.moduleIds ?? [];
+
+  // Modül nesnesini çöz: statik MODULES veya özel modül
+  const findModule = (id: string): ModuleItem | CustomModule | undefined =>
+    MODULES.find((m) => m.id === id) ?? customModules.find((c) => c.id === id);
+
+  // ➕ Yeni modül ekle
+  const addCustomModule = (name: string, icon: string, category: string, description: string, route: string) => {
+    if (!name.trim()) return;
+    const id = `custom-${Date.now()}`;
+    const color = MODULE_DOMAINS.find((d) => d.id === category)?.color ?? '#00f2fe';
+    const mod: CustomModule = { id, name: name.trim(), icon: icon.trim() || '🧩', color, description: description.trim(), route: route.trim(), category };
+    setCustomModules((prev) => [...prev, mod]);
+    setDomainOrder((prev) => {
+      const arr = [...(prev[category] ?? MODULE_DOMAINS.find((d) => d.id === category)?.moduleIds ?? [])];
+      arr.push(id);
+      return { ...prev, [category]: arr };
+    });
+    setShowModuleModal(false);
+  };
+
+  // 🖱️ Sürükle-bırak: hedef domain'e bırak
+  const handleDrop = (targetDomain: string, targetIndex: number) => {
+    if (!dragState) return;
+    const { id, fromDomain } = dragState;
+    const fromArr = [...getDomainIds(fromDomain)];
+    const fromIdx = fromArr.indexOf(id);
+    if (fromIdx < 0) { setDragState(null); setDropHint(null); return; }
+    fromArr.splice(fromIdx, 1);
+    const toArr = [...getDomainIds(targetDomain)];
+    if (fromDomain === targetDomain) {
+      let idx = Math.min(Math.max(targetIndex, 0), toArr.length);
+      if (fromIdx < targetIndex) idx -= 1;
+      toArr.splice(Math.min(Math.max(idx, 0), toArr.length), 0, id);
+    } else {
+      toArr.splice(Math.min(Math.max(targetIndex, 0), toArr.length), 0, id);
+    }
+    setDomainOrder((prev) => ({ ...prev, [fromDomain]: fromArr, [targetDomain]: toArr }));
+    setDragState(null);
+    setDropHint(null);
+  };
+
+  // 🔄 Varsayılan düzene sıfırla (özel modüller de temizlenir)
+  const resetLayout = () => {
+    setDomainOrder(defaultDomainOrder());
+    setCustomModules([]);
+    setDragState(null);
+    setDropHint(null);
+  };
+
   const [input, setInput] = useState('');
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [pendingAttachment, setPendingAttachment] = useState<ChatAttachment | null>(null);
@@ -729,33 +920,42 @@ export default function CEOCommandCenter() {
           </div>
         )}
 
-        {/* Module List - 4 Alan Kategorili Akordiyon */}
+        {/* Module List - Dinamik Akordiyon (Sürükle-Bırak + Özel Modül) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', flex: 1 }}>
+          {/* ➕ Yeni Modül & Sıfırla */}
+          <div style={{ display: 'flex', gap: '6px', padding: '0 2px 2px' }}>
+            <button onClick={() => setShowModuleModal(true)}
+              style={{ flex: 1, padding: '8px 10px', borderRadius: '10px', cursor: 'pointer', border: '1px dashed rgba(0,242,254,0.5)', background: 'rgba(0,242,254,0.08)', color: '#00f2fe', fontSize: '10px', fontWeight: 700 }}>
+              ➕ Yeni Modül
+            </button>
+            <button onClick={resetLayout} title="Varsayılan düzene sıfırla"
+              style={{ padding: '8px 10px', borderRadius: '10px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.04)', color: '#94a3b8', fontSize: '10px', fontWeight: 600 }}>
+              🔄
+            </button>
+          </div>
+
           {MODULE_DOMAINS.map((dom) => {
-            const catModules = MODULES.filter((m) => dom.moduleIds.includes(m.id));
+            const domIds = getDomainIds(dom.id);
+            const catModules = domIds.map((id) => findModule(id)).filter((m): m is ModuleItem | CustomModule => !!m);
             const isOpen = openCategory === dom.id;
             const hasActive = catModules.some((m) => m.id === activeView);
+            const isDropTarget = !!dragState && dragState.fromDomain !== dom.id;
             return (
               <div key={dom.id} style={{ marginBottom: '4px' }}>
-                {/* Kategori Başlığı (Accordion Header) */}
+                {/* Kategori Başlığı (Accordion Header + cross-category bırakma alanı) */}
                 <button
                   onClick={() => setOpenCategory(isOpen ? '' : dom.id)}
+                  onDragOver={(e) => { if (isDropTarget) { e.preventDefault(); setDropHint({ domain: dom.id, index: catModules.length }); } }}
+                  onDrop={(e) => { if (isDropTarget) { e.preventDefault(); handleDrop(dom.id, catModules.length); } }}
+                  onDragLeave={() => { if (isDropTarget) setDropHint(null); }}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    width: '100%',
-                    padding: '8px 10px',
-                    borderRadius: '10px',
-                    border: 'none',
-                    background: hasActive ? `${dom.color}15` : 'rgba(255,255,255,0.03)',
-                    color: hasActive ? dom.color : '#94a3b8',
-                    cursor: 'pointer',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    whiteSpace: 'nowrap',
+                    display: 'flex', alignItems: 'center', gap: '8px', width: '100%', padding: '8px 10px',
+                    borderRadius: '10px', cursor: 'pointer', fontSize: '11px', fontWeight: '700',
+                    textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap',
+                    border: dropHint?.domain === dom.id ? `1px dashed ${dom.color}` : 'none',
+                    background: hasActive ? `${dom.color}15` : isDropTarget ? `${dom.color}0d` : 'rgba(255,255,255,0.03)',
+                    color: hasActive ? dom.color : isDropTarget ? dom.color : '#94a3b8',
+                    boxShadow: dropHint?.domain === dom.id ? `0 0 12px ${dom.color}40` : 'none',
                   }}
                 >
                   <span>{dom.icon}</span>
@@ -764,34 +964,36 @@ export default function CEOCommandCenter() {
                   <span style={{ fontSize: '10px', color: '#64748b' }}>{isOpen ? '▾' : '▸'}</span>
                 </button>
 
-                {/* Kategori İçeriği (Accordion Body) */}
+                {/* Kategori İçeriği (Accordion Body — sürükle-bırak sıralama) */}
                 {isOpen && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px', paddingLeft: '8px' }}>
-                    {catModules.map((mod) => (
+                    {catModules.map((mod, idx) => (
                       <button
                         key={mod.id}
+                        draggable
+                        onDragStart={(e) => { e.dataTransfer.setData('text/plain', mod.id); setDragState({ id: mod.id, fromDomain: dom.id }); }}
+                        onDragEnd={() => { setDragState(null); setDropHint(null); }}
+                        onDragOver={(e) => { if (dragState) { e.preventDefault(); setDropHint({ domain: dom.id, index: idx }); } }}
+                        onDragLeave={() => { if (dragState) setDropHint(null); }}
+                        onDrop={(e) => { if (dragState) { e.preventDefault(); handleDrop(dom.id, idx); } }}
                         onClick={() => setActiveView(mod.id)}
                         title={mod.name}
                         style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '10px',
-                          padding: '8px 10px',
-                          borderRadius: '8px',
-                          border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid transparent',
+                          display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '8px',
+                          cursor: 'grab',
+                          borderTop: dropHint?.domain === dom.id && dropHint.index === idx ? `2px solid ${dom.color}` : '2px solid transparent',
                           borderLeft: activeView === mod.id ? `3px solid ${mod.color}` : '3px solid transparent',
-                          background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.02)',
+                          background: activeView === mod.id ? `${mod.color}15` : dragState?.id === mod.id ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
                           color: activeView === mod.id ? mod.color : '#94a3b8',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: activeView === mod.id ? '600' : '400',
-                          whiteSpace: 'nowrap',
-                          transition: 'all 0.2s',
+                          fontSize: '12px', fontWeight: activeView === mod.id ? '600' : '400', whiteSpace: 'nowrap',
+                          transition: 'all 0.15s', opacity: dragState?.id === mod.id ? 0.45 : 1,
                           boxShadow: activeView === mod.id ? `0 0 12px ${mod.color}30` : 'none',
                         }}
                       >
                         <span style={{ color: mod.color }}>{mod.icon}</span>
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{mod.name}</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', flex: 1 }}>{mod.name}</span>
+                        {'category' in mod && (mod as CustomModule).route && <span style={{ fontSize: '8px', color: '#64748b' }}>🧩</span>}
+                        <span style={{ fontSize: '8px', color: '#475569' }}>⋮⋮</span>
                       </button>
                     ))}
                   </div>
@@ -846,14 +1048,14 @@ export default function CEOCommandCenter() {
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(0,242,254,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
-                {MODULES.find((m) => m.id === activeView)?.icon || '📦'}
+                {findModule(activeView)?.icon || '📦'}
               </div>
               <div>
                 <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>
-                  {MODULES.find((m) => m.id === activeView)?.name || 'Modül'}
+                  {findModule(activeView)?.name || 'Modül'}
                 </div>
                 <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                  {MODULES.find((m) => m.id === activeView)?.description || ''}
+                  {findModule(activeView)?.description || ''}
                 </div>
               </div>
               <button
@@ -881,6 +1083,23 @@ export default function CEOCommandCenter() {
               {activeView === 'tent' && <SmartTentStore />}
               {activeView === 'market' && <LikyaMarketplace />}
               {activeView === 'room' && <RoomOnlyConcept />}
+              {(() => {
+                const cm = customModules.find((c) => c.id === activeView);
+                return cm ? (
+                  <div style={{ padding: '24px', borderRadius: '16px', background: 'rgba(255,255,255,0.02)', border: `1px solid ${cm.color}33`, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span style={{ fontSize: '34px' }}>{cm.icon}</span>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: 800, color: cm.color }}>{cm.name} 🧩</div>
+                        <div style={{ fontSize: '11px', color: '#94a3b8' }}>{cm.description}</div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize: '10px', color: '#64748b', fontFamily: 'monospace', padding: '12px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      📁 Hedef Rota: <b style={{ color: '#00f2fe' }}>{cm.route || '/'}</b> — bu modül için bağımsız bir panel henüz üretilmedi; Cline talimatıyla inşa edilebilir.
+                    </div>
+                  </div>
+                ) : null;
+              })()}
               {activeView === 'athlete' && <AthletePerformanceAI />}
               {activeView === 'sportvision' && <SportVisionDashboard />}
               {activeView === 'sportvisionx' && <SportVisionX />}
@@ -1677,13 +1896,18 @@ export default function CEOCommandCenter() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
               <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>📊 Modüller</div>
-              <button onClick={() => setMobileMenuOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer', fontSize: '14px' }}>✕</button>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button onClick={() => setShowModuleModal(true)} style={{ padding: '7px 12px', borderRadius: '18px', cursor: 'pointer', border: '1px dashed rgba(0,242,254,0.5)', background: 'rgba(0,242,254,0.1)', color: '#00f2fe', fontSize: '10px', fontWeight: 700 }}>
+                  ➕ Yeni Modül
+                </button>
+                <button onClick={() => setMobileMenuOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer', fontSize: '14px' }}>✕</button>
+              </div>
             </div>
-            {/* Kategori Filtre Butonları (Tümü / 4 Alan) */}
+            {/* Kategori Filtre Butonları (Tümü / 5 Alan) */}
             <div style={{ display: 'flex', gap: '8px', padding: '12px 16px', overflowX: 'auto', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
               {[
-                { id: 'all', name: 'Tümü', icon: '🗂️', color: '#e2e8f0', count: MODULES.length },
-                ...MODULE_DOMAINS.map((d) => ({ id: d.id, name: d.chipLabel || d.name, icon: d.icon, color: d.color, count: d.moduleIds.length })),
+                { id: 'all', name: 'Tümü', icon: '🗂️', color: '#e2e8f0', count: MODULES.length + customModules.length },
+                ...MODULE_DOMAINS.map((d) => ({ id: d.id, name: d.chipLabel || d.name, icon: d.icon, color: d.color, count: getDomainIds(d.id).length })),
               ].map((d) => {
                 const active = filterDomain === d.id;
                 return (
@@ -1703,20 +1927,24 @@ export default function CEOCommandCenter() {
               })}
             </div>
 
-            {/* 4 Alan Kategorili Akordiyon */}
+            {/* 5 Alan Kategorili Akordiyon (sürükle-bırak) */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(env(safe-area-inset-bottom) + 16px)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {MODULE_DOMAINS.filter((d) => filterDomain === 'all' || filterDomain === d.id).map((dom) => {
-                const domModules = MODULES.filter((m) => dom.moduleIds.includes(m.id));
+                const domModules = getDomainIds(dom.id).map((id) => findModule(id)).filter((m): m is ModuleItem | CustomModule => !!m);
                 const isOpen = openMobileDomain === dom.id;
+                const isDropTarget = !!dragState && dragState.fromDomain !== dom.id;
                 return (
                   <div key={dom.id}>
-                    {/* Alan Başlığı — renkli rozet + ikon */}
                     <button
                       onClick={() => setOpenMobileDomain(isOpen ? null : dom.id)}
+                      onDragOver={(e) => { if (isDropTarget) { e.preventDefault(); setDropHint({ domain: dom.id, index: domModules.length }); } }}
+                      onDrop={(e) => { if (isDropTarget) { e.preventDefault(); handleDrop(dom.id, domModules.length); } }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: '10px', width: '100%',
                         padding: '12px 14px', borderRadius: '14px', cursor: 'pointer',
-                        border: `1px solid ${dom.color}33`, background: `${dom.color}0d`,
+                        border: dropHint?.domain === dom.id ? `1px dashed ${dom.color}` : `1px solid ${dom.color}33`,
+                        background: `${dom.color}0d`,
+                        boxShadow: dropHint?.domain === dom.id ? `0 0 14px ${dom.color}40` : 'none',
                       }}
                     >
                       <span style={{ width: '34px', height: '34px', borderRadius: '10px', background: `${dom.color}1f`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>{dom.icon}</span>
@@ -1725,24 +1953,30 @@ export default function CEOCommandCenter() {
                       <span style={{ color: dom.color, fontSize: '12px' }}>{isOpen ? '▾' : '▸'}</span>
                     </button>
 
-                    {/* Alan içi modül kartları */}
                     {isOpen && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px', paddingLeft: '6px' }}>
-                        {domModules.map((mod) => (
+                        {domModules.map((mod, idx) => (
                           <button
                             key={mod.id}
+                            draggable
+                            onDragStart={(e) => { e.dataTransfer.setData('text/plain', mod.id); setDragState({ id: mod.id, fromDomain: dom.id }); }}
+                            onDragEnd={() => { setDragState(null); setDropHint(null); }}
+                            onDragOver={(e) => { if (dragState) { e.preventDefault(); setDropHint({ domain: dom.id, index: idx }); } }}
+                            onDrop={(e) => { if (dragState) { e.preventDefault(); handleDrop(dom.id, idx); } }}
                             onClick={() => { setActiveView(mod.id); setMobileMenuOpen(false); }}
                             style={{
                               display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 14px',
-                              borderRadius: '12px', cursor: 'pointer', textAlign: 'left',
-                              background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
+                              borderRadius: '12px', cursor: 'grab', textAlign: 'left',
+                              borderTop: dropHint?.domain === dom.id && dropHint.index === idx ? `2px solid ${dom.color}` : '2px solid transparent',
+                              background: activeView === mod.id ? `${mod.color}15` : dragState?.id === mod.id ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.03)',
                               border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid rgba(255,255,255,0.06)',
-                              color: activeView === mod.id ? mod.color : '#e2e8f0',
+                              color: activeView === mod.id ? mod.color : '#e2e8f0', opacity: dragState?.id === mod.id ? 0.5 : 1,
                             }}
                           >
                             <span style={{ color: mod.color, display: 'flex' }}>{mod.icon}</span>
                             <span style={{ fontSize: '13px', fontWeight: '600', flex: 1 }}>{mod.name}</span>
-                            <span style={{ fontSize: '10px', color: '#64748b', maxWidth: '40%', textAlign: 'right' }}>{mod.description}</span>
+                            {'category' in mod && (mod as CustomModule).route && <span style={{ fontSize: '9px', color: '#64748b' }}>🧩</span>}
+                            <span style={{ fontSize: '10px', color: '#64748b', maxWidth: '35%', textAlign: 'right' }}>{mod.description}</span>
                           </button>
                         ))}
                       </div>
@@ -1788,6 +2022,15 @@ export default function CEOCommandCenter() {
             ))}
           </div>
         )}
+
+        {/* ➕ Yeni Modül Oluşturma Modalı */}
+        {showModuleModal && (
+          <ModuleCreateModal
+            onClose={() => setShowModuleModal(false)}
+            onSave={(name, icon, category, description, route) => addCustomModule(name, icon, category, description, route)}
+          />
+        )}
+
       </div>
     </div>
   );
