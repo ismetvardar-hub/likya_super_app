@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2, Ghost, Ruler, ShoppingBag, Package } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2, Ghost, Ruler, ShoppingBag, Package, UserPlus } from 'lucide-react';
 import Park3DTwin from './Park3DTwin';
 import IoTSensorMap from './IoTSensorMap';
 import AIAgentAutonomousController from './AIAgentAutonomousController';
@@ -26,6 +26,7 @@ import ToolsAndAgentsDashboard from './ToolsAndAgentsDashboard';
 import DazeSmartCampus from './DazeSmartCampus';
 import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
+import HRDispatchDashboard from './HRDispatchDashboard';
 import StrategicRiskShield from './StrategicRiskShield';
 import SmartDestinationEngine from './SmartDestinationEngine';
 import SupplierManagement from './SupplierManagement';
@@ -96,6 +97,7 @@ const MODULES: ModuleItem[] = [
   { id: 'smartcampus', name: 'Akıllı Tesis Operasyonları', icon: <Building2 size={16} />, color: '#34d399', description: 'Enerji, lig, güvenlik, bakım, concierge', category: 'infra' },
   { id: 'mediacom', name: 'Medya Kasası & KVKK', icon: <ShoppingBag size={16} />, color: '#f472b6', description: 'Klip satışı, Daze-Gift, hukuk uyumu', category: 'growth' },
   { id: 'procurement', name: 'Donanım & Satın Alma', icon: <Package size={16} />, color: '#00f2fe', description: 'Şartname, tedarikçi, ihale, beyanname', category: 'infra' },
+  { id: 'hrdispatch', name: 'Otonom Vardiya & İK', icon: <UserPlus size={16} />, color: '#4ade80', description: 'İşe davet, yoğunluk radarı, skorlama', category: 'ops' },
   { id: 'caravan', name: 'Konaklama & Karavan', icon: <Car size={16} />, color: '#34d399', description: 'Otel, karavan & kort slotları', category: 'sports' },
   { id: 'tent', name: 'Çadır Mağaza', icon: <Tent size={16} />, color: '#fbbf24', description: 'Deneyimle-satın al', category: 'sports' },
   { id: 'market', name: 'Pazaryeri', icon: <Store size={16} />, color: '#f87171', description: 'Phygital showroom', category: 'sports' },
@@ -831,6 +833,7 @@ export default function CEOCommandCenter() {
               {activeView === 'smartcampus' && <DazeSmartCampus />}
               {activeView === 'mediacom' && <SportMediaCommerceDashboard />}
               {activeView === 'procurement' && <ProcurementDashboard />}
+              {activeView === 'hrdispatch' && <HRDispatchDashboard />}
               {activeView === 'risk' && <StrategicRiskShield />}
               {activeView === 'engine' && <SmartDestinationEngine />}
               {activeView === 'supplier' && <SupplierManagement />}

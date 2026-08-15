@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendVipAlert } from '../../../../lib/notifications';
+import { createRateLimiter, injectionShield } from '../../../../lib/securityAudit';
+
+// 🛡️ STRIX kalkanı: rate-limit + injection denetimi (Bölüm 2 / Modül 5)
+const limiter = createRateLimiter();
 
 // ============================================================================
 // 📲 LİKYA VIP BİLDİRİM API'si — Telegram / Discord webhook tetikleyicisi
@@ -8,6 +12,16 @@ import { sendVipAlert } from '../../../../lib/notifications';
 
 export async function POST(request: NextRequest) {
   try {
+    // 🛡️ STRIX: rate-limit (IP başına 10 istek/dakika) + injection kalkanı
+    const clientKey = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'bilinmeyen';
+    const rate = limiter.check(`notify:${clientKey}`, 10, 60000);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { success: false, error: `Çok fazla istek — ${rate.retryAfterSec} sn sonra tekrar deneyin`, rate },
+        { status: 429 }
+      );
+    }
+
     let body: { message?: string; channels?: ('telegram' | 'discord')[] };
     try {
       body = await request.json();
@@ -18,6 +32,14 @@ export async function POST(request: NextRequest) {
     const message = String(body.message || '').trim();
     if (!message) {
       return NextResponse.json({ success: false, error: 'Mesaj boş olamaz' }, { status: 400 });
+    }
+
+    const injection = injectionShield(message);
+    if (!injection.safe) {
+      return NextResponse.json(
+        { success: false, error: `Enjeksiyon girişimi engellendi: ${injection.flagged.join(', ')}`, shield: true },
+        { status: 400 }
+      );
     }
 
     const defaultChannels: ('telegram' | 'discord')[] = ['telegram', 'discord'];

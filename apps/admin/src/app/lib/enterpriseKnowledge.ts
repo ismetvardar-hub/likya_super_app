@@ -136,6 +136,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'Master Ekosistem İnovasyon Paketi 8 deterministik modül sunar: 1) speedRadar.ts — piksel/frame hareketinden km/s vuruş ve sprint hızı (kale 7.32m kalibrasyonu, fizik sınırı 250 km/s üzeri otomatik geçersiz). 2) erpEngine.ts — reçete hammadde tüketimi (atomik stok kontrolü), canlı stok uyarıları (DÜŞÜK/KRİTİK/TÜKENDİ), Daze Crew bordro (saatlik+mesai %150+haftasonu %200+vardiya 150 TL, %22 kesinti) ve %5 komisyon şeması. 3) promptOrchestrator.ts — 3 katmanlı bağlam: Memory %35 + Live %30 + RAG %25 + direktif %10, token bütçesi kesintisiz kırpma, RAG Bilgi Vaultu (enterpriseKnowledge) entegre. 4) eventBus.ts — non-blocking asenkron kuyruk: maç bitişi → Chef içecek emri + Veli WhatsApp raporu + arka plan log, FIFO + once desteği. 5) securityAudit.ts — kayan pencere rate-limit, SQL/NoSQL/LDAP/XSS/komut enjeksiyon kalkanı, CORS wildcard denetimi, birleşik auditRequest. 6) stopSlopFilter.ts — 30+ AI klişesi temizliği + kaba ifade sansürü (•••) + gentlemanValidator. 7) omniRouter.ts — 8 sağlayıcı ağırlıklı yük dengeleme, yuvarlak robin, başarı/başarısızlık istatistiği, fallback şelalesi (rankByReliability). 8) dazeSentinel.ts — turnike/IoT uptime monitörü (% uptime), meteoroloji risk + Daze DJ tempo köprüsü, yedekleme zamanlama + saklama politikası. Tüm modüller LLM-siz, tamamen deterministik matematiktir; tsc EXIT 0 + 23/23 fonksiyonel test geçti.',
   },
 
+  {
+    id: 'hr-dispatch',
+    title: 'Otonom İşe Davet & Dinamik Vardiya Motoru',
+    icon: '👥',
+    keywords: ['ik', 'insan kaynakları', 'vardiya', 'işe davet', 'personel', 'part-time', 'yoğunluk', 'skorlama', 'müsaitlik', 'availability', 'qr', 'bordro', 'prim'],
+    content:
+      'Otonom Vardiya Motoru (hr/shiftDispatchEngine.ts): 1) Yoğunluk analizi — departman yoğunluğu %75+ veya rezervasyon %80+ → +2 personel, %50+/%55+ → +1, etkinlik flag +1; aciliyet KRİTİK/YÜKSEK/ORTA/DÜŞÜK. 2) Skorlama — Performans %50 + Güvenilirlik %30 + Bütçe uyumu %20 + müsaitlik bonusu 15 puan; tavan bütçenin %80 üzeri saatlik ücret cezalandırılır. 3) İki taraflı otonom davet — WhatsApp şablonu (saatlik ₺ + prim + EVET/HAYIR yönlendirmesi); KABUL → takvim + QR kartı (LKY|INV-...|ONAYLI), RET → alternatif gün/saat sorgusu → Availability Pool hafızası. 4) LikyaCrew (skill + vardiya + XP + müşteri memnuniyeti) ve HRPayrollAgent (maaş + prim + fazla mesai) ile uyumludur. STRIX güvenlik kalkanı (/api/v1/ceo/memory 20 req/dk, /api/v1/ceo/notify 10 req/dk) API rotalarına entegredir.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

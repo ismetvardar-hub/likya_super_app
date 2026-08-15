@@ -7,6 +7,10 @@ import {
   getEnterpriseMemorySummary,
   type VaultDocType,
 } from '../../../../lib/db/infiniteMemory';
+import { createRateLimiter, injectionShield } from '../../../../lib/securityAudit';
+
+// 🛡️ STRIX kalkanı: rate-limit + injection denetimi (Bölüm 2 / Modül 5)
+const limiter = createRateLimiter();
 
 // ============================================================================
 // 🏛️ SONSUZ KURUMSAL HAFIZA API'si
@@ -22,11 +26,31 @@ const VALID_DOC_TYPES: VaultDocType[] = ['INVOICE', 'LEGAL', 'CUSTOMER', 'TRANSA
 
 export async function POST(request: NextRequest) {
   try {
+    // 🛡️ STRIX: rate-limit (IP başına 20 istek/dakika)
+    const clientKey = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'bilinmeyen';
+    const rate = limiter.check(`memory:${clientKey}`, 20, 60000);
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { success: false, error: `Çok fazla istek — ${rate.retryAfterSec} sn sonra tekrar deneyin`, rate },
+        { status: 429 }
+      );
+    }
+
     let body: Record<string, unknown>;
     try {
       body = await request.json();
     } catch {
       return NextResponse.json({ success: false, error: 'Geçersiz JSON gövdesi' }, { status: 400 });
+    }
+
+    // 🛡️ STRIX: injection kalkanı (tüm metin alanları)
+    const rawProbe = JSON.stringify(body);
+    const injection = injectionShield(rawProbe);
+    if (!injection.safe) {
+      return NextResponse.json(
+        { success: false, error: `Enjeksiyon girişimi engellendi: ${injection.flagged.join(', ')}`, shield: true },
+        { status: 400 }
+      );
     }
 
     const action = String(body.action || '').toLowerCase();
