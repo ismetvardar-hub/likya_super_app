@@ -127,6 +127,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
     content:
       'Likya Command CEO 7/24 kesintisiz bulut mimarisi: GitHub reposu → otomatik CI/CD → Vercel/Cloud Run üzerinde yayın (output standalone, Dockerfile hazır) → Supabase Cloud veri tabanı. Mobil: PWA (progressive web app) — manifest.json (standalone, tema #0f172a), Service Worker /sw.js (ağ öncelikli + offline önbellek), Safari/Chrome "Ana Ekrana Ekle" ile tarayıcı çubuğu olmadan tam ekran uygulama. Patron Güvenlik Kalkanı: 4 haneli PIN kilidi (varsayılan 1818, değiştirilebilir), 5 hatalı denemede 30 sn kilit, sessionStorage oturum kilidi (pencere kapanınca yeniden kilit). İkonlar deterministik PNG üreticiyle üretilir (scripts/gen-icons.cjs): neon cam göbeği→mor gradyan + şimşek. Production build: npx tsc --noEmit EXIT 0 + npm run build EXIT 0 doğrulanmıştır.',
   },
+  {
+    id: 'mega-ekosistem',
+    title: 'Master Ekosistem İnovasyon Paketi (8 Modül)',
+    icon: '🏛️',
+    keywords: ['radar', 'hız analizi', 'sprint', 'vuruş hızı', 'erp', 'reçete', 'stok', 'bordro', 'prim', 'prompt', 'orkestratör', 'memory', 'rag', 'live context', 'event bus', 'maç bitişi', 'security', 'rate limit', 'enjeksiyon', 'cors', 'stop-slop', 'üslup', 'omni', 'router', 'fallback', 'sentinel', 'uptime', 'meteoroloji', 'yedekleme'],
+    content:
+      'Master Ekosistem İnovasyon Paketi 8 deterministik modül sunar: 1) speedRadar.ts — piksel/frame hareketinden km/s vuruş ve sprint hızı (kale 7.32m kalibrasyonu, fizik sınırı 250 km/s üzeri otomatik geçersiz). 2) erpEngine.ts — reçete hammadde tüketimi (atomik stok kontrolü), canlı stok uyarıları (DÜŞÜK/KRİTİK/TÜKENDİ), Daze Crew bordro (saatlik+mesai %150+haftasonu %200+vardiya 150 TL, %22 kesinti) ve %5 komisyon şeması. 3) promptOrchestrator.ts — 3 katmanlı bağlam: Memory %35 + Live %30 + RAG %25 + direktif %10, token bütçesi kesintisiz kırpma, RAG Bilgi Vaultu (enterpriseKnowledge) entegre. 4) eventBus.ts — non-blocking asenkron kuyruk: maç bitişi → Chef içecek emri + Veli WhatsApp raporu + arka plan log, FIFO + once desteği. 5) securityAudit.ts — kayan pencere rate-limit, SQL/NoSQL/LDAP/XSS/komut enjeksiyon kalkanı, CORS wildcard denetimi, birleşik auditRequest. 6) stopSlopFilter.ts — 30+ AI klişesi temizliği + kaba ifade sansürü (•••) + gentlemanValidator. 7) omniRouter.ts — 8 sağlayıcı ağırlıklı yük dengeleme, yuvarlak robin, başarı/başarısızlık istatistiği, fallback şelalesi (rankByReliability). 8) dazeSentinel.ts — turnike/IoT uptime monitörü (% uptime), meteoroloji risk + Daze DJ tempo köprüsü, yedekleme zamanlama + saklama politikası. Tüm modüller LLM-siz, tamamen deterministik matematiktir; tsc EXIT 0 + 23/23 fonksiyonel test geçti.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
