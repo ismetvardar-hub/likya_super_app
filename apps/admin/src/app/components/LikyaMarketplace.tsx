@@ -30,12 +30,14 @@ interface Product {
   verified: boolean;
   type: 'new' | 'secondhand' | 'rental';
   delivery: 'store' | 'cargo';
+  tryBeforeBuy?: boolean;  // 🎪 Kiralayıp beğen, sonra satın al
+  purchased?: boolean;
 }
 
 const SEGMENTS: { id: Segment; label: string; icon: string; color: string; desc: string }[] = [
   { id: 'new', label: 'Sıfır Satış', icon: '🏷️', color: '#f59e0b', desc: 'Mağaza & spor ürünleri' },
   { id: 'secondhand', label: '2. El Pazarı', icon: '🔄', color: '#a78bfa', desc: 'Doğrulanmış C2C' },
-  { id: 'rental', label: 'Kiralama Havuzu', icon: '⏱️', color: '#10b981', desc: 'Çadır • ekipman • araç' },
+  { id: 'rental', label: 'Kiralama & Ekipman Kataloğu', icon: '🎪', color: '#10b981', desc: 'Try Before You Buy • çadır • ekipman • araç' },
 ];
 
 export default function LikyaMarketplace() {
@@ -66,6 +68,12 @@ export default function LikyaMarketplace() {
     { id: '13', name: 'E-Bisiklet', icon: '🚲', category: 'Araç Kiralama', brand: 'VoltBike', dailyRental: 120, salePrice: 0, commissionRate: 0, rating: 4.6, reviews: 78, rentalCount: 95, saleCount: 0, verified: true, type: 'rental', delivery: 'store' },
     { id: '14', name: 'Elektrikli Scooter', icon: '🛴', category: 'Araç Kiralama', brand: 'Glide', dailyRental: 90, salePrice: 0, commissionRate: 0, rating: 4.5, reviews: 60, rentalCount: 140, saleCount: 0, verified: true, type: 'rental', delivery: 'store' },
     { id: '15', name: 'Tırmanış Ekipman Seti', icon: '🧗', category: 'Spor Ekipmanı', brand: 'RockSafe', dailyRental: 110, salePrice: 0, commissionRate: 0, rating: 4.9, reviews: 44, rentalCount: 52, saleCount: 0, verified: true, type: 'rental', delivery: 'store' },
+
+    // 🎪 EKİPMAN KATALOĞU — Try Before You Buy (kiralayıp beğen, satın al)
+    { id: '16', name: 'Lüks Glamping Çadırı', icon: '🎪', category: 'Kamp & Outdoor', brand: 'Quechua', dailyRental: 50, salePrice: 2500, commissionRate: 10, rating: 4.9, reviews: 88, rentalCount: 64, saleCount: 7, verified: true, type: 'rental', delivery: 'store', tryBeforeBuy: true },
+    { id: '17', name: 'Şişme Yatak & Yastık', icon: '🛏️', category: 'Kamp & Outdoor', brand: 'Decathlon', dailyRental: 20, salePrice: 800, commissionRate: 10, rating: 4.7, reviews: 132, rentalCount: 210, saleCount: 25, verified: true, type: 'rental', delivery: 'store', tryBeforeBuy: true },
+    { id: '18', name: 'Mobil Kamp Kliması', icon: '🌬️', category: 'Kamp & Outdoor', brand: 'EcoFlow', dailyRental: 40, salePrice: 1800, commissionRate: 12, rating: 4.8, reviews: 55, rentalCount: 48, saleCount: 5, verified: true, type: 'rental', delivery: 'store', tryBeforeBuy: true },
+    { id: '19', name: 'Güç İstasyonu (Solar)', icon: '💡', category: 'Kamp & Outdoor', brand: 'Jackery', dailyRental: 30, salePrice: 1200, commissionRate: 12, rating: 4.6, reviews: 71, rentalCount: 92, saleCount: 11, verified: true, type: 'rental', delivery: 'store', tryBeforeBuy: true },
   ]);
 
   const categories = ['all', 'Outdoor & Spor', 'Kamp & Outdoor', 'Spor Ekipmanı', 'Araç Kiralama'];
@@ -109,6 +117,19 @@ export default function LikyaMarketplace() {
     setSecondhandRevenue((prev) => prev + commission);
     setNotifications((prev) => [
       `🛡️ ${product.name} satın alındı! Para Likya Havuz Hesabı nda blokede; alıcı onaylayınca satıcıya aktarılır. %${product.commissionRate} komisyon (${commission.toFixed(0)} ₺)`,
+      ...prev,
+    ]);
+  };
+
+  // 🎪 Try Before You Buy — kiraladı, beğendi, satın aldı (komisyon)
+  const buyTbyB = (productId: string) => {
+    const product = products.find((p) => p.id === productId);
+    if (!product || product.purchased) return;
+    const commission = product.salePrice * (product.commissionRate / 100);
+    setProducts((prev) => prev.map((p) => (p.id === productId ? { ...p, purchased: true } : p)));
+    setCommissionRevenue((prev) => prev + commission);
+    setNotifications((prev) => [
+      `🎪 ${product.name} Try Before You Buy ile satın alındı! (${product.salePrice} ₺) — kira bedeli düşüldü, %${product.commissionRate} komisyon (${commission.toFixed(0)} ₺)`,
       ...prev,
     ]);
   };
@@ -199,7 +220,14 @@ export default function LikyaMarketplace() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px' }}>
               {p.type === 'rental' ? (
-                <span style={{ color: '#10b981', fontWeight: 700 }}>⏱️ {formatTL(p.dailyRental)} ₺/gün</span>
+                <>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>⏱️ {formatTL(p.dailyRental)} ₺/gün</span>
+                  {p.tryBeforeBuy ? (
+                    <span style={{ color: '#f59e0b', fontWeight: 700, fontSize: '10px', padding: '2px 7px', borderRadius: '10px', background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.4)' }}>
+                      🎪 TBYB • {formatTL(p.salePrice)} ₺
+                    </span>
+                  ) : null}
+                </>
               ) : (
                 <>
                   <span style={{ color: '#00f2fe', fontWeight: 600 }}>{p.dailyRental > 0 ? `${formatTL(p.dailyRental)} ₺/gün` : 'Satılık'}</span>
@@ -209,9 +237,24 @@ export default function LikyaMarketplace() {
             </div>
             <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
               {p.type === 'rental' && (
-                <button onClick={() => rentProduct(p.id)} style={{ flex: 1, padding: '9px', borderRadius: '10px', cursor: 'pointer', border: '1px solid rgba(16,185,129,0.5)', background: 'rgba(16,185,129,0.12)', color: '#10b981', fontSize: '11px', fontWeight: 700 }}>
-                  ⏱️ Kirala
-                </button>
+                <>
+                  {p.purchased ? (
+                    <span style={{ flex: 1, textAlign: 'center', padding: '9px', borderRadius: '10px', background: 'rgba(74,222,128,0.14)', border: '1px solid rgba(74,222,128,0.4)', color: '#4ade80', fontSize: '11px', fontWeight: 700 }}>
+                      ✅ TBYB ile Satın Alındı
+                    </span>
+                  ) : (
+                    <>
+                      <button onClick={() => rentProduct(p.id)} style={{ flex: 1, padding: '9px', borderRadius: '10px', cursor: 'pointer', border: '1px solid rgba(16,185,129,0.5)', background: 'rgba(16,185,129,0.12)', color: '#10b981', fontSize: '11px', fontWeight: 700 }}>
+                        ⏱️ Kirala
+                      </button>
+                      {p.tryBeforeBuy && (
+                        <button onClick={() => buyTbyB(p.id)} style={{ flex: 1, padding: '9px', borderRadius: '10px', cursor: 'pointer', border: '1px solid rgba(245,158,11,0.5)', background: 'rgba(245,158,11,0.12)', color: '#f59e0b', fontSize: '11px', fontWeight: 700 }}>
+                          🎪 Beğendim, Satın Al
+                        </button>
+                      )}
+                    </>
+                  )}
+                </>
               )}
               {p.type === 'new' && (
                 <>
