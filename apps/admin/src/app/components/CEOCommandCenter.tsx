@@ -74,8 +74,7 @@ const CATEGORIES: CategoryGroup[] = [
   { id: 'infra', name: 'Altyapı, Güvenlik & IT', icon: '⚙️', color: '#60a5fa' },
 ];
 
-// 🗂️ 5 ANA ALAN KATEGORİSİ — "Modüller" sekmesi/modalı için şık gruplama
-// Her modül tek bir alana ait olacak şekilde eşlenir (42 modülün tamamı kapsanır).
+// 🗂️ 👑 6 ANA DAL — LİKYA HOLDİNG AJAN AĞACI hiyerarşisi (Modüller sekmesi/navigasyon)
 const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: string; color: string; moduleIds: string[] }[] = [
   {
     id: 'biz',
@@ -86,7 +85,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     moduleIds: [
       'campus', 'pricing', 'supplier', 'crew', 'gift', 'hrdispatch',
       'finance', 'marketing', 'legal', 'dept', 'hr', 'payment', 'risk',
-      'gcp', 'saas', 'mediacom', 'market', 'twin', 'iot', 'engine',
+      'gcp', 'saas', 'mediacom',
     ],
   },
   {
@@ -100,8 +99,26 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     ],
   },
   {
+    id: 'facility',
+    name: 'Tesis, Konaklama & Deneyim Parkı',
+    chipLabel: 'Tesis & Konaklama',
+    icon: '🏕️',
+    color: '#10b981',
+    moduleIds: [
+      'caravan', 'tent', 'room', 'twin', 'iot', 'engine',
+    ],
+  },
+  {
+    id: 'market',
+    name: 'Pazaryeri & Kiralama',
+    chipLabel: 'Pazaryeri',
+    icon: '🛒',
+    color: '#f87171',
+    moduleIds: ['market'],
+  },
+  {
     id: 'music',
-    name: 'Müzik, Sanat & Etkinlik',
+    name: 'Müzik, Sanat & Atmosfer',
     chipLabel: 'Müzik',
     icon: '🎵',
     color: '#ecc94b',
@@ -109,23 +126,13 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
   },
   {
     id: 'system',
-    name: 'Sistem, AI Ajanlar & Altyapı',
+    name: 'Çekirdek Sistem & Altyapı',
     chipLabel: 'Sistem',
     icon: '🧠',
     color: '#00f2fe',
     moduleIds: [
       'mesh', 'balance', 'toolsagents', 'smartcampus', 'procurement',
       'facility', 'security', 'stress', 'monitor', 'telemetry', 'osint', 'ai',
-    ],
-  },
-  {
-    id: 'facility',
-    name: 'Tesis, Konaklama & Deneyim Parkı',
-    chipLabel: 'Tesis & Konaklama',
-    icon: '🏕️',
-    color: '#10b981',
-    moduleIds: [
-      'caravan', 'tent', 'room',
     ],
   },
 ];
@@ -200,7 +207,7 @@ interface CustomModule {
 }
 
 const LS_CUSTOM_MODULES = 'likya_custom_modules_v1';
-const LS_DOMAIN_ORDER = 'likya_domain_order_v1';
+const LS_DOMAIN_ORDER = 'likya_domain_order_v2'; // v2: 6 dallı Holding Ajan Ağacı
 
 // Varsayılan düzen: MODULE_DOMAINS'ten üretilir
 function defaultDomainOrder(): Record<string, string[]> {
