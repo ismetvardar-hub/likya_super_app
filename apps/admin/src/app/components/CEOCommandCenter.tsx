@@ -74,6 +74,49 @@ const CATEGORIES: CategoryGroup[] = [
   { id: 'infra', name: 'Altyapı, Güvenlik & IT', icon: '⚙️', color: '#60a5fa' },
 ];
 
+// 🗂️ 4 ANA ALAN KATEGORİSİ — "Modüller" sekmesi/modalı için şık gruplama
+// Her modül tek bir alana ait olacak şekilde eşlenir (42 modülün tamamı kapsanır).
+const MODULE_DOMAINS: { id: string; name: string; icon: string; color: string; moduleIds: string[] }[] = [
+  {
+    id: 'biz',
+    name: 'İşletme, Finans & İK',
+    icon: '🏢',
+    color: '#f59e0b',
+    moduleIds: [
+      'campus', 'pricing', 'supplier', 'crew', 'gift', 'hrdispatch',
+      'finance', 'marketing', 'legal', 'dept', 'hr', 'payment', 'risk',
+      'gcp', 'saas', 'mediacom',
+    ],
+  },
+  {
+    id: 'sport',
+    name: 'Spor, Biyomekanik & Akademi',
+    icon: '🎾',
+    color: '#34d399',
+    moduleIds: [
+      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic',
+      'scouting', 'caravan', 'tent', 'market', 'room', 'twin', 'iot', 'engine',
+    ],
+  },
+  {
+    id: 'music',
+    name: 'Müzik, Sanat & Etkinlik',
+    icon: '🎵',
+    color: '#ecc94b',
+    moduleIds: ['music'],
+  },
+  {
+    id: 'system',
+    name: 'Sistem, AI Ajanlar & Altyapı',
+    icon: '🧠',
+    color: '#00f2fe',
+    moduleIds: [
+      'mesh', 'balance', 'toolsagents', 'smartcampus', 'procurement',
+      'facility', 'security', 'stress', 'monitor', 'telemetry', 'osint', 'ai',
+    ],
+  },
+];
+
 const MODULES: ModuleItem[] = [
   // 🎛️ ANA KOMUTA (Executive Core)
   { id: 'campus', name: 'CEO Kokpiti', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası', category: 'core' },
@@ -246,6 +289,8 @@ export default function CEOCommandCenter() {
   const [threads, setThreads] = useState<ChatThread[]>(loadThreads);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [openCategory, setOpenCategory] = useState<string>('chat');
+  const [filterDomain, setFilterDomain] = useState<string>('all'); // mobil modül filtresi
+  const [openMobileDomain, setOpenMobileDomain] = useState<string | null>('biz'); // mobil akordiyon
   const [input, setInput] = useState('');
   const [attachMenuOpen, setAttachMenuOpen] = useState(false);
   const [pendingAttachment, setPendingAttachment] = useState<ChatAttachment | null>(null);
@@ -671,17 +716,17 @@ export default function CEOCommandCenter() {
           </div>
         )}
 
-        {/* Module List - 5 Kategorili Akordiyon */}
+        {/* Module List - 4 Alan Kategorili Akordiyon */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'auto', flex: 1 }}>
-          {CATEGORIES.map((cat) => {
-            const catModules = MODULES.filter((m) => m.category === cat.id);
-            const isOpen = openCategory === cat.id;
+          {MODULE_DOMAINS.map((dom) => {
+            const catModules = MODULES.filter((m) => dom.moduleIds.includes(m.id));
+            const isOpen = openCategory === dom.id;
             const hasActive = catModules.some((m) => m.id === activeView);
             return (
-              <div key={cat.id} style={{ marginBottom: '4px' }}>
+              <div key={dom.id} style={{ marginBottom: '4px' }}>
                 {/* Kategori Başlığı (Accordion Header) */}
                 <button
-                  onClick={() => setOpenCategory(isOpen ? '' : cat.id)}
+                  onClick={() => setOpenCategory(isOpen ? '' : dom.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -690,8 +735,8 @@ export default function CEOCommandCenter() {
                     padding: '8px 10px',
                     borderRadius: '10px',
                     border: 'none',
-                    background: hasActive ? `${cat.color}15` : 'rgba(255,255,255,0.03)',
-                    color: hasActive ? cat.color : '#94a3b8',
+                    background: hasActive ? `${dom.color}15` : 'rgba(255,255,255,0.03)',
+                    color: hasActive ? dom.color : '#94a3b8',
                     cursor: 'pointer',
                     fontSize: '11px',
                     fontWeight: '700',
@@ -700,8 +745,8 @@ export default function CEOCommandCenter() {
                     whiteSpace: 'nowrap',
                   }}
                 >
-                  <span>{cat.icon}</span>
-                  <span style={{ flex: 1, textAlign: 'left' }}>{cat.name}</span>
+                  <span>{dom.icon}</span>
+                  <span style={{ flex: 1, textAlign: 'left' }}>{dom.name}</span>
                   <span style={{ fontSize: '9px', color: '#64748b' }}>{catModules.length}</span>
                   <span style={{ fontSize: '10px', color: '#64748b' }}>{isOpen ? '▾' : '▸'}</span>
                 </button>
@@ -1621,24 +1666,77 @@ export default function CEOCommandCenter() {
               <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#fff' }}>📊 Modüller</div>
               <button onClick={() => setMobileMenuOpen(false)} style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer', fontSize: '14px' }}>✕</button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px calc(env(safe-area-inset-bottom) + 16px)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              {MODULES.map((mod) => (
-                <button
-                  key={mod.id}
-                  onClick={() => { setActiveView(mod.id); setMobileMenuOpen(false); }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 14px',
-                    borderRadius: '12px', cursor: 'pointer', textAlign: 'left',
-                    background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
-                    border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid rgba(255,255,255,0.06)',
-                    color: activeView === mod.id ? mod.color : '#e2e8f0',
-                  }}
-                >
-                  <span style={{ color: mod.color, display: 'flex' }}>{mod.icon}</span>
-                  <span style={{ fontSize: '13px', fontWeight: '600' }}>{mod.name}</span>
-                  <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#64748b' }}>{mod.description}</span>
-                </button>
-              ))}
+            {/* Kategori Filtre Butonları (Tümü / 4 Alan) */}
+            <div style={{ display: 'flex', gap: '8px', padding: '12px 16px', overflowX: 'auto', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
+              {[
+                { id: 'all', name: 'Tümü', icon: '🗂️', color: '#e2e8f0', count: MODULES.length },
+                ...MODULE_DOMAINS.map((d) => ({ id: d.id, name: d.name, icon: d.icon, color: d.color, count: d.moduleIds.length })),
+              ].map((d) => {
+                const active = filterDomain === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    onClick={() => setFilterDomain(d.id)}
+                    style={{
+                      padding: '8px 14px', borderRadius: '20px', cursor: 'pointer', whiteSpace: 'nowrap',
+                      border: active ? `1px solid ${d.color}` : '1px solid rgba(255,255,255,0.12)',
+                      background: active ? `${d.color}1a` : 'rgba(255,255,255,0.04)',
+                      color: active ? d.color : '#94a3b8', fontSize: '11px', fontWeight: '700',
+                    }}
+                  >
+                    {d.icon} {d.name} <span style={{ opacity: 0.7 }}>({d.count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 4 Alan Kategorili Akordiyon */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(env(safe-area-inset-bottom) + 16px)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {MODULE_DOMAINS.filter((d) => filterDomain === 'all' || filterDomain === d.id).map((dom) => {
+                const domModules = MODULES.filter((m) => dom.moduleIds.includes(m.id));
+                const isOpen = openMobileDomain === dom.id;
+                return (
+                  <div key={dom.id}>
+                    {/* Alan Başlığı — renkli rozet + ikon */}
+                    <button
+                      onClick={() => setOpenMobileDomain(isOpen ? null : dom.id)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '10px', width: '100%',
+                        padding: '12px 14px', borderRadius: '14px', cursor: 'pointer',
+                        border: `1px solid ${dom.color}33`, background: `${dom.color}0d`,
+                      }}
+                    >
+                      <span style={{ width: '34px', height: '34px', borderRadius: '10px', background: `${dom.color}1f`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>{dom.icon}</span>
+                      <span style={{ flex: 1, textAlign: 'left', fontSize: '13px', fontWeight: '800', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{dom.name}</span>
+                      <span style={{ fontSize: '10px', fontWeight: '700', color: dom.color, padding: '3px 10px', borderRadius: '12px', background: `${dom.color}1a`, border: `1px solid ${dom.color}44` }}>{domModules.length}</span>
+                      <span style={{ color: dom.color, fontSize: '12px' }}>{isOpen ? '▾' : '▸'}</span>
+                    </button>
+
+                    {/* Alan içi modül kartları */}
+                    {isOpen && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px', paddingLeft: '6px' }}>
+                        {domModules.map((mod) => (
+                          <button
+                            key={mod.id}
+                            onClick={() => { setActiveView(mod.id); setMobileMenuOpen(false); }}
+                            style={{
+                              display: 'flex', alignItems: 'center', gap: '10px', padding: '11px 14px',
+                              borderRadius: '12px', cursor: 'pointer', textAlign: 'left',
+                              background: activeView === mod.id ? `${mod.color}15` : 'rgba(255,255,255,0.03)',
+                              border: activeView === mod.id ? `1px solid ${mod.color}` : '1px solid rgba(255,255,255,0.06)',
+                              color: activeView === mod.id ? mod.color : '#e2e8f0',
+                            }}
+                          >
+                            <span style={{ color: mod.color, display: 'flex' }}>{mod.icon}</span>
+                            <span style={{ fontSize: '13px', fontWeight: '600', flex: 1 }}>{mod.name}</span>
+                            <span style={{ fontSize: '10px', color: '#64748b', maxWidth: '40%', textAlign: 'right' }}>{mod.description}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
