@@ -86,7 +86,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     moduleIds: [
       'campus', 'pricing', 'supplier', 'crew', 'gift', 'hrdispatch',
       'finance', 'marketing', 'legal', 'dept', 'hr', 'payment', 'risk',
-      'gcp', 'saas', 'mediacom',
+      'gcp', 'saas', 'mediacom', 'market',
     ],
   },
   {
@@ -125,7 +125,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     icon: '🏕️',
     color: '#10b981',
     moduleIds: [
-      'caravan', 'tent', 'market', 'room', 'twin', 'iot', 'engine',
+      'caravan', 'tent', 'room', 'twin', 'iot', 'engine',
     ],
   },
 ];
@@ -155,8 +155,8 @@ const MODULES: ModuleItem[] = [
   { id: 'procurement', name: 'Donanım & Satın Alma', icon: <Package size={16} />, color: '#00f2fe', description: 'Şartname, tedarikçi, ihale, beyanname', category: 'infra' },
   { id: 'hrdispatch', name: 'Otonom Vardiya & İK', icon: <UserPlus size={16} />, color: '#4ade80', description: 'İşe davet, yoğunluk radarı, skorlama', category: 'ops' },
   { id: 'caravan', name: 'Konaklama & Karavan', icon: <Car size={16} />, color: '#34d399', description: 'Otel, karavan & kort slotları', category: 'sports' },
-  { id: 'tent', name: 'Çadır Mağaza', icon: <Tent size={16} />, color: '#fbbf24', description: 'Deneyimle-satın al', category: 'sports' },
-  { id: 'market', name: 'Pazaryeri', icon: <Store size={16} />, color: '#f87171', description: 'Phygital showroom', category: 'sports' },
+  { id: 'tent', name: 'Çadır Konaklama & Glamping', icon: <Tent size={16} />, color: '#fbbf24', description: 'Yer tahsisi & fiziksel konaklama (ekipman kiralama Pazaryeri nde)', category: 'sports' },
+  { id: 'market', name: 'Pazaryeri & Kiralama', icon: <Store size={16} />, color: '#f87171', description: 'Sıfır satış • 2. el • kiralama havuzu', category: 'sports' },
   { id: 'room', name: 'Room Only', icon: <Home size={16} />, color: '#c084fc', description: 'Sadece oda', category: 'sports' },
   { id: 'twin', name: '3D Park Twin', icon: <Map size={16} />, color: '#00f2fe', description: '30-35 Dönüm dijital ikiz', category: 'sports' },
   { id: 'iot', name: 'IoT Sensör Haritası', icon: <Activity size={16} />, color: '#48bb78', description: 'Canlı ısı haritası', category: 'sports' },
