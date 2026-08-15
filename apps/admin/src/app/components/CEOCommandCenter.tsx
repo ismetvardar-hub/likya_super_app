@@ -74,12 +74,13 @@ const CATEGORIES: CategoryGroup[] = [
   { id: 'infra', name: 'Altyapı, Güvenlik & IT', icon: '⚙️', color: '#60a5fa' },
 ];
 
-// 🗂️ 4 ANA ALAN KATEGORİSİ — "Modüller" sekmesi/modalı için şık gruplama
+// 🗂️ 5 ANA ALAN KATEGORİSİ — "Modüller" sekmesi/modalı için şık gruplama
 // Her modül tek bir alana ait olacak şekilde eşlenir (42 modülün tamamı kapsanır).
-const MODULE_DOMAINS: { id: string; name: string; icon: string; color: string; moduleIds: string[] }[] = [
+const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: string; color: string; moduleIds: string[] }[] = [
   {
     id: 'biz',
     name: 'İşletme, Finans & İK',
+    chipLabel: 'İşletme',
     icon: '🏢',
     color: '#f59e0b',
     moduleIds: [
@@ -91,16 +92,17 @@ const MODULE_DOMAINS: { id: string; name: string; icon: string; color: string; m
   {
     id: 'sport',
     name: 'Spor, Biyomekanik & Akademi',
+    chipLabel: 'Spor',
     icon: '🎾',
     color: '#34d399',
     moduleIds: [
-      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic',
-      'scouting', 'caravan', 'tent', 'market', 'room', 'twin', 'iot', 'engine',
+      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic', 'scouting',
     ],
   },
   {
     id: 'music',
     name: 'Müzik, Sanat & Etkinlik',
+    chipLabel: 'Müzik',
     icon: '🎵',
     color: '#ecc94b',
     moduleIds: ['music'],
@@ -108,11 +110,22 @@ const MODULE_DOMAINS: { id: string; name: string; icon: string; color: string; m
   {
     id: 'system',
     name: 'Sistem, AI Ajanlar & Altyapı',
+    chipLabel: 'Sistem',
     icon: '🧠',
     color: '#00f2fe',
     moduleIds: [
       'mesh', 'balance', 'toolsagents', 'smartcampus', 'procurement',
       'facility', 'security', 'stress', 'monitor', 'telemetry', 'osint', 'ai',
+    ],
+  },
+  {
+    id: 'facility',
+    name: 'Tesis, Konaklama & Deneyim Parkı',
+    chipLabel: 'Tesis & Konaklama',
+    icon: '🏕️',
+    color: '#10b981',
+    moduleIds: [
+      'caravan', 'tent', 'market', 'room', 'twin', 'iot', 'engine',
     ],
   },
 ];
@@ -1670,7 +1683,7 @@ export default function CEOCommandCenter() {
             <div style={{ display: 'flex', gap: '8px', padding: '12px 16px', overflowX: 'auto', borderBottom: '1px solid rgba(255,255,255,0.06)', flexShrink: 0 }}>
               {[
                 { id: 'all', name: 'Tümü', icon: '🗂️', color: '#e2e8f0', count: MODULES.length },
-                ...MODULE_DOMAINS.map((d) => ({ id: d.id, name: d.name, icon: d.icon, color: d.color, count: d.moduleIds.length })),
+                ...MODULE_DOMAINS.map((d) => ({ id: d.id, name: d.chipLabel || d.name, icon: d.icon, color: d.color, count: d.moduleIds.length })),
               ].map((d) => {
                 const active = filterDomain === d.id;
                 return (
