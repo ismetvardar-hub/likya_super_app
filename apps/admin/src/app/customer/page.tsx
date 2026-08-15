@@ -13,9 +13,10 @@ import AIChatModal from './components/AIChatModal';
 import CommunityEventsTab from './components/CommunityEventsTab';
 import GiftSystem from './components/GiftSystem';
 import ReviewTab from './components/ReviewTab';
+import FinanceMarket from './components/FinanceMarket';
 
 export default function CustomerSuperApp() {
-  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift' | 'review'>('trendyol');
+  const [activeScreen, setActiveScreen] = useState<'trendyol' | 'dolap' | 'food' | 'booking' | 'sports' | 'tickets' | 'wallet' | 'community' | 'gift' | 'review' | 'finance'>('trendyol');
   const [walletBalance, setWalletBalance] = useState(1450.00);
   const [ecoPoints, setEcoPoints] = useState(320);
   const [cart, setCart] = useState<Array<{ id: string; name: string; price: number; qty: number }>>([]);
@@ -55,6 +56,7 @@ export default function CustomerSuperApp() {
     { key: 'sports', icon: '🎾', label: 'Spor' },
     { key: 'tickets', icon: '🎟️', label: 'QR Bilet' },
     { key: 'wallet', icon: '💳', label: 'Cüzdan' },
+    { key: 'finance', icon: '📈', label: 'Finans' },
     { key: 'community', icon: '👥', label: 'Topluluk' },
     { key: 'gift', icon: '🎁', label: 'İkram' },
   ];
@@ -125,6 +127,7 @@ export default function CustomerSuperApp() {
           {activeScreen === 'gift' && <GiftSystem />}
           {activeScreen === 'review' && <ReviewTab />}
           {activeScreen === 'wallet' && <WalletTab walletBalance={walletBalance} setWalletBalance={setWalletBalance} ecoPoints={ecoPoints} setEcoPoints={setEcoPoints} />}
+          {activeScreen === 'finance' && <FinanceMarket />}
         </div>
 
         {/* Alt Sabit Menü (Bottom Navigation Bar) */}

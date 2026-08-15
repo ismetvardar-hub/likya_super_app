@@ -64,12 +64,12 @@ class EventDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            Card(
+            const Card(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Icon(Icons.access_time_rounded, color: AppTheme.primaryLight),
                         SizedBox(width: 12),
@@ -82,8 +82,8 @@ class EventDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Divider(height: 20),
-                    const Row(
+                    Divider(height: 20),
+                    Row(
                       children: [
                         Icon(Icons.place_rounded, color: AppTheme.secondaryColor),
                         SizedBox(width: 12),

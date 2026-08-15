@@ -65,12 +65,12 @@ class _RollingQrWidgetState extends State<RollingQrWidget> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.shield_outlined, color: AppTheme.successColor, size: 18),
-              const SizedBox(width: 6),
-              const Text(
+              Icon(Icons.shield_outlined, color: AppTheme.successColor, size: 18),
+              SizedBox(width: 6),
+              Text(
                 'Dinamik Güvenlikli QR (Sahtecilik Önleyici)',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.primaryColor),
               ),

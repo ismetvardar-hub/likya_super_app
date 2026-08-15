@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import ts from 'typescript';
+import {
+  getEnterpriseMemorySummary,
+  searchVault,
+  getDecisions,
+  type VaultDocType,
+} from '../../../../lib/db/infiniteMemory';
+import { generateWithWaterfall } from '../../../../lib/ai/modelMatrix';
+import { buildKnowledgeContext } from '../../../../lib/enterpriseKnowledge';
 
 // ============================================================================
 // LİKYA CEO GEMINI LLM KOD DÜZENLEME MOTORU (Next.js App Router)
@@ -12,7 +22,7 @@ const PROJECT_ROOT = path.resolve(process.cwd(), process.cwd().endsWith('apps/ad
 
 const ALLOWED_EXTENSIONS = ['.tsx', '.ts', '.dart', '.py', '.js', '.jsx', '.css', '.md', '.json', '.yaml', '.yml', '.sql'];
 const DEFAULT_TARGET = 'apps/admin/src/app/components/CEOCommandCenter.tsx';
-const GEMINI_MODEL = 'gemini-3.5-flash';
+const GEMINI_MODEL = 'gemini-3.5-flash'; // Hesap için doğrulandı: en hızlı erişilebilir flash modeli (2.5-flash bu hesapta 404)
 const DEEPSEEK_MODEL = 'deepseek-chat';
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
@@ -39,10 +49,17 @@ const RESEARCH_KEYWORDS = [
 
 function classifyIntent(command: string): 'code' | 'research' {
   const lower = command.toLowerCase();
+  // ❓ SORU AĞIRLIĞI: "nasıl/nedir/anlat/açıkla" içeren komutlar araştırmaya yönlendirilir
+  // (modül gibi kod kelimeleri bile bir soru cümlesinde kod işlemi anlamına gelmez)
+  const questionBonus = [
+    'nedir', 'nasıl', 'ne demek', 'ne işe yarar', 'nasıl çalışır', 'anlat', 'açıkla',
+    'özetle', 'ne yapar', 'değerlendir', 'hangi', 'kullanıyor', 'çalışıyor', 'nerede', 'yapıyor', 'göster', 'liste',
+  ].reduce((s, kw) => (lower.includes(kw) ? s + 1 : s), 0);
+
   const codeHits = CODE_KEYWORDS.filter((k) => lower.includes(k)).length;
   const researchHits = RESEARCH_KEYWORDS.filter((k) => lower.includes(k)).length;
-  // Puanlama: kod ağır basıyorsa Kanal B, değilse Kanal A
-  return codeHits >= researchHits && codeHits > 0 ? 'code' : 'research';
+  const totalResearch = researchHits + questionBonus * 2;
+  return codeHits >= totalResearch && codeHits > 0 ? 'code' : 'research';
 }
 
 // DeepSeek Coder/V3 — saf kod motoru (düşük maliyet, token verimli)
@@ -55,7 +72,7 @@ async function generateWithDeepSeek(prompt: string): Promise<string> {
     body: JSON.stringify({
       model: DEEPSEEK_MODEL,
       messages: [
-        { role: 'system', content: "Sen Likya Kampüsü'nün baş yazılım mühendisisin. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür; açıklama, markdown veya kod bloğu işareti kullanma." },
+        { role: 'system', content: "Sen Likya Kampüsü'nün baş yazılım mühendisisin. Sadece ve sadece tam güncellenmiş dosya içeriğini döndür; açıklama, markdown veya kod bloğu işareti kullanma. Yanıtlar kısa, net, gerçekçi ve doğrudan sonuca yönelik olmalıdır; uzun edebiyat ve gereksiz dolgu cümleleri yasaktır." },
         { role: 'user', content: prompt },
       ],
       temperature: 0.4,
@@ -80,7 +97,8 @@ async function generateResearchWithGemini(command: string): Promise<string> {
     model: GEMINI_MODEL,
     generationConfig: { maxOutputTokens: 4096, temperature: 0.7 },
   });
-  const prompt = `Sen Likya CEO'sun; centilmen, naif, sıcak ve hafif esprili bir kurucu ortak gibi konuşursun. Kullanıcının talebini değerlendir ve zengin, düzenli, okunaklı bir yanıt üret.\n\nKULLANICI TALEBİ: ${command}\n\nYanıt markdown formatında olsun (başlıklar, listeler). 'Efendim' hitabıyla başla. Asla soğuk veya robotik olma; araştırma bulgularını net ama sıcak bir dille sun.`;
+  const memory = getEnterpriseMemorySummary();
+  const prompt = `${memory ? `ÇEKİRDEK BELLEK — PATRON'UN ONAYLI SONSUZ KARARLARI (her zaman uyulmalı):\n${memory}\n\n` : ''}Sen Likya CEO'sun; centilmen, naif, sıcak ve hafif esprili bir kurucu ortak gibi konuşursun. Kullanıcının talebini değerlendir ve net bir yanıt üret.\n\nKULLANICI TALEBİ: ${command}\n\nYanıt markdown formatında olsun (başlıklar, listeler). 'Efendim' hitabıyla başla. Asla soğuk veya robotik olma; araştırma bulgularını net ama sıcak bir dille sun.\n\nKURALLAR: Yanıtlar kısa, net, gerçekçi ve doğrudan sonuca yönelik olmalıdır; uzun edebiyat ve gereksiz dolgu cümleleri YASAKTIR. 3-4 kısa paragrafı aşma.`;
   const result = await model.generateContent(prompt);
   return result.response.text().trim();
 }
@@ -126,7 +144,8 @@ function resolveTargetFile(command: string): string {
 }
 
 function buildGeminiPrompt(command: string, targetFile: string, existingContent: string): string {
-  return `Bu React bileşenini kullanıcının şu talimatına göre güncelle: "${command}"
+  const memory = getEnterpriseMemorySummary();
+  return `${memory ? `ÇEKİRDEK BELLEK — PATRON'UN ONAYLI SONSUZ KARARLARI (üretimde her zaman uyulmalı):\n${memory}\n\n` : ''}Bu React bileşenini kullanıcının şu talimatına göre güncelle: "${command}"
 
 HEDEF DOSYA: ${targetFile}
 
@@ -139,7 +158,74 @@ KURALLAR:
 3. Mevcut import/export yapısını, state ve mevcut fonksiyonaliteyi KORU; yalnızca istenen değişikliği uygula.
 4. Tasarımda koyu mod + glassmorphism + neon vurgular kullan (#00f2fe, #10B981, #F27A1A, #8B5CF6).
 5. Eksiksiz, derlenebilir TypeScript/TSX kodu üret. TODO veya placeholder bırakma.
-6. Üslup: Kod yorumlarında ve üretilen metinlerde centilmen, naif, sıcak ve insani bir dil kullan; asla soğuk, robotik veya mekanik olma.`;
+6. Üslup: Kod yorumlarında ve üretilen metinlerde centilmen, naif, sıcak ve insani bir dil kullan; asla soğuk, robotik veya mekanik olma.
+7. Yanıtlar kısa, net, gerçekçi ve doğrudan sonuca yönelik olmalıdır. Uzun edebiyat ve gereksiz dolgu cümleleri yasaktır.
+8. Dosya içeriğini eksiksiz, tüm JSX etiketlerini ve parantezleri eksiksiz kapatacak şekilde TEK PARÇA üret. Eksik kod veya placeholder bırakma.`;
+}
+
+// ============================================================================
+// 🧠 PROAKTİF İDRAK — stratejik kural/vizyon/karar algılama (kalıcı hafıza teklifi)
+// ============================================================================
+const STRATEGIC_KEYWORDS = [
+  'kural', 'vizyon', 'misyon', 'strateji', 'politika', 'hedef', 'genelge', 'talimat',
+  'her zaman', 'asla', 'bundan sonra', 'karar', 'ilke', 'standart', 'tercih', 'prefer',
+  'bundan böyle', 'benim için önemli',
+];
+function detectStrategicIntent(command: string): string | null {
+  const lower = command.toLowerCase();
+  if (!STRATEGIC_KEYWORDS.some((kw) => lower.includes(kw))) return null;
+  if (lower.includes('tasarım') || lower.includes('tema') || lower.includes('logo') || lower.includes('renk')) {
+    return 'tasarım';
+  }
+  if (lower.includes('müşteri') || lower.includes('fiyat') || lower.includes('pazarlama') || lower.includes('satış')) {
+    return 'işletme';
+  }
+  if (lower.includes('güvenlik') || lower.includes('veri') || lower.includes('yedek')) {
+    return 'güvenlik';
+  }
+  return 'strateji';
+}
+
+// ============================================================================
+// 🔍 DERİN ARŞİV ARAMA niyeti — geçmiş fatura/sözleşme/karar soruları
+// ============================================================================
+const ARCHIVE_KEYWORDS = ['fatura', 'sözleşme', 'sözleşme', 'arşiv', 'arşivden', 'geçmiş', 'geçmişten', 'kayıt', 'kayıtları', 'belge', 'belgeleri', 'karar geçmiş', 'geçmiş kararlar', 'eski'];
+function detectArchiveQuery(command: string): { query: string; docType?: VaultDocType } | null {
+  const lower = command.toLowerCase();
+  if (!ARCHIVE_KEYWORDS.some((k) => lower.includes(k))) return null;
+
+  let docType: VaultDocType | undefined;
+  if (lower.includes('fatura') || lower.includes('fatura')) docType = 'INVOICE';
+  else if (lower.includes('sözleşme') || lower.includes('hukuk') || lower.includes('yasal')) docType = 'LEGAL';
+  else if (lower.includes('müşteri')) docType = 'CUSTOMER';
+  else if (lower.includes('işlem') || lower.includes('ödeme') || lower.includes('satış')) docType = 'TRANSACTION';
+
+  // Sorgu için anlamlı anahtar kelimeleri seç
+  const stopWords = ['bana', 'geçmiş', 'geçmişten', 'arşiv', 'arşivden', 'kayıt', 'kayıtları', 'göster', 'getir', 'var', 'mı', 'mi', 'ne', 'hangi', 'fatura', 'faturalar', 'sözleşme', 'sözleşmeler', 'varsa', 'ara', 'ile', 'ilgili', 'lütfen', 'eski', 'tüm', 'listele'];
+  const query = lower
+    .replace(/[?.!,]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !stopWords.includes(w))
+    .slice(0, 3)
+    .join(' ');
+
+  return { query, docType };
+}
+
+// ============================================================================
+// 🧑‍💼 İNSAN ONAYI KESİNTİSİ (Human Approval Interrupt)
+// Yasal/parasal/geri dönülemez işlemler onaysız asla çalıştırılmaz.
+// Kritik komut tespit edilirse "Patron, onaylıyor musunuz?" ekranı çıkar.
+// ============================================================================
+const CRITICAL_KEYWORDS = [
+  'sil', 'kaldır', 'geri al', 'iptal et', 'öde', 'transfer', 'gönder', 'para',
+  'fatura kes', 'sözleşme', 'imzala', 'yayınla', 'kapat', 'yeniden başlat', 'reset',
+  'temizle', 'formatter', 'delete', 'drop', 'truncate', 'faturalandır', 'ödeme yap',
+  'sözleşmeyi onayla', 'hisse al', 'yatırım yap',
+];
+function isCriticalCommand(command: string): boolean {
+  const lower = command.toLowerCase();
+  return CRITICAL_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
 function fallbackTemplate(command: string, filePath: string): string {
@@ -176,10 +262,106 @@ function extractCodeFromResponse(text: string): string {
   return cleaned.trim();
 }
 
+// ============================================================================
+// 🛡️ SYNTAX KORUMA KAPISI — LLM çıktısı derlenemiyorsa ASLA diske yazma
+// Önceki arıza: CEO chat dosyayı yarıda kesip sayfayı kilitlemişti (TS17008).
+// Bu kapı; JSON/TS/TSX/JS/JSX doğrulaması + kesinti (truncation) koruması yapar.
+// ============================================================================
+function validateGeneratedCode(filePath: string, content: string, existingContent: string): { ok: boolean; error?: string } {
+  if (!content.trim()) {
+    return { ok: false, error: 'Üretilen içerik boş — yazma iptal edildi' };
+  }
+
+  const ext = path.extname(filePath).toLowerCase();
+
+  // --- JSON sözdizimi doğrulaması ---
+  if (ext === '.json') {
+    try {
+      JSON.parse(content);
+    } catch {
+      return { ok: false, error: 'Geçersiz JSON sözdizimi — yazma iptal edildi' };
+    }
+    return { ok: true };
+  }
+
+  // --- TS/TSX/JS/JSX sözdizimi doğrulaması (TypeScript derleyicisi) ---
+  if (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.jsx') {
+    try {
+      const result = ts.transpileModule(content, {
+        fileName: filePath,
+        reportDiagnostics: true,
+        compilerOptions: {
+          target: ts.ScriptTarget.ES2020,
+          module: ts.ModuleKind.ESNext,
+          jsx: ext === '.tsx' ? ts.JsxEmit.Preserve : ts.JsxEmit.React,
+          esModuleInterop: true,
+        },
+      });
+      const errors = (result.diagnostics || []).filter((d) => d.category === ts.DiagnosticCategory.Error);
+      if (errors.length > 0) {
+        const detail = errors
+          .slice(0, 3)
+          .map((d) => ts.flattenDiagnosticMessageText(d.messageText, '\n'))
+          .join(' | ');
+        return { ok: false, error: `Sözdizimi hatası — yazma iptal edildi: ${detail}` };
+      }
+    } catch (e) {
+      return { ok: false, error: `Derleyici hatası — yazma iptal edildi: ${e instanceof Error ? e.message : String(e)}` };
+    }
+
+    // --- 🔍 Kesinti (truncation) koruması ---
+    // Büyük mevcut dosya %50'den fazla küçülüyorsa LLM dosyayı kesmiş demektir.
+    if (existingContent && existingContent.length > 8000 && content.length < existingContent.length * 0.5) {
+      const pct = Math.round((content.length / existingContent.length) * 100);
+      return {
+        ok: false,
+        error: `Çıktı orijinalin %${pct}'i (${existingContent.length}→${content.length} karakter) — LLM dosyayı kesti. Yazma iptal edildi.`,
+      };
+    }
+  }
+
+  return { ok: true };
+}
+
+// ============================================================================
+// 🚀 POST-YAZIM DOĞRULAMA (SAFE-WRITE + OTONOM GERİ ALMA / AUTO-ROLLBACK)
+// Dosya yazıldıktan SONRA tüm projede tsc --noEmit çalıştırılır.
+// - Hedef dosyamız hataya sebep oluyorsa  -> ROLLBACK (dosya anında orijinaline döner)
+// - Hata başka dosyada (önceden var ise)  -> yazım korunur, yalnızca uyarı döner
+// Böylece Likya CEO kendi arayüzünü canlı yayında asla çökertemez.
+// ============================================================================
+function runTscVerification(targetFile: string): { ok: boolean; relatedError: boolean; output: string } {
+  const adminDir = path.join(PROJECT_ROOT, 'apps', 'admin');
+  const tscBin = path.join(adminDir, 'node_modules', '.bin', 'tsc');
+  const normalizedTarget = targetFile.replace(/\\/g, '/');
+  const adminRelative = normalizedTarget.replace(/^apps\/admin\//, '');
+  const basename = path.basename(normalizedTarget);
+
+  try {
+    const result = execSync(`"${tscBin}" --noEmit`, {
+      cwd: adminDir,
+      timeout: 90000,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      encoding: 'utf-8',
+    });
+    return { ok: true, relatedError: false, output: String(result || '') };
+  } catch (e) {
+    const err = e as { stdout?: string | Buffer; stderr?: string | Buffer; message?: string };
+    const output = `${String(err.stdout || '')}\n${String(err.stderr || '')}\n${String(err.message || '')}`;
+    // tsc çıktısındaki yol: src/app/components/X.tsx (admin'e göreli)
+    const relatedError =
+      output.includes(normalizedTarget) || output.includes(adminRelative) || output.includes(basename);
+    return { ok: false, relatedError, output: output.slice(0, 2000) };
+  }
+}
+
+// Post-yazım tsc doğrulaması yalnızca kod dosyaları için anlamlıdır
+const CODE_EXTENSIONS_FOR_TSC = ['.ts', '.tsx', '.js', '.jsx'];
+
 export async function POST(request: NextRequest) {
   try {
     // Güvenli JSON parse
-    let body: { command?: string; file?: string };
+    let body: { command?: string; file?: string; approved?: boolean };
     try {
       body = await request.json();
     } catch {
@@ -191,26 +373,85 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Komut boş olamaz' }, { status: 400 });
     }
 
+    // --- 🏛️ KURUMSAL HAFIZA & ARŞİV NİYETİ ---
+    const strategicCategory = detectStrategicIntent(command);
+    const archiveQuery = detectArchiveQuery(command);
+
     // --- İDRAK ANALİZİ (Intent Router) ---
     const hasExplicitFile = /[\w/.-]+\.(?:tsx|ts|dart|py|js|jsx|css|md|json|yaml|yml|sql)/i.test(command);
     const intent: 'code' | 'research' = hasExplicitFile || !!body.file ? 'code' : classifyIntent(command);
 
-    // Kanal A: Araştırma/Medya/Çeviri — dosya hedefi yoksa Gemini/Ollama analiz yanıtı döndür
+    // --- 🧑‍💼 İNSAN ONAYI KESİNTİSİ: SADECE kod/mutasyon niyeti için ---
+    // Soru/araştırma cümlelerinde "geri alma" gibi kritik kelimeler olsa bile
+    // onay istemek yanlış pozitif üretir; onay yalnızca dosya değiştiren komutlarda geçerli.
+    if (intent === 'code' && body.approved !== true && isCriticalCommand(command)) {
+      return NextResponse.json({
+        success: false,
+        requires_approval: true,
+        intent: 'approval',
+        action: 'onay_bekliyor',
+        preview: command,
+        message: '🧑‍💼 Patron, bu kritik işlem geri dönülemez olabilir. Onaylıyor musunuz?',
+      }, { status: 202 });
+    }
+
+    // 🔍 DERİN ARŞİV ARAMA: geçmiş fatura/sözleşme/karar soruları
+    if (archiveQuery) {
+      const results = searchVault(archiveQuery.query, archiveQuery.docType);
+      const decisionHits = !archiveQuery.docType && /karar|vizyon|kural|strateji/i.test(command) ? getDecisions() : [];
+      return NextResponse.json({
+        success: true,
+        motor: 'memory',
+        intent: 'archive',
+        action: 'Kurumsal arşiv tarandı',
+        query: archiveQuery.query,
+        docType: archiveQuery.docType || null,
+        count: results.length,
+        results,
+        decisions: decisionHits,
+        message:
+          results.length > 0
+            ? `📦 Arşivde ${results.length} kayıt bulundu.`
+            : '🗄️ Arşivde eşleşen kayıt bulunamadı.',
+        memory_offer: strategicCategory
+          ? { category: strategicCategory, decision_text: command }
+          : undefined,
+      });
+    }
+
+    // Kanal A: Araştırma/Medya/Çeviri — A-B-C-D şelale (Gemini→Groq→OpenRouter→Ollama)
     if (intent === 'research') {
       try {
-        const answer = await generateResearchWithGemini(command);
+        const memoryBlock = getEnterpriseMemorySummary();
+        const knowledgeBlock = buildKnowledgeContext(command);
+        const researchPrompt = `${memoryBlock ? `ÇEKİRDEK BELLEK — PATRON'UN ONAYLI SONSUZ KARARLARI (her zaman uyulmalı):\n${memoryBlock}\n\n` : ''}${knowledgeBlock}\nKullanıcı talebi: ${command}`;
+        const matrixResult = await generateWithWaterfall(researchPrompt, 'research');
+        if (!matrixResult.ok) {
+          return NextResponse.json({
+            success: false,
+            motor: 'matrix',
+            intent: 'research',
+            error: matrixResult.error,
+            message: '⚠️ Efendim, araştırma modellerinin tümüne ulaşamadım (Plan A→D). API anahtarlarını kontrol edip tekrar deneyelim.',
+          }, { status: 503 });
+        }
+        const answer = `${matrixResult.badge}\n\n${matrixResult.content}`;
         return NextResponse.json({
           success: true,
-          motor: 'gemini',
+          motor: `plan-${matrixResult.plan}`,
+          provider: matrixResult.provider,
           intent: 'research',
-          action: 'Gemini/Ollama analizi tamamlandı',
+          action: `Plan ${matrixResult.plan} (${matrixResult.provider}) analizi tamamlandı`,
           answer,
-          message: 'Multimodal araştırma hattı yanıtladı',
+          message: matrixResult.badge,
+          memory_offer: strategicCategory
+            ? { category: strategicCategory, decision_text: command }
+            : undefined,
         });
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e);
-        console.error('[CEO/Gemini] Araştırma hatası:', message);
-        return NextResponse.json({ success: false, motor: 'gemini', error: message }, { status: 500 });
+        console.error('[CEO/Research] Araştırma hatası:', message);
+        return NextResponse.json({ success: false, motor: 'matrix', error: message }, { status: 500 });
       }
     }
 
@@ -254,65 +495,136 @@ export async function POST(request: NextRequest) {
       existingContent = '';
     }
 
-    // --- b) KOD ÜRETİMİ: DeepSeek (Kanal B) → Gemini fallback ---
-    const deepseekKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
-    const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+    // --- b) KOD ÜRETİMİ: A-B-C-D HİBRİT MODEL MATRİSİ (otomatik şelale) ---
+    // DeepSeek(A) → Groq(B) → Mistral(C) → Yerel Ollama(D) — sessiz yedekleme.
+    // Harici backend/Python servisi YOKTUR: tüm sağlayıcılar doğrudan in-process çağrılır.
     let finalContent = '';
-    let motor: 'deepseek' | 'gemini' = 'deepseek';
+    let motor: string = 'matrix';
     let healed = false;
+    let badge = '';
+    let providerName = '';
 
-    if (deepseekKey) {
-      try {
-        finalContent = await generateWithDeepSeek(buildGeminiPrompt(command, targetFile, existingContent));
-        console.log(`[CEO/DeepSeek] ${targetFile} güncellendi (${finalContent.length} karakter)`);
-      } catch (e) {
-        console.error('[CEO/DeepSeek] LLM hatası, Gemini ye düşülüyor:', e instanceof Error ? e.message : String(e));
-        motor = 'gemini';
-        healed = true; // OTONOM ONARIM: harici motor düştü, dahili motor devraldı
+    const matrixResult = await generateWithWaterfall(
+      buildGeminiPrompt(command, targetFile, existingContent),
+      'code'
+    );
+    badge = matrixResult.badge;
+    providerName = matrixResult.provider;
+    motor = `plan-${matrixResult.plan || 'x'}`;
+
+    if (!matrixResult.ok) {
+      return NextResponse.json({
+        success: false,
+        motor,
+        intent: 'code',
+        error: matrixResult.error || 'Tüm kod modelleri başarısız',
+        message: '⚠️ Efendim, kod üretim modellerinin tümüne ulaşamadım (Plan A→D). API anahtarlarını kontrol edip talebi tekrarlayalım.',
+      }, { status: 503 });
+    }
+
+    finalContent = extractCodeFromResponse(matrixResult.content);
+    console.log(`[CEO/Matrix] Kod üretimi Plan ${matrixResult.plan} (${matrixResult.provider}) ile başarılı — ${finalContent.length} karakter`);
+    if (matrixResult.fallbackLog.length > 0) {
+      console.warn(`[CEO/Matrix] Şelale günlüğü: ${matrixResult.fallbackLog.join(' | ')}`);
+    }
+
+    // --- c1) 🔁 KENDİ HATASINI DÜZELTEN DÖNGÜ (Self-Correction Loop) ---
+    // İlk üretimde sözdizimi hatası varsa, hata mesajını modele geri besleyip
+    // bir kez düzeltme talep eder (Chain-of-Thought ile); hâlâ bozuksa kapı bloklar.
+    let validation = validateGeneratedCode(targetFile, finalContent, existingContent);
+    if (!validation.ok) {
+      console.warn(`[CEO/🔄] ${targetFile} ilk denemede sözdizimi hatası: ${validation.error}`);
+      const fixPrompt =
+        buildGeminiPrompt(command, targetFile, existingContent) +
+        `\n\n⚠️ ÖNEMLİ DÜZELTME TALEBİ: Ürettiğin kod şu SÖZDİZİMİ hatasını içeriyor:\n"${validation.error}"\n\nDÜŞÜNCE ZİNCİRİ:\n1. Hangi etiket/parantez eksik veya fazla? Mantığı kur.\n2. Tüm JSX etiketlerini ve süslü parantezleri eşleştir.\n3. Düzeltilmiş TAM dosya içeriğini TEK PARÇA halinde döndür (açıklama yok).`;
+      const fixResult = await generateWithWaterfall(fixPrompt, 'code');
+      if (fixResult.ok) {
+        const fixed = extractCodeFromResponse(fixResult.content);
+        const recheck = validateGeneratedCode(targetFile, fixed, existingContent);
+        if (recheck.ok) {
+          finalContent = fixed;
+          healed = true;
+          console.log(`[CEO/🔄] ${targetFile} kendi hatasını düzeltti (Self-Correction Loop)`);
+        } else {
+          console.warn(`[CEO/🔄] ${targetFile} düzeltme sonrası hâlâ hatalı → koruma kapısı devrede: ${recheck.error}`);
+        }
       }
-    } else {
-      console.warn('[CEO/DeepSeek] API anahtarı bulunamadı, Gemini kullanılacak');
-      motor = 'gemini';
-      healed = true;
     }
 
-    if (!finalContent.trim() && geminiKey) {
-      try {
-        const genAI = new GoogleGenerativeAI(geminiKey);
-        const model = genAI.getGenerativeModel({
-          model: GEMINI_MODEL,
-          generationConfig: { maxOutputTokens: 65536, temperature: 0.7 },
-        });
-        const result = await model.generateContent(buildGeminiPrompt(command, targetFile, existingContent));
-        finalContent = extractCodeFromResponse(result.response.text());
-        console.log(`[CEO/Gemini] ${targetFile} güncellendi (${finalContent.length} karakter)`);
-      } catch (e) {
-        console.error('[CEO/Gemini] LLM hatası:', e instanceof Error ? e.message : String(e));
-        finalContent = existingContent || fallbackTemplate(command, targetFile);
-      }
-    } else if (!finalContent.trim()) {
-      console.warn('[CEO] API anahtarı bulunamadı; şablon kullanıldı');
-      finalContent = existingContent || fallbackTemplate(command, targetFile);
+    // --- c) SYNTAX KORUMA KAPISI: bozuk LLM çıktısı asla diske yazılmaz ---
+    if (!validation.ok) {
+      console.error(`[CEO/🛡️] ${targetFile} yazımı bloklandı: ${validation.error}`);
+      return NextResponse.json({
+        success: false,
+        motor,
+        file: targetFile,
+        action: 'bloklandı',
+        error: validation.error || 'Doğrulama başarısız',
+        message: '🛡️ Güvenlik kapısı devreye girdi: üretilen kod derlenemediği için dosyaya yazılmadı. Lütfen komutu biraz daha sadeleştirip tekrar deneyin.',
+      }, { status: 422 });
     }
 
-    if (!finalContent.trim()) {
-      return NextResponse.json({ success: false, error: 'LLM boş içerik döndürdü' }, { status: 500 });
-    }
-
-    // --- c) DOSYAYA YAZ ---
+    // --- d) GÜVENLİ YAZIM (SAFE-WRITE) ---
+    // Orijinal içeriği önce belleğe al: her ihtimale karşı geri alma yedek noktası
+    const originalContent = existingContent;
     await fs.mkdir(path.dirname(fullPath), { recursive: true });
     await fs.writeFile(fullPath, finalContent, 'utf-8');
 
-    // --- d) BAŞARI YANITI ---
+    // --- e) OTONOM DOĞRULAMA & GERİ ALMA (AUTO-ROLLBACK) ---
+    // Kod dosyaları için tsc tüm projeyi tarar; hedef dosyamız hataya sebep
+    // oluyorsa yazımı anında geri alır, sistem asla çökertilemez.
+    const isCodeFile = CODE_EXTENSIONS_FOR_TSC.includes(path.extname(targetFile).toLowerCase());
+    if (isCodeFile) {
+      const verification = runTscVerification(targetFile);
+      if (!verification.ok) {
+        if (verification.relatedError) {
+          // 🔁 GERİ AL: dosya anında orijinaline döner
+          await fs.writeFile(fullPath, originalContent, 'utf-8');
+          console.error(`[CEO/🔄] ${targetFile} hatalıydı — otomatik rollback yapıldı.`);
+          return NextResponse.json({
+            success: false,
+            motor,
+            file: targetFile,
+            action: 'geri_alindi',
+            error: `Derleme hatası: ${verification.output.split('\n').find((l) => l.includes('error')) || 'yazılan kod derlenmedi'}`,
+            message: '⚠️ Efendim, üretilen kodda sözdizimi hatası tespit edildiği için sistemin kesintiye uğramaması adına değişiklik geri alındı.',
+            rolled_back: true,
+          }, { status: 422 });
+        }
+        // İlgisiz hata: yazım doğru ama projede başka dosyada önceden var olan hata
+        console.warn(`[CEO/⚠️] tsc ilgisiz dosyada hata verdi (${targetFile} değil): ${verification.output}`);
+        return NextResponse.json({
+          success: true,
+          file: targetFile,
+          motor,
+          healed,
+          intent: 'code',
+          action: 'güncellendi (uyarılı)',
+          bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
+          message: '⚠️ Dosya başarıyla güncellendi; ancak projede başka dosyalarda önceden var olan derleme hataları bulunuyor.',
+          warning: verification.output,
+          memory_offer: strategicCategory
+            ? { category: strategicCategory, decision_text: command }
+            : undefined,
+        });
+      }
+    }
+
+    // --- f) BAŞARI YANITI ---
     return NextResponse.json({
       success: true,
       file: targetFile,
       motor,
+      provider: providerName,
+      plan: badge,
       healed,
       intent: 'code',
-      action: 'LLM tarafından güncellendi',
+      action: `${badge} LLM ile güncellendi (doğrulandı)`,
       bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
-      message: motor === 'deepseek' ? 'DeepSeek Coder ile güncellendi' : 'Gemini LLM ile güncellendi',
+      message: `${badge} ${providerName} ile güncellendi ve doğrulandı`,
+      memory_offer: strategicCategory
+        ? { category: strategicCategory, decision_text: command }
+        : undefined,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

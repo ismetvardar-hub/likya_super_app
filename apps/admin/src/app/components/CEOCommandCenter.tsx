@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2, Ghost, Ruler, ShoppingBag, Package } from 'lucide-react';
 import Park3DTwin from './Park3DTwin';
 import IoTSensorMap from './IoTSensorMap';
 import AIAgentAutonomousController from './AIAgentAutonomousController';
@@ -17,6 +17,15 @@ import SmartTentStore from './SmartTentStore';
 import LikyaMarketplace from './LikyaMarketplace';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
+import SportVisionDashboard from './SportVisionDashboard';
+import SportVisionX from './SportVisionX';
+import YouthDevelopmentDashboard from './YouthDevelopmentDashboard';
+import HolisticChildDashboard from './HolisticChildDashboard';
+import ScoutingEcosystem from './ScoutingEcosystem';
+import ToolsAndAgentsDashboard from './ToolsAndAgentsDashboard';
+import DazeSmartCampus from './DazeSmartCampus';
+import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
+import ProcurementDashboard from './ProcurementDashboard';
 import StrategicRiskShield from './StrategicRiskShield';
 import SmartDestinationEngine from './SmartDestinationEngine';
 import SupplierManagement from './SupplierManagement';
@@ -31,7 +40,8 @@ import AgentTelemetryPanel from './AgentTelemetryPanel';
 import OSINTSahaRadar from './OSINTSahaRadar';
 import GoogleCloudHibe from './GoogleCloudHibe';
 import GlobalSaaSFatura from './GlobalSaaSFatura';
-import SunoJingleBar from './SunoJingleBar';
+import LikyaMusicStation from './LikyaMusicStation';
+import DensityBalancer from './DensityBalancer';
 
 // ============================================================================
 // LİKYA CEO COMMAND CENTER - 2 SAYFALI SPLIT LAYOUT
@@ -67,6 +77,7 @@ const MODULES: ModuleItem[] = [
   // 🎛️ ANA KOMUTA (Executive Core)
   { id: 'campus', name: 'CEO Kokpiti', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası', category: 'core' },
   { id: 'mesh', name: '21 Ajan Mesh', icon: <Network size={16} />, color: '#00f2fe', description: '21 Departmanlı Ajan Ağı + Multi-LLM', category: 'core' },
+  { id: 'balance', name: 'Yoğunluk Dengeleme', icon: <Scale size={16} />, color: '#48bb78', description: 'Homojen dağılım & otonom rotasyon', category: 'core' },
 
   // 🍽️ DAZE HUB & İŞLETME
   { id: 'crew', name: 'Daze Crew', icon: <Users size={16} />, color: '#ecc94b', description: 'Personel & Vardiya', category: 'daze' },
@@ -76,6 +87,15 @@ const MODULES: ModuleItem[] = [
 
   // 🎾 SPOR, KAMPÜS & DENEYİM
   { id: 'athlete', name: 'Sports Vision', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyomekanik AI analiz', category: 'sports' },
+  { id: 'sportvision', name: 'Sport Vision Ajanlar', icon: <Activity size={16} />, color: '#34d399', description: 'Otonom branş ajanları & BESYO akademisi', category: 'sports' },
+  { id: 'sportvisionx', name: 'Sport Vision X', icon: <Ghost size={16} />, color: '#00f2fe', description: '3D ikiz, ritim kilidi, viral klip, termal radar', category: 'sports' },
+  { id: 'youthdev', name: 'Gelişim Ligi & Biyometrik', icon: <Ruler size={16} />, color: '#4ade80', description: 'PHV büyüme atağı & genç sporcu akademisi', category: 'sports' },
+  { id: 'holistic', name: '360° Çocuk Gelişimi', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Veli anketi, medikal OCR, tribün analizi', category: 'sports' },
+  { id: 'scouting', name: 'Scouting & Rekabet', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Kulüp ihracı & küresel rekabet zekası', category: 'sports' },
+  { id: 'toolsagents', name: 'İstemci Araçlar & Ajan Hattı', icon: <Wrench size={16} />, color: '#ecc94b', description: 'KVKK uyumlu araçlar & 6 ajanlı üretim hattı', category: 'infra' },
+  { id: 'smartcampus', name: 'Akıllı Tesis Operasyonları', icon: <Building2 size={16} />, color: '#34d399', description: 'Enerji, lig, güvenlik, bakım, concierge', category: 'infra' },
+  { id: 'mediacom', name: 'Medya Kasası & KVKK', icon: <ShoppingBag size={16} />, color: '#f472b6', description: 'Klip satışı, Daze-Gift, hukuk uyumu', category: 'growth' },
+  { id: 'procurement', name: 'Donanım & Satın Alma', icon: <Package size={16} />, color: '#00f2fe', description: 'Şartname, tedarikçi, ihale, beyanname', category: 'infra' },
   { id: 'caravan', name: 'Konaklama & Karavan', icon: <Car size={16} />, color: '#34d399', description: 'Otel, karavan & kort slotları', category: 'sports' },
   { id: 'tent', name: 'Çadır Mağaza', icon: <Tent size={16} />, color: '#fbbf24', description: 'Deneyimle-satın al', category: 'sports' },
   { id: 'market', name: 'Pazaryeri', icon: <Store size={16} />, color: '#f87171', description: 'Phygital showroom', category: 'sports' },
@@ -105,7 +125,7 @@ const MODULES: ModuleItem[] = [
   { id: 'osint', name: 'OSINT & Saha Radarı', icon: <Radar size={16} />, color: '#f87171', description: 'Çevre güvenliği & SAR alarmı', category: 'infra' },
   { id: 'gcp', name: 'Google Cloud Hibe Asistanı', icon: <Cloud size={16} />, color: '#60a5fa', description: '350K$ AI cloud hibe motoru', category: 'growth' },
   { id: 'saas', name: 'Global SaaS & USD Fatura', icon: <CreditCard size={16} />, color: '#34d399', description: 'Stripe / ABD LLC köprüsü', category: 'growth' },
-  { id: 'suno', name: 'Suno AI Ses & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Dinamik jingle & gamification', category: 'daze' },
+  { id: 'music', name: 'Likya Müzik & Atmosfer', icon: <Music size={16} />, color: '#ecc94b', description: 'Akustik frekans istasyonu & gamification', category: 'daze' },
 ];
 
 // Kullanılabilir AI Modelleri (Model Seçici)
@@ -137,6 +157,8 @@ interface ChatMessage {
   text: string;
   time: string;
   attachment?: ChatAttachment;
+  memoryOffer?: { category: string; decision_text: string };
+  approvalRequest?: { text: string };
 }
 
 interface ChatThread {
@@ -172,6 +194,35 @@ const INITIAL_CHAT_THREADS: ChatThread[] = [
   },
 ];
 
+// ============================================================================
+// 💾 SOHBET GEÇMİŞİ KALICI DEPOLAMA — silinen konuşmalar asla geri gelmez
+// threads durumu localStorage'a kaydedilir; sayfa yenilense bile korunur.
+// ============================================================================
+const THREAD_STORAGE_KEY = 'likya_chat_threads_v1';
+
+function loadThreads(): ChatThread[] {
+  if (typeof window === 'undefined') return INITIAL_CHAT_THREADS;
+  try {
+    const raw = window.localStorage.getItem(THREAD_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed as ChatThread[];
+    }
+  } catch {
+    /* bozuk/erişilemez veri → varsayılanlar */
+  }
+  return INITIAL_CHAT_THREADS;
+}
+
+function saveThreads(threads: ChatThread[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(threads));
+  } catch {
+    /* depolama dolu/kapalı — sessizce geç */
+  }
+}
+
 // Mobil/Tablet tespiti için media query hook'u (native app deneyimi)
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -190,7 +241,7 @@ function useMediaQuery(query: string): boolean {
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
-  const [threads, setThreads] = useState<ChatThread[]>(INITIAL_CHAT_THREADS);
+  const [threads, setThreads] = useState<ChatThread[]>(loadThreads);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [openCategory, setOpenCategory] = useState<string>('chat');
   const [input, setInput] = useState('');
@@ -205,6 +256,75 @@ export default function CEOCommandCenter() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [backendOnline, setBackendOnline] = useState(true); // Header LED'i için
+  const [approvedMemoryOffers, setApprovedMemoryOffers] = useState<string[]>([]);
+
+  // 🏛️ Stratejik kararı ömür boyu kalıcı hafızaya mühürle
+  const handleMemoryApprove = async (category: string, decisionText: string) => {
+    try {
+      const res = await fetch('/api/v1/ceo/memory', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve', category, decision_text: decisionText }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        setApprovedMemoryOffers((prev) => (prev.includes(decisionText) ? prev : [...prev, decisionText]));
+        setMessages((prev) => [...prev, {
+          role: 'ceo',
+          text: result.message || '🏛️ Karar ömür boyu kalıcı hafızaya mühürlendi.',
+          time: now(),
+        }]);
+      } else {
+        setMessages((prev) => [...prev, {
+          role: 'ceo',
+          text: `⚠️ Karar kaydedilemedi: ${result.error || 'bilinmeyen hata'}`,
+          time: now(),
+        }]);
+      }
+    } catch {
+      setMessages((prev) => [...prev, {
+        role: 'ceo',
+        text: '⚠️ Efendim, karar kaydedilirken bir sorun oluştu. Lütfen tekrar deneyin.',
+        time: now(),
+      }]);
+    }
+  };
+
+  // 🧑‍💼 Kritik işlem onayı (Human Approval Interrupt)
+  const handleApproveCritical = async (approvalText: string) => {
+    setMessages((prev) => prev.map((m) => (m.approvalRequest?.text === approvalText ? { ...m, approvalRequest: undefined } : m)));
+    setMessages((prev) => [...prev, { role: 'ceo', text: '✅ Efendim, onayınız alındı. İşlem gerçekleştiriliyor...', time: now() }]);
+    await handleSend(approvalText, true); // approved bayrağıyla yeniden gönder
+  };
+
+  const handleRejectCritical = (approvalText: string) => {
+    setMessages((prev) => prev.map((m) => (m.approvalRequest?.text === approvalText ? { ...m, approvalRequest: undefined } : m)));
+    setMessages((prev) => [...prev, {
+      role: 'ceo',
+      text: `🛑 Efendim, işlem iptal edildi. Hiçbir değişiklik yapılmadı.\n\n📋 İptal edilen: "${approvalText}"`,
+      time: now(),
+    }]);
+  };
+
+  // Sistemsel durum kontrolü — header LED'i (yeşil: aktif, kırmızı: çevrimdışı)
+  const checkBackendHealth = useCallback(async () => {
+    try {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch('/api/v1/ceo/health', { method: 'GET', signal: controller.signal });
+      clearTimeout(t);
+      setBackendOnline(res.ok);
+    } catch {
+      setBackendOnline(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    checkBackendHealth();
+    const interval = setInterval(checkBackendHealth, 30000);
+    return () => clearInterval(interval);
+  }, [checkBackendHealth]);
 
   // Konu başlığına tıklandığında o konunun mesajlarını yükle
   const loadThread = (threadId: string) => {
@@ -216,13 +336,22 @@ export default function CEOCommandCenter() {
     }
   };
 
-  // Konu başlığını silme fonksiyonu
+  // Konu başlığını silme fonksiyonu — kalıcı olarak kaldırır
   const handleDeleteThread = (threadId: string) => {
-    setThreads((prev) => prev.filter((t) => t.id !== threadId));
+    setThreads((prev) => {
+      const next = prev.filter((t) => t.id !== threadId);
+      saveThreads(next); // 💾 silme işlemini kalıcılaştır — yenilenince geri gelmez
+      return next;
+    });
     if (activeThreadId === threadId) {
       startNewChat();
     }
   };
+
+  // Sohbet geçmişini otomatik kalıcılaştır (değişen her durum kaydedilir)
+  useEffect(() => {
+    saveThreads(threads);
+  }, [threads]);
 
   // Yeni sohbet başlat
   const startNewChat = () => {
@@ -238,25 +367,8 @@ export default function CEOCommandCenter() {
 
   const now = () => new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-  const isSoftwareRequest = (text: string): boolean => {
-    const lower = text.toLowerCase();
-    const softwareKeywords = ['yazılım', 'kod', 'program', 'uygulama', 'ekran', 'modül', 'entegrasyon', 'bug', 'hata düzelt', 'özellik ekle', 'geliştir', 'yap', 'oluştur', 'tasarla', 'yaz', 'component', 'bileşen', 'api', 'backend', 'frontend', 'database', 'veritabanı', 'flutter', 'next.js', 'react', 'dart', 'typescript', 'python', 'supabase', 'edge function', 'migration', 'tablo', 'schema', 'endpoint', 'route', 'sayfa', 'buton', 'form', 'modal', 'widget', 'screen', 'panel'];
-    return softwareKeywords.some((kw) => lower.includes(kw));
-  };
-
-  const isBusinessRequest = (text: string): boolean => {
-    const lower = text.toLowerCase();
-    const businessKeywords = [
-      // BİLGİ/ARAŞTIRMA TALEPLERİ - KESİNLİKLE Likya'ya yönlendirilir
-      'araştır', 'araştırma', 'nedir', 'incele', 'bilgi ver', 'iot nedir', 'sensor nedir',
-      'nasıl çalışır', 'ne işe yarar', 'açıkla', 'detaylandır', 'raporla', 'özetle',
-      'iş', 'pazar', 'rakip', 'analiz', 'strateji', 'pazarlama', 'satış', 'gelir',
-      'bütçe', 'rapor', 'özet', 'fikir', 'tavsiye', 'öneri', 'plan', 'proje',
-      'yatırım', 'maliyet', 'kâr', 'kar', 'ciro', 'müşteri', 'trend', 'sektör',
-      'piyasa', 'fiyat', 'kampanya', 'reklam', 'sosyal medya', 'marka', 'büyüme', 'ölçek',
-    ];
-    return businessKeywords.some((kw) => lower.includes(kw));
-  };
+  // Not: Akıllı yönlendirme artık tamamen sunucuda (route.ts classifyIntent) yapılıyor;
+  // eski istemci tarafı isSoftwareRequest/isBusinessRequest fonksiyonları kaldırıldı.
 
   const isWebSearchQuery = (text: string): boolean => {
     const lower = text.toLowerCase();
@@ -296,8 +408,8 @@ export default function CEOCommandCenter() {
     setAttachMenuOpen(false);
   };
 
-  const handleSend = async () => {
-    const text = input.trim();
+  const handleSend = async (overrideText?: string, approved?: boolean) => {
+    const text = (overrideText ?? input).trim();
     if (!text || isProcessing) return;
 
     setMessages((prev) => [...prev, { role: 'user', text, time: now(), attachment: pendingAttachment || undefined }]);
@@ -306,8 +418,6 @@ export default function CEOCommandCenter() {
     setIsProcessing(true);
 
     // Akıllı yönlendirme
-    const isSoftware = isSoftwareRequest(text);
-    const isBusiness = isBusinessRequest(text);
     const isWebSearch = isWebSearchQuery(text);
 
     // Özel Web Arama sorgusu yanıtı (Kullanıcının araştırma yeteneğini test etme sorusu)
@@ -325,13 +435,19 @@ export default function CEOCommandCenter() {
 
     try {
       // GERÇEK API ÇAĞRISI - Backend /api/v1/ceo/execute
+      // ⏱️ 60sn zaman aşımı: backend takılırsa isProcessing sonsuza dek kilitlenmesin
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000);
       const response = await fetch('/api/v1/ceo/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: text }),
+        body: JSON.stringify({ command: text, ...(approved ? { approved: true } : {}) }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (response.ok) {
+        setBackendOnline(true);
         const result = await response.json();
         // Backend'den dönen GERÇEK sonucu ekrana bas
         if (result.success) {
@@ -341,41 +457,60 @@ export default function CEOCommandCenter() {
               ? result.answer
               : `🧠 Efendim, isteğiniz başarıyla yerine getirildi! 😊\n\n${result.motor === 'deepseek' ? '**[🧠 Cline/DeepSeek]** DeepSeek Coder motoru' : '**[⚡ Gemini/Ollama]** Gemini motoru'} çalıştı.${result.healed ? '\n\n🩺 Efendim, arka plan servisi otomatik onarıldı ve talebiniz başarıyla tamamlandı.' : ''}\n\n📋 Talebiniz: "${text}"\n\n📁 İlgilendiğim dosya: ${result.file || 'belirlenemedi'}\n\n✅ Yapılan işlem: ${result.action || 'tamamlandı'}\n\n📊 Detay: ${result.bytes_written ? `${result.bytes_written} byte yazıldı` : result.message || 'başarıyla tamamlandı'}`,
             time: now(),
+            ...(result.memory_offer ? { memoryOffer: result.memory_offer } : {}),
+          }]);
+        } else if (result.requires_approval) {
+          // 🧑‍💼 İNSAN ONAYI KESİNTİSİ — kritik işlem için Patron onayı
+          setMessages((prev) => [...prev, {
+            role: 'ceo',
+            text: result.message || '🧑‍💼 Bu kritik işlem geri dönülemez olabilir. Onaylıyor musunuz?',
+            time: now(),
+            approvalRequest: { text },
           }]);
         } else {
           setMessages((prev) => [...prev, {
             role: 'ceo',
-            text: `🙏 Efendim, bu işte biraz ters gitti, üzgünüm.\n\n📋 Talebiniz: "${text}"\n\n❌ Karşılaştığım durum: ${result.error || 'beklenmedik bir hata'}\n\n🔧 Dilerseniz talebi biraz daha sadeleştirip tekrar deneyebiliriz.`,
+            text: result.message
+              ? `${result.message}\n\n📋 Talebiniz: "${text}"\n\n❌ Detay: ${result.error || 'beklenmedik bir hata'}`
+              : `🙏 Efendim, bu işte biraz ters gitti, üzgünüm.\n\n📋 Talebiniz: "${text}"\n\n❌ Karşılaştığım durum: ${result.error || 'beklenmedik bir hata'}\n\n🔧 Dilerseniz talebi biraz daha sadeleştirip tekrar deneyebiliriz.`,
             time: now(),
           }]);
         }
       } else {
-        // Backend yoksa fallback - statik yanıt
-        if (isSoftware) {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
-        } else if (isBusiness) {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Likya'ya analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
-        } else {
-          setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
+        // Rota hata döndürdü — GERÇEK hatayı göster (yanıltıcı "backend yok" mesajı kaldırıldı)
+        let errorText = `İşlem tamamlanamadı (HTTP ${response.status}). Lütfen tekrar deneyin.`;
+        try {
+          const errBody = await response.json();
+          if (errBody?.message) {
+            errorText = `${errBody.message}${errBody.error ? `\n\n❌ Detay: ${errBody.error}` : ''}`;
+          } else if (errBody?.error) {
+            errorText = `❌ ${errBody.error}`;
+          }
+        } catch {
+          // JSON çözümlenemedi — status bilgisi yeterli
         }
+        setMessages((prev) => [...prev, { role: 'ceo', text: errorText, time: now() }]);
       }
     } catch (e) {
-      // Backend yoksa fallback
-      if (isSoftware) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `🧠 Efendim, yazılım talebinizi aldım. 😊\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; birazdan tekrar deneyebiliriz.\n\n🔧 İnfaz motoru ayağa kalktığında bu komut dosya üzerinde gerçek değişikliği yapacak.`, time: now() }]);
-      } else if (isBusiness) {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `📊 Efendim, "${text}" konusunu Likya'ya analiz ettiriyorum. 😊\n\n📋 Konu: ${text}\n\nİzninizle detaylı bir araştırma raporu hazırlayıp en kısa sürede masanıza bırakacağım.`, time: now() }]);
-      } else {
-        setMessages((prev) => [...prev, { role: 'ceo', text: `⚙️ Efendim, operasyon talebinizi aldım.\n\n📋 Talebiniz: "${text}"\n\n⚠️ Şu an backend servisiyle bağlantı kuramadım; ama sistem normale döner dönmez işleme alacağım.`, time: now() }]);
-      }
+      // Gerçek ağ/bağlantı hatası — LED kırmızıya döner
+      const errMsg = e instanceof Error && e.name !== 'AbortError' ? e.message : 'İstek zaman aşımına uğradı (60 sn).';
+      setBackendOnline(false);
+      setMessages((prev) => [...prev, {
+        role: 'ceo',
+        text: `⚠️ Efendim, sunucuya ulaşamadım: ${errMsg}\n\n🔧 Lütfen birkaç saniye sonra tekrar deneyin.`,
+        time: now(),
+      }]);
+      // LED'i gerçek duruma göre yenile
+      setTimeout(checkBackendHealth, 3000);
     }
     setIsProcessing(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      // Canlı DOM değerini ilet — state senkron olmayabilir
+      handleSend(e.currentTarget.value);
     }
   };
 
@@ -422,34 +557,39 @@ export default function CEOCommandCenter() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           {sidebarOpen && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', whiteSpace: 'nowrap' }}>
-              {/* Likya SVG Logosu - Degrade Indigo/Cyan/Amber + Glow */}
+              {/* Likya Neon Amblem - Geometrik 'L' Monogramı + CEO Tepe Şapkası (Cyan & Amber Işıltılı) */}
               <div style={{
                 width: '36px',
                 height: '36px',
                 borderRadius: '10px',
-                background: 'linear-gradient(135deg, rgba(99,102,241,0.2), rgba(0,242,254,0.2), rgba(245,158,11,0.2))',
-                border: '1px solid rgba(0,242,254,0.4)',
+                background: 'linear-gradient(135deg, rgba(0,242,254,0.18), rgba(79,70,229,0.16), rgba(245,158,11,0.2))',
+                border: '1px solid rgba(0,242,254,0.45)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 0 16px rgba(0,242,254,0.3), inset 0 0 8px rgba(245,158,11,0.1)',
+                boxShadow: '0 0 18px rgba(0,242,254,0.35), inset 0 0 10px rgba(245,158,11,0.15)',
               }}>
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none">
                   <defs>
                     <linearGradient id="likyaLogo" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#6366f1" />
-                      <stop offset="50%" stopColor="#00f2fe" />
+                      <stop offset="0%" stopColor="#00f2fe" />
+                      <stop offset="55%" stopColor="#4facfe" />
                       <stop offset="100%" stopColor="#f59e0b" />
                     </linearGradient>
                   </defs>
-                  {/* Antik dağ formu */}
-                  <path d="M4 20 L12 4 L20 20 Z" stroke="url(#likyaLogo)" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
-                  {/* Işık huzmesi */}
-                  <path d="M12 4 L12 20" stroke="url(#likyaLogo)" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-                  {/* L harfi */}
-                  <path d="M9 14 L9 20 L15 20" stroke="url(#likyaLogo)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                  {/* Zemin */}
-                  <path d="M4 20 L20 20" stroke="url(#likyaLogo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+                  {/* Neon radar halkası - fütüristik enerji */}
+                  <circle cx="12" cy="12" r="10.4" stroke="url(#likyaLogo)" strokeWidth="0.7" opacity="0.35" strokeDasharray="3 2.4" />
+                  {/* Geometrik L monogramı - şapkanın siperliğiyle birleşik */}
+                  <path d="M8.2 20 V7 H16.4" stroke="url(#likyaLogo)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* CEO tepe şapkası (crown) - L'nin üzerinde yükselen */}
+                  <path d="M9.6 7 V3.6 H14.4 V7" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  {/* Şapka siperliği - amber ışıltılı çizgi */}
+                  <path d="M4.4 6.4 H19.6" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                  {/* Tepeden yükselen ışık huzmesi */}
+                  <path d="M12 3.6 V1.9" stroke="#00f2fe" strokeWidth="1.4" strokeLinecap="round" />
+                  {/* Amber bilgelik mücevheri - L köşesi */}
+                  <circle cx="8.2" cy="7" r="1.4" fill="#f59e0b" />
+                  <circle cx="8.2" cy="7" r="3" stroke="#f59e0b" strokeWidth="0.5" opacity="0.45" />
                 </svg>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -479,6 +619,21 @@ export default function CEOCommandCenter() {
           >
             {sidebarOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
           </button>
+          {/* 🚀 ACİL BULUT IDE — github.dev web editörüne tek tık */}
+          <a
+            href="https://github.dev/ismetvardar-hub/likya_super_app"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Acil Bulut IDE — web tabanlı editör (github.dev)"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '26px', height: '26px', borderRadius: '8px',
+              background: 'rgba(0,242,254,0.08)', border: '1px solid rgba(0,242,254,0.3)',
+              color: '#00f2fe', fontSize: '13px', textDecoration: 'none',
+            }}
+          >
+            🚀
+          </a>
         </div>
 
         {/* 1. LİKYA CHAT - Ana Buton */}
@@ -667,6 +822,15 @@ export default function CEOCommandCenter() {
               {activeView === 'market' && <LikyaMarketplace />}
               {activeView === 'room' && <RoomOnlyConcept />}
               {activeView === 'athlete' && <AthletePerformanceAI />}
+              {activeView === 'sportvision' && <SportVisionDashboard />}
+              {activeView === 'sportvisionx' && <SportVisionX />}
+              {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
+              {activeView === 'holistic' && <HolisticChildDashboard />}
+              {activeView === 'scouting' && <ScoutingEcosystem />}
+              {activeView === 'toolsagents' && <ToolsAndAgentsDashboard />}
+              {activeView === 'smartcampus' && <DazeSmartCampus />}
+              {activeView === 'mediacom' && <SportMediaCommerceDashboard />}
+              {activeView === 'procurement' && <ProcurementDashboard />}
               {activeView === 'risk' && <StrategicRiskShield />}
               {activeView === 'engine' && <SmartDestinationEngine />}
               {activeView === 'supplier' && <SupplierManagement />}
@@ -680,7 +844,8 @@ export default function CEOCommandCenter() {
               {activeView === 'osint' && <OSINTSahaRadar />}
               {activeView === 'gcp' && <GoogleCloudHibe />}
               {activeView === 'saas' && <GlobalSaaSFatura />}
-              {activeView === 'suno' && <SunoJingleBar />}
+              {activeView === 'music' && <LikyaMusicStation />}
+              {activeView === 'balance' && <DensityBalancer />}
             </div>
           </div>
         )}
@@ -692,12 +857,42 @@ export default function CEOCommandCenter() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
               {/* Chat Header */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, #f59e0b, #d97706)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
-                  🎩
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'linear-gradient(135deg, rgba(0,242,254,0.2), rgba(245,158,11,0.2))', border: '1px solid rgba(0,242,254,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 16px rgba(0,242,254,0.3)' }}>
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none">
+                    <defs>
+                      <linearGradient id="likyaHeaderLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#00f2fe" />
+                        <stop offset="55%" stopColor="#4facfe" />
+                        <stop offset="100%" stopColor="#f59e0b" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="10.4" stroke="url(#likyaHeaderLogo)" strokeWidth="0.7" opacity="0.35" strokeDasharray="3 2.4" />
+                    <path d="M8.2 20 V7 H16.4" stroke="url(#likyaHeaderLogo)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M9.6 7 V3.6 H14.4 V7" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M4.4 6.4 H19.6" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                    <path d="M12 3.6 V1.9" stroke="#00f2fe" strokeWidth="1.4" strokeLinecap="round" />
+                    <circle cx="8.2" cy="7" r="1.4" fill="#f59e0b" />
+                    <circle cx="8.2" cy="7" r="3" stroke="#f59e0b" strokeWidth="0.5" opacity="0.45" />
+                  </svg>
                 </div>
-                <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#fff' }}>Likya CEO</div>
-                  <div style={{ fontSize: '11px', color: '#48bb78' }}>🟢 Emrinizdeyim • Akıllı Yönlendirme Aktif</div>
+                  {/* Canlılık LED'i — yeşil: sistem aktif, kırmızı: çevrimdışı */}
+                  <span
+                    title={backendOnline ? 'Sistem aktif' : 'Sistem çevrimdışı'}
+                    style={{
+                      width: '9px',
+                      height: '9px',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      flexShrink: 0,
+                      background: backendOnline ? '#22c55e' : '#ef4444',
+                      boxShadow: backendOnline
+                        ? '0 0 8px #22c55e, 0 0 16px rgba(34,197,94,0.5)'
+                        : '0 0 8px #ef4444, 0 0 16px rgba(239,68,68,0.5)',
+                      animation: backendOnline ? 'radarPulse 2s infinite' : 'none',
+                    }}
+                  />
                 </div>
               </div>
 
@@ -705,27 +900,30 @@ export default function CEOCommandCenter() {
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto', padding: '8px' }}>
                 {messages.length === 0 && !isProcessing ? (
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '18px', textAlign: 'center', padding: '24px', minHeight: '100%' }}>
-                    {/* Likya Neon Amblem */}
+                    {/* Likya Neon Amblem - Geometrik 'L' + CEO Tepe Şapkası (Cyan & Amber Işıltılı) */}
                     <div style={{
                       width: '76px', height: '76px', borderRadius: '24px',
-                      background: 'linear-gradient(135deg, rgba(99,102,241,0.25), rgba(0,242,254,0.25), rgba(245,158,11,0.25))',
-                      border: '1px solid rgba(0,242,254,0.4)',
+                      background: 'linear-gradient(135deg, rgba(0,242,254,0.22), rgba(79,70,229,0.18), rgba(245,158,11,0.22))',
+                      border: '1px solid rgba(0,242,254,0.45)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      boxShadow: '0 0 30px rgba(0,242,254,0.35), inset 0 0 12px rgba(245,158,11,0.15)',
+                      boxShadow: '0 0 34px rgba(0,242,254,0.4), inset 0 0 14px rgba(245,158,11,0.18)',
                       animation: 'radarPulse 2s infinite',
                     }}>
-                      <svg viewBox="0 0 24 24" width="40" height="40" fill="none">
+                      <svg viewBox="0 0 24 24" width="42" height="42" fill="none">
                         <defs>
                           <linearGradient id="likyaHeroLogo" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#6366f1" />
-                            <stop offset="50%" stopColor="#00f2fe" />
+                            <stop offset="0%" stopColor="#00f2fe" />
+                            <stop offset="55%" stopColor="#4facfe" />
                             <stop offset="100%" stopColor="#f59e0b" />
                           </linearGradient>
                         </defs>
-                        <path d="M4 20 L12 4 L20 20 Z" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" fill="none" strokeLinejoin="round" />
-                        <path d="M12 4 L12 20" stroke="url(#likyaHeroLogo)" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-                        <path d="M9 14 L9 20 L15 20" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                        <path d="M4 20 L20 20" stroke="url(#likyaHeroLogo)" strokeWidth="1.5" strokeLinecap="round" opacity="0.8" />
+                        <circle cx="12" cy="12" r="10.4" stroke="url(#likyaHeroLogo)" strokeWidth="0.7" opacity="0.35" strokeDasharray="3 2.4" />
+                        <path d="M8.2 20 V7 H16.4" stroke="url(#likyaHeroLogo)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M9.6 7 V3.6 H14.4 V7" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M4.4 6.4 H19.6" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                        <path d="M12 3.6 V1.9" stroke="#00f2fe" strokeWidth="1.4" strokeLinecap="round" />
+                        <circle cx="8.2" cy="7" r="1.4" fill="#f59e0b" />
+                        <circle cx="8.2" cy="7" r="3" stroke="#f59e0b" strokeWidth="0.5" opacity="0.45" />
                       </svg>
                     </div>
                     <h2 style={{
@@ -765,15 +963,35 @@ export default function CEOCommandCenter() {
                     gap: '12px',
                   }}>
                     <div style={{
-                      width: '32px', height: '32px', borderRadius: '50%', flexShrink: 0,
+                      width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       background: m.role === 'user'
                         ? 'linear-gradient(135deg, rgba(0,242,254,0.25), rgba(72,187,120,0.25))'
-                        : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        : 'linear-gradient(135deg, rgba(0,242,254,0.18), rgba(79,70,229,0.16), rgba(245,158,11,0.2))',
+                      border: m.role === 'user' ? '1px solid rgba(0,242,254,0.25)' : '1px solid rgba(0,242,254,0.4)',
                       fontSize: '15px',
-                      boxShadow: m.role === 'user' ? '0 0 10px rgba(0,242,254,0.15)' : '0 0 12px rgba(245,158,11,0.2)',
+                      boxShadow: m.role === 'user' ? '0 0 10px rgba(0,242,254,0.15)' : '0 0 14px rgba(0,242,254,0.3)',
                     }}>
-                      {m.role === 'user' ? '👤' : '🎩'}
+                      {m.role === 'user' ? (
+                        '👤'
+                      ) : (
+                        /* Likya CEO Neon Amblemi — cyan/amber degrade vektörel logo */
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+                          <defs>
+                            <linearGradient id="likyaMsgLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#00f2fe" />
+                              <stop offset="55%" stopColor="#4facfe" />
+                              <stop offset="100%" stopColor="#f59e0b" />
+                            </linearGradient>
+                          </defs>
+                          <circle cx="12" cy="12" r="10.4" stroke="url(#likyaMsgLogo)" strokeWidth="0.7" opacity="0.35" strokeDasharray="3 2.4" />
+                          <path d="M8.2 20 V7 H16.4" stroke="url(#likyaMsgLogo)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M9.6 7 V3.6 H14.4 V7" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M4.4 6.4 H19.6" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                          <path d="M12 3.6 V1.9" stroke="#00f2fe" strokeWidth="1.4" strokeLinecap="round" />
+                          <circle cx="8.2" cy="7" r="1.4" fill="#f59e0b" />
+                        </svg>
+                      )}
                     </div>
                     <div style={{ flex: 1, minWidth: 0, maxWidth: '85%' }}>
                       <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '4px', fontWeight: '600', letterSpacing: '0.3px' }}>
@@ -802,6 +1020,70 @@ export default function CEOCommandCenter() {
                       }}>
                         {renderMarkdown(m.text)}
                       </div>
+                      {m.memoryOffer && m.role === 'ceo' && (
+                        <div style={{
+                          marginTop: '12px',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(245,158,11,0.35)',
+                          background: 'linear-gradient(135deg, rgba(245,158,11,0.08), rgba(0,242,254,0.06))',
+                          padding: '10px 12px',
+                        }}>
+                          <div style={{ fontSize: '12px', color: '#fbbf24', fontWeight: '600', marginBottom: '8px' }}>
+                            💡 Efendim, bu stratejik kararı ömür boyu kalıcı hafızaya kaydedeyim mi?
+                          </div>
+                          <button
+                            onClick={() => handleMemoryApprove(m.memoryOffer!.category, m.memoryOffer!.decision_text)}
+                            disabled={approvedMemoryOffers.includes(m.memoryOffer!.decision_text)}
+                            style={{
+                              padding: '8px 18px',
+                              borderRadius: '20px',
+                              cursor: approvedMemoryOffers.includes(m.memoryOffer!.decision_text) ? 'default' : 'pointer',
+                              border: '1px solid rgba(34,197,94,0.5)',
+                              background: approvedMemoryOffers.includes(m.memoryOffer!.decision_text) ? 'rgba(34,197,94,0.15)' : 'rgba(34,197,94,0.1)',
+                              color: '#4ade80',
+                              fontSize: '12px',
+                              fontWeight: '700',
+                              transition: 'all 0.2s',
+                            }}
+                          >
+                            {approvedMemoryOffers.includes(m.memoryOffer!.decision_text) ? '🏛️ Mühürlendi ✓' : '🔒 Onayla & Mühürle'}
+                          </button>
+                        </div>
+                      )}
+                      {m.approvalRequest && m.role === 'ceo' && (
+                        <div style={{
+                          marginTop: '12px', borderRadius: '12px',
+                          border: '1px solid rgba(248,113,113,0.4)',
+                          background: 'rgba(248,113,113,0.08)',
+                          padding: '10px 12px',
+                        }}>
+                          <div style={{ fontSize: '12px', color: '#fbbf24', fontWeight: '700', marginBottom: '8px' }}>
+                            🧑‍💼 Patron, bu kritik işlemi onaylıyor musunuz?
+                          </div>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <button
+                              onClick={() => handleApproveCritical(m.approvalRequest!.text)}
+                              style={{
+                                padding: '8px 18px', borderRadius: '20px', cursor: 'pointer',
+                                border: '1px solid rgba(74,222,128,0.5)', background: 'rgba(74,222,128,0.1)',
+                                color: '#4ade80', fontSize: '12px', fontWeight: '700',
+                              }}
+                            >
+                              ✅ Onayla
+                            </button>
+                            <button
+                              onClick={() => handleRejectCritical(m.approvalRequest!.text)}
+                              style={{
+                                padding: '8px 18px', borderRadius: '20px', cursor: 'pointer',
+                                border: '1px solid rgba(248,113,113,0.5)', background: 'rgba(248,113,113,0.1)',
+                                color: '#f87171', fontSize: '12px', fontWeight: '700',
+                              }}
+                            >
+                              🛑 Reddet
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -809,7 +1091,21 @@ export default function CEOCommandCenter() {
                 )}
                 {isProcessing && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#f59e0b' }}>
-                    <span style={{ animation: 'pulse 1s infinite' }}>🎩</span> Bir saniye efendim, hemen ilgileniyorum...
+                    <span style={{ display: 'inline-flex', animation: 'pulse 1s infinite' }}>
+                      <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+                        <defs>
+                          <linearGradient id="likyaProcLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#00f2fe" />
+                            <stop offset="55%" stopColor="#4facfe" />
+                            <stop offset="100%" stopColor="#f59e0b" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M8.2 20 V7 H16.4" stroke="url(#likyaProcLogo)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M9.6 7 V3.6 H14.4 V7" stroke="#00f2fe" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M4.4 6.4 H19.6" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                        <circle cx="8.2" cy="7" r="1.4" fill="#f59e0b" />
+                      </svg>
+                    </span> Bir saniye efendim, hemen ilgileniyorum...
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -958,7 +1254,7 @@ export default function CEOCommandCenter() {
                             { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
                             { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
                             { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
-                            { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
+                            { icon: '🎵', label: 'Likya Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
                             { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
                           ].map((item) => (
                             <button
@@ -1031,7 +1327,28 @@ export default function CEOCommandCenter() {
                         🎤
                       </button>
 
-                      {/* Gönder ok butonu kaldırıldı — Enter ile gönderiliyor */}
+                      {/* Gönder Butonu — Enter yanında güvenilir görsel geri bildirim */}
+                      <button
+                        title="Gönder"
+                        onClick={() => handleSend()}
+                        disabled={isProcessing || !input.trim()}
+                        style={{
+                          width: '36px',
+                          height: '36px',
+                          borderRadius: '50%',
+                          border: 'none',
+                          cursor: 'pointer',
+                          background: input.trim() ? 'linear-gradient(135deg, #00f2fe, #f59e0b)' : 'rgba(255,255,255,0.06)',
+                          color: input.trim() ? '#0d1322' : '#64748b',
+                          fontSize: '15px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        ➤
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1069,7 +1386,7 @@ export default function CEOCommandCenter() {
                           { icon: '📁', label: 'Dosya Yükle', desc: 'PDF, TXT, CSV, Excel', onClick: () => fileInputRef.current?.click() },
                           { icon: '📸', label: 'Fotoğraf / Kamera', desc: 'Galeriden seç veya çek (JPG, PNG)', onClick: () => imageInputRef.current?.click() },
                           { icon: '🎨', label: 'Görsel Tasarla', desc: '[Görsel Tasarla]', onClick: () => quickCommand('[Görsel Tasarla]') },
-                          { icon: '🎵', label: 'Suno Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
+                          { icon: '🎵', label: 'Likya Müzik & Jingle', desc: '[Müzik Üret]', onClick: () => quickCommand('[Müzik Üret]') },
                           { icon: '🔬', label: 'Deep Research', desc: '[Deep Research]', onClick: () => quickCommand('[Deep Research]') },
                         ].map((item) => (
                           <button
@@ -1111,6 +1428,22 @@ export default function CEOCommandCenter() {
                       outline: 'none',
                     }}
                   />
+                  {/* Gönder Butonu — mobil için görsel geri bildirim */}
+                  <button
+                    title="Gönder"
+                    onClick={() => handleSend()}
+                    disabled={isProcessing || !input.trim()}
+                    style={{
+                      width: '42px', height: '42px', borderRadius: '12px', flexShrink: 0,
+                      border: 'none', cursor: 'pointer',
+                      background: input.trim() ? 'linear-gradient(135deg, #00f2fe, #f59e0b)' : 'rgba(255,255,255,0.06)',
+                      color: input.trim() ? '#0d1322' : '#64748b',
+                      fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    ➤
+                  </button>
                   {/* Model Seçici (Likya Tarzı Dropdown) */}
                   <div style={{ position: 'relative', flexShrink: 0 }}>
                     <button

@@ -32,11 +32,11 @@ class ComponentShowcaseScreen extends StatelessWidget {
             const SizedBox(height: 24),
             const Text('Hava Durumu & Parkur Bileşeni', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 10),
-            CampusWeatherWidget(),
+            const CampusWeatherWidget(),
             const SizedBox(height: 24),
             const Text('Doğrulanmış Üretici Rozeti', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 10),
-            SellerBadgeWidget(
+            const SellerBadgeWidget(
               sellerName: 'Antalya Yerel Üretici Kooperatifi 🌾',
               rating: 4.9,
               totalReviews: 64,

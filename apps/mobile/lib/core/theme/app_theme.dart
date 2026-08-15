@@ -43,12 +43,11 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      colorScheme: ColorScheme.light(
+      colorScheme: const ColorScheme.light(
         primary: primaryColor,
         secondary: secondaryColor,
         tertiary: accentColor,
         surface: cardColor,
-        background: backgroundColor,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: textDark,
@@ -101,7 +100,6 @@ class AppTheme {
         secondary: secondaryColor,
         tertiary: accentColor,
         surface: darkCard,
-        background: darkBg,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
         onSurface: darkText,

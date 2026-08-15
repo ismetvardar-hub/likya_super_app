@@ -8,3 +8,10 @@ apps/admin/.next/
 .next/
 apps/admin/.env.local
 .env.local
+
+# 🔒 KVKK: sonsuz hafıza veritabanı (kişisel veri) asla depoya gönderilmez
+data/
+*.sqlite
+*.sqlite3
+*.db
+

@@ -1,0 +1,158 @@
+// ============================================================================
+// 🏛️ LİKYA KURUMSAL BİLGİ VAULT'U (Enterprise Knowledge Vault)
+// Kurulan tüm modüllerin bilgisi burada "mühürlü" tutulur.
+// Soru geldiğinde anahtar kelime eşleşmesiyle (RAG) ilgili bilgi
+// otomatik olarak CEO prompt'una enjekte edilir → CEO bilimsel doğrulukla yanıtlar.
+// ============================================================================
+
+export interface KnowledgeEntry {
+  id: string;
+  title: string;
+  icon: string;
+  keywords: string[];
+  content: string;
+}
+
+export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
+  {
+    id: 'sport-vision',
+    title: 'Sport Vision — Otonom Branş Ajanları & Spor Bilimleri',
+    icon: '🎾',
+    keywords: ['sport vision', 'branş', 'padel', 'yüzme', 'yoga', 'fitness', 'koşu', 'tenis', 'futbol', 'biyomekanik', 'besyo', 'vo2max', 'ajan'],
+    content:
+      'Sport Vision, her spor branşına ayrı bir "Uzman Gözlemci Ajan" atar (Padel, Yüzme, Fitness, Yoga, Koşu, Futbol). Her ajanın persona, biyomekanik odakları, sakatlık risk noktaları, ideal BPM ve MET değeri vardır. Tüm istatistikler DETERMİNİSTİK matematikle hesaplanır (LLM halüsinasyonu yok): kalori (MET yöntemi), vuruş hızı, saha kapsama alanı, isabet oranı, güç çıkışı (P=F·v), VO2Max (Cooper testi: VO2max=(d−504.9)/44.73), laktat eşiği (maks HR %85). BESYO kütüphanesi 4 modül içerir: Biyomekanik Analiz (açı verimi, asimetri, eklem yükü), Kondisyon Motoru (periyodizasyon), Sakatlık Önleme (HRV bazlı aşırı yüklenme riski), Antrenör Pedagojisi. Kişiselleştirilmiş mesajlaşma motoru sporcuya motive edici, antrenöre bilimsel rapor üretir.',
+  },
+  {
+    id: 'youth-dev',
+    title: 'Gelişim Ligi & Biyometrik Akademi (Youth Maturation)',
+    icon: '🧬',
+    keywords: ['gelişim', 'biyometrik', 'phv', 'büyüme', 'mirwald', 'khamis', 'ape index', 'kulaç', 'altyapı', 'genç sporcu', 'maturity', 'kemik yaşı', 'osgood', 'olgunlaşma'],
+    content:
+      'Gelişim Ligi, genç sporcuları kronolojik yaşa değil BİYOLOJİK yaşa göre değerlendirir. Üç bilimsel algoritma kullanır: (1) MİRWALD (2002) Maturity Offset: boy, oturma yüksekliği, bacak boyu, kilo ve yaş ile PHV (Peak Height Velocity — Büyüme Zirve Hızı) tahmini; negatif değer PHV öncesi, 0 civarı HIZLI BÜYÜME evresi, pozitif sonrası demektir. (2) TANNER/KHAMIS-ROCHE yetişkin boy tahmini: erkek (baba+anne+13)/2, kız (baba+anne−13)/2. (3) APE INDEX: kulaç/boy oranı (yüzme, tenis, basketbolda erişim avantajı). PHV dönemi "Büyüme Kalkanı" aktifleşir: plyometrik yük %30 azaltılır, kalsiyum 1300 mg/D3/magnezyum önerilir — Osgood-Schlatter gibi büyüme çağı sakatlıkları önlenir. Beslenme motoru büyüme payı + antrenman harcamasını toplar. 3 taraflı rapor: sporcuya motive edici, veliye beslenme/uyku/büyüme ağrısı rehberi, antrenöre yük yönetimi.',
+  },
+  {
+    id: 'density-balancer',
+    title: 'Yoğunluk Dengeleme & Homojen Dağılım Motoru',
+    icon: '⚖️',
+    keywords: ['yoğunluk', 'dengeleme', 'homojen', 'dağılım', 'tenha', 'kalabalık', 'happy hour', 'personel rotasyonu', 'pop-up', 'etkinlik', 'sessiz vaha'],
+    content:
+      'Yoğunluk Dengeleme Motoru, tesisin doluluğunu bölge bazında izleyip 5 otonom strateji uygular: (1) Dinamik Fiyat/Flash İkram: tenha bölge %30 indirim başlatır; (2) Akustik Çekim (BPM Köprüsü): tenha bölgede müziği yükseltir, yoğun bölgede düşürür; (3) Pop-Up Etkinlik: atıl alanlara mini şov; (4) Personel Rotasyonu: yoğun bölgeden tenha bölgeye personel kaydırır; (5) Sessiz Vaha Rotası: sessizlik arayan misafirlere tenha bölgeleri önerir. Homojenlik Puanı (standart sapma bazlı %0-100) dağılım dengesini ölçer; her karar zaman damgalı denetim kaydına işlenir ve kritik kararlar Telegram/Discord VIP hattından Patron\'a bildirilir.',
+  },
+  {
+    id: 'music-matrix',
+    title: 'Çok Bölgeli Akustik Matrisi & Likya Müzik',
+    icon: '🎧',
+    keywords: ['akustik', 'bölge', 'müzik matrisi', 'zone', 'yoga spa', 'havuz', 'restoran', 'villa', 'padel kort', 'frekans', 'bpm', 'çal'],
+    content:
+      'Likya Müzik, 5 bölgeli bağımsız akustik ekosistemdir: Yoga&Spa (432Hz Zen), Ana Havuz&Sunset Bar (Disco/House), Restoran (Bossa/Akustik), Villalar (Lo-Fi), Padel Kortu (High-Energy). Her bölge kendi gerçek telifsiz radyo akışını (Radio Paradise MP3) bağımsız çalar; canlı BPM, ses seviyesi, enerji ve Suno üretim akışı ayrı yönetilir. "Tesis Geneli Parti Modu" tek tıkla tüm bölgeleri kutlamaya alır. Gerçek parçalar new Audio(track.audioUrl) ile, parça bitince onended ile sıradakine kesintisiz geçilir.',
+  },
+  {
+    id: 'weather-dj',
+    title: 'Hava Durumu DJ Otomasyonu (Open-Meteo)',
+    icon: '🌤️',
+    keywords: ['hava durumu', 'open-meteo', 'yağmur', 'güneş', 'sıcaklık', 'fırtına', 'tempo', 'atmosfer', 'gün batımı', 'antalya'],
+    content:
+      'Hava Durumu DJ Otomasyonu, ücretsiz Open-Meteo API ile Antalya anlık hava durumunu çeker ve müziğin BPM\'ini otomatik ayarlar: açık/güneşli +10 BPM (canlı groove), parçalı bulutlu +4, sisli −6 (ambient), yağmurlu −12 (lounge/şömine), karlı −15 (lo-fi), fırtına −18 (spa frekansları). Gün batımı saati de gösterilir; hava her 15 dakikada yenilenir ve "Hava DJ Otomatik" anahtarıyla açılıp kapatılabilir.',
+  },
+  {
+    id: 'memory',
+    title: 'Sonsuz Kurumsal Hafıza & Karar Mührü',
+    icon: '🏛️',
+    keywords: ['hafıza', 'karar', 'arşiv', 'enterprise', 'vault', 'onay', 'mühür', 'kaydet', 'strateji', 'kural', 'vizyon', 'sakla'],
+    content:
+      'Sonsuz Kurumsal Hafıza, TTL\'siz kalıcı SQLite deposudur (node:sqlite, JSON yedeğiyle). İki tablo: decisions (onaylı stratejik kararlar, status APPROVED, approved_by Patron) ve enterprise_vault (fatura/sözleşme/müşteri/işlem arşivi). Kullanıcı kural/vizyon/strateji verdiğinde chat altında "💡 Bu kararı ömür boyu kalıcı hafızaya kaydedeyim mi?" onayı çıkar; onaylanınca karar mühürlenir ve SONRAKİ TÜM promptlara otomatik enjekte edilir (çekirdek bellek). Geçmiş fatura/sözleşme/karar soruları arşivden taranarak yanıtlanır.',
+  },
+  {
+    id: 'model-matrix',
+    title: 'A-B-C-D Hibrit Model Şelalesi',
+    icon: '🚀',
+    keywords: ['yedek', 'model', 'şelale', 'deepseek', 'gemini', 'groq', 'ollama', 'mistral', 'openrouter', 'fallback', 'rozet', 'kota'],
+    content:
+      'A-B-C-D model şelalesi, LLM arızalarında kesintisiz yedekleme sağlar. Kodlama: A=DeepSeek → B=Groq → C=OpenAI → D=Anthropic → E=Mistral → F=Yerel Ollama. Sohbet/araştırma: A=Gemini → B=Groq → C=OpenAI → D=Anthropic → E=OpenRouter → F=Ollama. 429 (kota)/401 (kredi)/timeout durumunda kullanıcıya hissettirmeden sıradaki plana geçilir; başarılı model yanıta rozet olarak iliştirilir ([🧠 Plan A: DeepSeek]). Eksik anahtarlı planlar otomatik atlanır. Şu an aktif: DeepSeek + Gemini + yerel Ollama (qwen2.5-coder:7b).',
+  },
+  {
+    id: 'safety-shield',
+    title: 'Güvenlik Kalkanı & Otomatik Geri Alma',
+    icon: '🛡️',
+    keywords: ['kalkan', 'rollback', 'geri alma', 'syntax', 'güvenlik', 'tsc', 'hata', 'çökme', 'koruma', 'doğrulama'],
+    content:
+      'İnfaz motoru üç katmanlı koruma kalkanıyla çalışır: (1) Yazma Öncesi Syntax Kapısı: TS/TSX/JS/JSX TypeScript derleyicisiyle doğrulanır, bozuk kod diske hiç yazılmaz; (2) Yazma Sonrası tsc --noEmit doğrulaması: hedef dosya hataya sebep oluyorsa dosya anında orijinaline döndürülür (rollback); (3) Self-Correction Loop: ilk üretimde sözdizimi hatası olursa hata mesajı modele geri beslenip bir kez düzeltme istenir. Böylece CEO chat kendi arayüzünü asla çökertemez. Ayrıca kritik komutlar (sil, öde, sözleşme, yayınla) İNSAN ONAYI kesintisiyle Patron\'un onayına sunulur.',
+  },
+  {
+    id: 'sportvision-x',
+    title: 'Sport Vision X — Devrimsel Modüller',
+    icon: '🩻',
+    keywords: ['ghost', 'avatar', '3d ikiz', 'holografik', 'klip', 'termal', 'metabolik', 'kriyo', 'ritim kilitleme', 'binaural', 'viral', 'showtime'],
+    content:
+      'Sport Vision X 5 devrimsel modül içerir: (1) Ghost Avatar: sporcunun hareketine şampiyonun şeffaf 3D hayaleti bindirilir, kol açısı farkı canlı görülür; (2) Akustik Ritim Kitleme: kadans düşünce Likya Müzik BPM\'i hedef ritme kilitler (akustik pacing); (3) Viral Klip Fabrikası: kamera en estetik 3 anı seçer, ağır çekim+hız göstergesi+LİKYA logosu ile 15 sn Reels klip sporcunun WhatsApp\'ına gider; (4) Termal Sakatlık Radarı: lokal ısı artışından (ör. +1.8°C omuz) mikro enflamasyonu önceden sezer, kriyo yönlendirmesi yapar; (5) Metabolik Bar Köprüsü: yakılan kalori/elektrolit Daze Chef ekranına düşer, sporcu sahaya çıkarken smoothie hazırdır.',
+  },
+  {
+    id: 'journey',
+    title: 'Duygu Serüveni & Vibe Scanner',
+    icon: '🎭',
+    keywords: ['duygu', 'serüven', 'vibe', 'ruh hali', 'enerji', 'mekan nabzı', 'dikkat çekme', 'rezonans', 'coşku', 'nöro-akustik'],
+    content:
+      'Duygu Serüveni (Emotional Journey), mekanı "Duygusal Simya" laboratuvarına çevirir. 3 evreli otonom BPM rampası: (1) Dikkat Çekme 75 BPM (tatlı saksafon/dalga efekti), (2) Frekans Eşleme 98 BPM (lo-fi/Akdeniz gitarı — düşük frekansa inip bağ kurma), (3) Coşku Rampası 124+ BPM (disco-funk zirve). Vibe Scanner paneli "Mekan Ruh Hali / Duygu Dönüştürücü" durumunu gösterir. Gizlilik sınırı: konuşma asla dinlenmez — yalnızca on-device işlenen toplu çevre sinyalleri (gürültü, enerji, ruh hali eğilimi) KVKK/GDPR uyumlu şekilde kullanılır.',
+  },
+  {
+    id: 'scouting',
+    title: 'Scouting & Küresel Rekabet Ekosistemi',
+    icon: '🎯',
+    keywords: ['scouting', 'rekabet', 'hudl', 'catapult', 'homecourt', 'kitman', 'zone7', 'rakip', 'kulüp', 'ihraç', 'yetene', 'la masia', 'ajax', 'img'],
+    content:
+      'Sport Vision Scouting Ekosistemi, küresel rakiplere (Hudl, Catapult, HomeCourt, Kitman Labs, Zone7) karşı 8 boyutlu konumlanma sunar. Rakipler güçlü: saha video/skor (Hudl), GPS/biyometrik (Catapult), mobil biyomekanik (HomeCourt), sağlık AMS (Kitman), sakatlık tahmini (Zone7). BİZİM BENZERSİZ FARKIMIZ: 360° bütüncül yaklaşım — biyolojik yaş (PHV/Mirwald), çift veli pedagojisi (Q1-Q4), okul/akademik yük, kan tahlili OCR, tribün davranışı ve müzik/beslenme köprüsü rakiplerde YOK. Scouting modülü: genç sporcuların scout karnesini (holistik gelişim + sosyal + PHV ağırlıklı hazırlık skoru) üretir ve La Masia, Ajax, IMG gibi kulüplere tek tıkla yetenek dosyası gönderir (WhatsApp). Doğrulanmış Hareket Kütüphanesi, ideal vuruş açıları ve risk eşiklerini güven skorlarıyla biriktirerek veri üstünlüğü hedefler.',
+  },
+  {
+    id: 'mediacom',
+    title: 'Medya Kasası & KVKK Uyum',
+    icon: '🎬',
+    keywords: ['kvkk', 'rıza', 'muvafakat', 'veli onay', 'medya', 'klip satış', 'daze-gift', 'xp', 'imha', '48 saat', 'hukuk', 'filigran', 'anonim'],
+    content:
+      'Sport Media Commerce, hukuki güvence + medya satışı + sadakat kataloğu sunar. KVKK (6698) md.5/1-a açık rıza + md.10 aydınlatma şablonu üretir; 18 yaş altı sporcular için VELİ MUVAFAKATNAME zorunludur. Anonimleştirme: rızası olmayan üçüncü kişilerin yüzleri AI ile otomatik bulanıklaştırılır. 48 SAAT OTONOM İMHA: satın alınmayan ham/önizleme video 48 saat sonra diskten kalıcı silinir. Ürün kasası: Viral Reels Klip (150 TL/5$/500 XP), Biyomekanik Analiz (250 TL/9$/1000 XP), 4K Fotoğraf Paketi (100 TL/4$/350 XP), 4K Maç Arşivi (350 TL/12$/1500 XP). Daze-Gift: XP/token ile ücretsiz medya talebi (redeemWithPoints). Filigranlı önizleme + çift kanallı satın alma (kart/mobil + XP).',
+  },
+  {
+    id: 'procurement',
+    title: 'Donanım Şartname & Satın Alma Motoru',
+    icon: '📦',
+    keywords: ['donanım', 'şartname', 'tedarik', 'satın alma', 'ihale', 'veo', 'spiideo', 'pixellot', 'bepro', 'jetson', 'kamera', 'poe', 'global shutter', 'polar', 'inbody', 'roi', 'lisans', 'beyanname'],
+    content:
+      'Sport Vision Donanım Motoru: hazır kapalı kutu sistemlere (Veo Cam 3, Spiideo, Pixellot Air NXT, Bepro) aylık/yıllık lisans ödemek yerine endüstriyel bileşenler doğrudan tedarik edilir: 4K Panoramik 180° kamera (120 FPS Global Shutter, Sony Pregius/Hikvision, IP67, PoE+), NVIDIA Jetson Orin Nano/AGX Edge AI (sıfır bulut gecikmesi, on-device KVKK), Polar H10/Verity Sense HRV + BLE 5.3 Gateway, Seca 213 stadiometre + InBody 570 istasyonu (PHV/Mirwald besler), 10 Gbps SFP+ ağ + 8TB NVMe RAID tampon. evaluateSupplierQuote(): Teknik Uyum %40 + Fiyat %30 + Teslim %15 + Garanti %15 + güven bonusu (garanti≥2 yıl +3, uyum≥%90 +4); ONAY ≥78, İNCELEME ≥55, altı RED. 5 yıllık TCO hesabı (donanım + zorunlu abonelik) ile ortalama %65 maliyet avantajı: 13.970 USD tek seferlik (kurulum dahil ~15.370 USD) vs Veo 31.000$, Spiideo 40.000$, Pixellot 50.000$, Bepro 24.500$, Akademi paketi 74.000$. generatePurchaseRequisition() resmî satın alma beyannamesini üretir (gerekçe, kalemler, bütçe TL/USD/EUR, tedarikçi listesi, onay imzası).',
+  },
+
+  {
+    id: 'pwa-deploy',
+    title: '7/24 Bulut & Mobil PWA Mimarisi',
+    icon: '📱',
+    keywords: ['pwa', 'mobil', 'vercel', 'cloud run', 'deploy', 'dağıtım', 'manifest', 'ana ekran', 'pin', 'kilit', 'offline', 'service worker', 'bulut'],
+    content:
+      'Likya Command CEO 7/24 kesintisiz bulut mimarisi: GitHub reposu → otomatik CI/CD → Vercel/Cloud Run üzerinde yayın (output standalone, Dockerfile hazır) → Supabase Cloud veri tabanı. Mobil: PWA (progressive web app) — manifest.json (standalone, tema #0f172a), Service Worker /sw.js (ağ öncelikli + offline önbellek), Safari/Chrome "Ana Ekrana Ekle" ile tarayıcı çubuğu olmadan tam ekran uygulama. Patron Güvenlik Kalkanı: 4 haneli PIN kilidi (varsayılan 1818, değiştirilebilir), 5 hatalı denemede 30 sn kilit, sessionStorage oturum kilidi (pencere kapanınca yeniden kilit). İkonlar deterministik PNG üreticiyle üretilir (scripts/gen-icons.cjs): neon cam göbeği→mor gradyan + şimşek. Production build: npx tsc --noEmit EXIT 0 + npm run build EXIT 0 doğrulanmıştır.',
+  },
+];
+
+// ----------------------------------------------------------------------------
+// 🔍 RAG RETRIEVAL — sorudaki anahtar kelimelerle ilgili bilgiyi seç
+// ----------------------------------------------------------------------------
+export function retrieveKnowledge(question: string): KnowledgeEntry[] {
+  const lower = question.toLowerCase();
+  const hits = KNOWLEDGE_VAULT.map((entry) => {
+    const score = entry.keywords.reduce((s, kw) => (lower.includes(kw.toLowerCase()) ? s + 1 : s), 0);
+    return { entry, score };
+  }).filter((h) => h.score > 0);
+
+  if (hits.length === 0) return [];
+  const maxScore = Math.max(...hits.map((h) => h.score));
+  return hits
+    .filter((h) => h.score >= maxScore * 0.6) // en alakalı grup
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map((h) => h.entry);
+}
+
+// Prompt'a enjekte edilecek bilgi bloğu
+export function buildKnowledgeContext(question: string): string {
+  const entries = retrieveKnowledge(question);
+  if (entries.length === 0) return '';
+  const blocks = entries.map((e) => `📌 ${e.icon} ${e.title}:\n${e.content}`);
+  return `\n\n─── 🔒 MÜHÜRLÜ KURUMSAL BİLGİ (Likya Bilgi Vault'undan) ───\nBilgileri birebir kullan, kendi bilginle harmanla. Emin değilsen uydurma, vault bilgisini aktar.\n${blocks.join('\n\n')}`;
+}
+

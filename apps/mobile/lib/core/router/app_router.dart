@@ -43,7 +43,6 @@ import '../../features/audio_guide/presentation/screens/audio_guide_screen.dart'
 import '../../features/ar_lens/presentation/screens/ar_lens_screen.dart';
 import '../../features/emergency/presentation/screens/emergency_sos_screen.dart';
 import '../../features/showcase/presentation/screens/component_showcase_screen.dart';
-import '../../features/showroom/presentation/screens/try_before_buy_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 
@@ -279,11 +278,6 @@ class AppRouter {
         path: '/showcase',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ComponentShowcaseScreen(),
-      ),
-      GoRoute(
-        path: '/try-before-buy',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const TryBeforeBuyScreen(),
       ),
       GoRoute(
         path: '/auth/login',

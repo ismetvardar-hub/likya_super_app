@@ -5,7 +5,7 @@ class BiometricService {
   factory BiometricService() => _instance;
   BiometricService._internal();
 
-  bool _isBiometricsAvailable = true;
+  final bool _isBiometricsAvailable = true;
 
   Future<bool> isBiometricsAvailable() async {
     return _isBiometricsAvailable;

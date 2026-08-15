@@ -49,23 +49,23 @@ class SolarGridScreen extends StatelessWidget {
                   BoxShadow(color: const Color(0xFFF6AD55).withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),
                 ],
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Canlı Güneş Üretimi (GES)', style: TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
                       Icon(Icons.solar_power_rounded, color: Colors.white, size: 28),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  const Text(
+                  SizedBox(height: 12),
+                  Text(
                     '142.8 kW',
                     style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: -1),
                   ),
-                  const SizedBox(height: 4),
-                  const Text(
+                  SizedBox(height: 4),
+                  Text(
                     'Bugün 1.2 MWh temiz enerji üretildi • Kampüs tüketiminin %68\'i karşılanıyor.',
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
