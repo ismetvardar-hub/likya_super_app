@@ -86,7 +86,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     moduleIds: [
       'campus', 'pricing', 'supplier', 'crew', 'gift', 'hrdispatch',
       'finance', 'marketing', 'legal', 'dept', 'hr', 'payment', 'risk',
-      'gcp', 'saas', 'mediacom', 'market',
+      'gcp', 'saas', 'mediacom', 'market', 'twin', 'iot', 'engine',
     ],
   },
   {
@@ -125,7 +125,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     icon: '🏕️',
     color: '#10b981',
     moduleIds: [
-      'caravan', 'tent', 'room', 'twin', 'iot', 'engine',
+      'caravan', 'tent', 'room',
     ],
   },
 ];
