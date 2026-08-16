@@ -31,6 +31,12 @@ import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
 import { openLiveBridgeStatus } from '../lib/ai/openLiveBridge';
 import { chatwootBridgeStatus } from '../lib/support/chatwootBridge';
 import { gestureTrackerStatus } from '../lib/vision/gestureTracker';
+import { openRouterStatus } from '../lib/ai/openRouterAdapter';
+import { ttsEngineStatus } from '../lib/voice/ttsEngine';
+import { runnerHStatus } from '../lib/ai/runnerHEngine';
+import { in3dBridgeStatus } from '../lib/vision/in3dAvatarBridge';
+import { meshyStatus } from '../lib/vision/meshyAssetGenerator';
+import { viralClipStatus } from '../lib/marketing/viralClipEngine';
 import HRDispatchDashboard from './HRDispatchDashboard';
 import StrategicRiskShield from './StrategicRiskShield';
 import SmartDestinationEngine from './SmartDestinationEngine';
@@ -1261,6 +1267,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   { label: '💬 Chatwoot', status: chatwootBridgeStatus() },
                   { label: '✋ Gesture (Ghost/Pinch)', status: gestureTrackerStatus() },
                   { label: '🔐 Logto 4L RBAC', status: 'SUPER_ADMIN→CREW guard kapısı' },
+                  { label: '🌐 OpenRouter', status: openRouterStatus() },
+                  { label: '🎙️ TTS VoiceBox', status: ttsEngineStatus() },
+                  { label: '🦾 Runner H', status: runnerHStatus() },
+                  { label: '👤 in3D Avatar', status: in3dBridgeStatus() },
+                  { label: '🧊 Meshy 3D', status: meshyStatus() },
+                  { label: '🎬 Viral Klip', status: viralClipStatus() },
                 ].map((p) => (
                   <span
                     key={p.label}

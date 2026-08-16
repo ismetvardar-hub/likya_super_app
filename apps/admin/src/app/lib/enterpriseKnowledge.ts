@@ -172,6 +172,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       '4 bağımsız eklenti adaptörü (mevcut 42 modüle kırılmasız eklenir): (1) lib/ai/openLiveBridge.ts — Web Audio VAD (RMS enerji eşiği) + Barge-In (araya girme) destekli çift yönlü ses köprüsü, AnalyserNode tabanlı VadDetector, createOpenLiveBridge(). (2) lib/support/chatwootBridge.ts — WhatsApp/Web/Messenger/Email webhook normalize + kanal bazlı yönlendirme (routeInbound), token yoksa simülasyon modu. (3) lib/vision/gestureTracker.ts — 21 noktalı el landmarklarından Ghost (kaydırma) ve Pinch (sıkıştırma) jestleri, trackHandSequence majority voting. (4) lib/auth/roleGuard.ts — Logto uyumlu 4 seviyeli RBAC (SUPER_ADMIN, FACILITY_MANAGER, COACH, CREW), resolveRole(claims), requireRole(), guardMiddleware() Next.js route handler sarmalayıcısı. CEO chat headerında eklenti durum rozetleri görünür.',
   },
 
+  {
+    id: 'plugin-kit-2',
+    title: 'İleri Eklenti Paketi (OpenRouter, TTS, Runner H, 3D, Viral)',
+    icon: '🚀',
+    keywords: ['openrouter', 'gateway', 'claude', 'llama', 'tts', 'voicebox', 'dia tts', 'runner h', 'komuta', 'in3d', 'avatar', 'meshy', '3d', 'gltf', 'viral klip', 'reels', 'form validation'],
+    content:
+      '7 kırılmasız eklenti: (1) lib/ai/openRouterAdapter.ts — OpenRouter Gateway: tek anahtar üzerinden Claude/DeepSeek/Llama/Gemini model yönlendirme (modelFromPrompt), routeViaOpenRouter; modelMatrix.ts Plan E korunur, generateWithOpenRouterGateway eklenir. (2) lib/voice/ttsEngine.ts — Ultra doğal ses: Web Speech + Dia TTS/VoiceBox uyumlu köprü, pickVoice Türkçe ses önceliği, speakText. (3) lib/ai/runnerHEngine.ts — Runner H: tek talimat yürütücü, 16 alt modül eşleme kuralı (padel/stok/vardiya/bilet...), parseCommand + executeCommand. (4) lib/vision/in3dAvatarBridge.ts — in3D Avatar: 33 nokta iskelet eşleme, limbAngle/classifyPose, Sport Vision 3D bağlantısı. (5) lib/vision/meshyAssetGenerator.ts — Meshy 3D: text-to-3d üretim (MESHY_API_KEY varsa gerçek, yoksa simülasyon), GLTFLoader köprüsü. (6) lib/marketing/viralClipEngine.ts — Viral Klip Motoru: maç anlarından Reels/Short taslağı (viralScore, suggestBpm, generateReelDraft). (7) styles/form-validation.css — sıfır JS maliyetli :invalid/:valid/:focus-visible form doğrulama stilleri (layout.tsx import eder). CEO chat headerında 10 eklenti rozeti görünür.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

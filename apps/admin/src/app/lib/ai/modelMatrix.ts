@@ -11,6 +11,7 @@
 // ============================================================================
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { routeViaOpenRouter, modelFromPrompt } from './openRouterAdapter';
 
 // ----------------------------------------------------------------------------
 // ☁️ BULUT ÇALIŞMA ZAMANI TESPİTİ — Vercel serverless'te yerel Ollama yasak
@@ -404,4 +405,31 @@ export async function generateWithWaterfall(prompt: string, mode: MatrixMode): P
     error: fallbackLog.join(' | ') || 'Tüm modeller başarısız oldu',
   };
 }
+
+// ----------------------------------------------------------------------------
+// 🌐 KIRILMASIZ OPENROUTER GATEWAY ROTASI (eklenti bağlantısı)
+// Mevcut Plan E (OpenRouter Free) korunur; bu rota openRouterAdapter üzerinden
+// çoklu model (Claude/DeepSeek/Llama/Gemini) yönlendirme sunar. Anahtar yoksa
+// veya hata olursa mevcut A→B→C→D şelalesine düşer (graceful fallback).
+// ----------------------------------------------------------------------------
+export async function generateWithOpenRouterGateway(prompt: string, mode: MatrixMode): Promise<MatrixResult> {
+  const key = process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || '';
+  if (!key) {
+    return generateWithWaterfall(prompt, mode);
+  }
+  try {
+    const res = await routeViaOpenRouter(prompt, { model: modelFromPrompt(prompt) });
+    return {
+      ok: res.ok,
+      content: res.content,
+      plan: 'E',
+      badge: '[🌐 Plan E: OpenRouter Gateway]',
+      provider: 'openrouter',
+      fallbackLog: [`openrouter-gateway: ${res.model} (${res.latencyMs}ms, sim=${res.simulated})`],
+    };
+  } catch {
+    return generateWithWaterfall(prompt, mode);
+  }
+}
+
 
