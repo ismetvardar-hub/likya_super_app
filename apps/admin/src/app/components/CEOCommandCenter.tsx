@@ -26,6 +26,8 @@ import ToolsAndAgentsDashboard from './ToolsAndAgentsDashboard';
 import DazeSmartCampus from './DazeSmartCampus';
 import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
+import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
+import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
 import HRDispatchDashboard from './HRDispatchDashboard';
 import StrategicRiskShield from './StrategicRiskShield';
 import SmartDestinationEngine from './SmartDestinationEngine';
@@ -432,6 +434,29 @@ export default function CEOCommandCenter() {
   const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
   const [threads, setThreads] = useState<ChatThread[]>(loadThreads);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+
+// 🤖 PRAISONAI AJAN GÖREV DEDEKTÖRÜ — komut metninden ajan görevi + metrik anlık görüntüsü
+function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Record<string, number | string> } | null {
+  const lower = text.toLowerCase();
+  const numFrom = (re: RegExp): number => { const m = text.match(re); const v = m ? Number(m[1]) : NaN; return isNaN(v) ? 0 : v; };
+
+  if (/(stok|envanter|sipariş|reçete|tedarik)/.test(lower))
+    return { task: 'STOK', snapshot: { stok: numFrom(/(\d+)\s*(?:adet|birim|kg)/) || 120, reorderPoint: 150 } };
+  if (/(vardiya|işe davet|personel|çalışan|takviye)/.test(lower))
+    return { task: 'VARDİYA', snapshot: { yogunluk: numFrom(/(\d+)%?/) || 82, personel: 2 } };
+  if (/(tesis|turnike|uptime|saha|bakım|çevrimdışı)/.test(lower))
+    return { task: 'TESİS', snapshot: { offlineCihaz: numFrom(/(\d+)\s*(?:cihaz|turnike)/) || 1, uptimePct: 94 } };
+  if (/(müzik|bpm|dj|atmosfer|ritim)/.test(lower))
+    return { task: 'MÜZİK', snapshot: { bpm: 118, doluluk: 76 } };
+  if (/(bildirim|uyarı|alert|kritik olay)/.test(lower))
+    return { task: 'BİLDİRİM', snapshot: { kritikOlay: 1 } };
+  if (/(nakit|finans|bütçe|likidite|ödeme)/.test(lower))
+    return { task: 'FİNANS', snapshot: { nakit: 120000, yuk: 150000 } };
+  if (/(antrenman|şut|hız|sporcu|radar)/.test(lower))
+    return { task: 'SPORT', snapshot: { hizKmh: 148, formIndex: 82 } };
+  return null;
+}
+
   const [openCategory, setOpenCategory] = useState<string>('chat');
   const [filterDomain, setFilterDomain] = useState<string>('all'); // mobil modül filtresi
   const [openMobileDomain, setOpenMobileDomain] = useState<string | null>('biz'); // mobil akordiyon
@@ -439,6 +464,33 @@ export default function CEOCommandCenter() {
   // ➕ Dinamik modül & sürükle-bırak durumu
   const [customModules, setCustomModules] = useState<CustomModule[]>(loadCustomModules);
   const [domainOrder, setDomainOrder] = useState<Record<string, string[]>>(loadDomainOrder);
+
+  // 🎙️ OpenLive ses köprüsü durumu
+  const [voiceActive, setVoiceActive] = useState(false);
+  const openLiveRef = useRef<{ stop: () => Promise<{ fallbackTranscript: string; durationMs: number }> } | null>(null);
+
+  // 🎙️ OpenLive ses köprüsü — mikrofon düğmesi toggle'ı
+  const toggleVoice = () => {
+    if (voiceActive) {
+      setVoiceActive(false);
+      if (openLiveRef.current) {
+        const session = openLiveRef.current;
+        openLiveRef.current = null;
+        session.stop().then(({ fallbackTranscript }) => {
+          if (fallbackTranscript.trim()) handleSend(fallbackTranscript);
+        });
+      }
+      return;
+    }
+    startOpenLiveRecording().then((session) => {
+      openLiveRef.current = session;
+      setVoiceActive(true);
+      setMessages((prev) => [...prev, { role: 'ceo', text: '🎙️ OpenLive: Sesli komut kaydediliyor — tekrar dokununca işlenir.', time: now() }]);
+    }).catch(() => {
+      setMessages((prev) => [...prev, { role: 'ceo', text: '⚙️ Sistem: Mikrofon erişimi yok. Lütfen izin verin.', time: now() }]);
+    });
+  };
+
   const [showModuleModal, setShowModuleModal] = useState(false);
   const [dragState, setDragState] = useState<{ id: string; fromDomain: string } | null>(null);
   const [dropHint, setDropHint] = useState<{ domain: string; index: number } | null>(null);
@@ -674,6 +726,22 @@ export default function CEOCommandCenter() {
     setInput('');
     setPendingAttachment(null);
     setIsProcessing(true);
+
+    // 🤖 PRAISONAI AJAN ZİNCİRİ — Research → Plan → Execute (üst öncelik)
+    const praisonDetect = detectPraisonTaskInline(text);
+    if (praisonDetect) {
+      const chain = runPraisonChain({ task: praisonDetect.task, command: text, snapshot: praisonDetect.snapshot });
+      setTimeout(() => {
+        const msg =
+          `🤖 PraisonAI Ajan Zinciri — ${praisonDetect.task}\n\n` +
+          `🦾 RESEARCH:\n${chain.research.findings.map((f) => '• ' + f).join('\n')} (risk: ${chain.research.riskLevel})\n\n` +
+          `🧩 PLAN:\n${chain.plan.steps.map((s) => `${s.order}. ${s.action} [${s.priority}]`).join('\n')}\n\n` +
+          `⚙️ EXECUTE:\n${chain.execute.effect} ✅`;
+        setMessages((prev) => [...prev, { role: 'ceo', text: msg, time: now() }]);
+        setIsProcessing(false);
+      }, 700);
+      return;
+    }
 
     // Akıllı yönlendirme
     const isWebSearch = isWebSearchQuery(text);
@@ -1596,22 +1664,25 @@ export default function CEOCommandCenter() {
                     {/* Sağ: Mikrofon ve Gönder Butonları */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                       <button
-                        title="Sesli komut"
+                        title="Sesli komut (OpenLive)"
+                        onClick={toggleVoice}
                         style={{
                           width: '36px',
                           height: '36px',
                           borderRadius: '50%',
                           border: 'none',
-                          background: 'transparent',
-                          color: '#94a3b8',
+                          background: voiceActive ? 'rgba(0,242,254,0.25)' : 'transparent',
+                          color: voiceActive ? '#00f2fe' : '#94a3b8',
                           fontSize: '18px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          boxShadow: voiceActive ? '0 0 12px rgba(0,242,254,0.6)' : 'none',
+                          animation: voiceActive ? 'radarPulse 1.5s infinite' : 'none',
                         }}
                       >
-                        🎤
+                        {voiceActive ? '🔴' : '🎤'}
                       </button>
 
                       {/* Gönder Butonu — Enter yanında güvenilir görsel geri bildirim */}
