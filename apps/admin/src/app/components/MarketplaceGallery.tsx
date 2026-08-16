@@ -257,6 +257,7 @@ function GalleryCard({
 export default function MarketplaceGallery() {
   const [segment, setSegment] = useState<SegmentId | 'all'>('all');
   const [selected, setSelected] = useState<GalleryProduct | null>(null);
+  const [rental, setRental] = useState<GalleryProduct | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   // Mobil tespiti → yatay kaydırılabilir kartlar / masaüstü grid
@@ -270,7 +271,9 @@ export default function MarketplaceGallery() {
   const visible = segment === 'all' ? PRODUCTS : PRODUCTS.filter((p) => p.segment === segment);
 
   const handleAction = (p: GalleryProduct) => {
-    setSelected(p); // aksiyon → ürün detayı/3D modalı açar
+    // 🎪 Kiralama ürünlerinde dinamik kiralama modalı, diğerlerinde 3D inceleme
+    if (p.segment === 'rental') setRental(p);
+    else setSelected(p);
   };
 
   return (
@@ -397,6 +400,132 @@ export default function MarketplaceGallery() {
           </div>
         </div>
       )}
+
+      {/* 🎪 Kiralama modalı render */}
+      {rental && <RentalModal product={rental} onClose={() => setRental(null)} />}
+    </div>
+  );
+}
+
+
+// ─── 🎪 Kiralama modalı: süre, depozito, teslimat + localStorage kalıcılığı ───
+const RENTAL_LS_KEY = 'likya_rentals_v1';
+
+function RentalModal({ product, onClose }: { product: GalleryProduct; onClose: () => void }) {
+  const [days, setDays] = useState(3);
+  const [delivery, setDelivery] = useState<'tesis' | 'kargo'>('tesis');
+  const [confirmed, setConfirmed] = useState(false);
+
+  const total = product.price * days;
+  const deposit = Math.round(total * 0.2);
+
+  const confirmRental = () => {
+    const entry = {
+      id: `${product.id}_${Date.now()}`,
+      product: product.name,
+      days,
+      total,
+      deposit,
+      delivery,
+      date: new Date().toISOString(),
+      status: 'aktif',
+    };
+    try {
+      const raw = window.localStorage.getItem(RENTAL_LS_KEY);
+      const list = raw ? (JSON.parse(raw) as unknown[]) : [];
+      window.localStorage.setItem(RENTAL_LS_KEY, JSON.stringify([...list, entry]));
+    } catch { /* depolama kapalı — bellek state'i yeterli */ }
+    setConfirmed(true);
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 1001, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+      }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: '400px', background: 'linear-gradient(160deg, #0f172a, #0d1322)',
+          border: '1px solid rgba(16,185,129,0.5)', borderRadius: '18px', padding: '20px',
+          boxShadow: '0 0 40px rgba(16,185,129,0.2)',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div style={{ fontSize: '14px', fontWeight: 800, color: '#fff' }}>🎪 Kiralama — {product.name}</div>
+          <button onClick={onClose} style={{ border: 'none', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', padding: '4px 8px', cursor: 'pointer', color: '#94a3b8' }}>
+            <X size={16} />
+          </button>
+        </div>
+
+        {confirmed ? (
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <div style={{ fontSize: '40px' }}>✅</div>
+            <div style={{ fontSize: '14px', fontWeight: 800, color: '#fff', marginTop: '8px' }}>Kiralama Oluşturuldu!</div>
+            <div style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px' }}>
+              {product.name} • {days} gün • {total.toLocaleString('tr-TR')}₺ • Depozito {deposit.toLocaleString('tr-TR')}₺<br />
+              Teslimat: {delivery === 'tesis' ? '🏕️ Tesisten teslim' : '📦 Kargo'}
+            </div>
+            <button onClick={onClose} style={{ marginTop: '14px', padding: '9px 24px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#10b981,#059669)', color: '#fff', fontWeight: 800, fontSize: '12px' }}>
+              Tamam
+            </button>
+          </div>
+        ) : (
+          <>
+
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
+              {[1, 3, 7].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDays(d)}
+                  style={{
+                    flex: 1, padding: '8px 0', borderRadius: '10px', cursor: 'pointer', fontSize: '12px', fontWeight: 700,
+                    border: days === d ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.12)',
+                    background: days === d ? 'rgba(16,185,129,0.18)' : 'rgba(255,255,255,0.03)',
+                    color: days === d ? '#34d399' : '#94a3b8',
+                  }}
+                >
+                  {d} Gün
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
+              {(['tesis', 'kargo'] as const).map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDelivery(d)}
+                  style={{
+                    flex: 1, padding: '8px 0', borderRadius: '10px', cursor: 'pointer', fontSize: '12px', fontWeight: 700,
+                    border: delivery === d ? '1px solid #00f2fe' : '1px solid rgba(255,255,255,0.12)',
+                    background: delivery === d ? 'rgba(0,242,254,0.12)' : 'rgba(255,255,255,0.03)',
+                    color: delivery === d ? '#67e8f9' : '#94a3b8',
+                  }}
+                >
+                  {d === 'tesis' ? '🏕️ Tesisten Teslim' : '📦 Kargo'}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', color: '#cbd5e1', marginBottom: '14px', padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.04)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Günlük bedel</span><span>{product.price.toLocaleString('tr-TR')}₺</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Süre</span><span>{days} gün</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700, color: '#34d399' }}><span>Toplam</span><span>{total.toLocaleString('tr-TR')}₺</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span>Depozito (%20)</span><span>{deposit.toLocaleString('tr-TR')}₺</span></div>
+              {product.tryBeforeBuy && (
+                <div style={{ color: '#fbbf24', fontSize: '11px' }}>🎪 Try Before You Buy: beğenirseniz kiralama bedeli satıştan düşülür!</div>
+              )}
+            </div>
+
+            <button onClick={confirmRental} style={{ width: '100%', padding: '11px 0', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#10b981,#059669)', color: '#fff', fontWeight: 800, fontSize: '13px' }}>
+              ✅ Kiralama Oluştur
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

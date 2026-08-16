@@ -16,6 +16,7 @@ import SmartCaravanPark from './SmartCaravanPark';
 import SmartTentStore from './SmartTentStore';
 import LikyaMarketplace from './LikyaMarketplace';
 import MarketplaceGallery from './MarketplaceGallery';
+import DazeChef from './DazeChef';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -1343,7 +1344,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'procurement' && <ProcurementDashboard />}
               {activeView === 'hrdispatch' && <HRDispatchDashboard />}
               {activeView === 'risk' && <StrategicRiskShield />}
-              {activeView === 'engine' && <SmartDestinationEngine />}
+              {activeView === 'engine' && (
+                <>
+                  <SmartDestinationEngine />
+                  <DazeChef />
+                </>
+              )}
               {activeView === 'supplier' && <SupplierManagement />}
               {activeView === 'pricing' && <DynamicLoyaltyPricing />}
               {activeView === 'stress' && <SystemStressTestAndEdgeController />}
