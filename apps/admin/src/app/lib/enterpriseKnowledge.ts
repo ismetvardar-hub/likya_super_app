@@ -154,6 +154,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'PraisonAI Çoklu Ajan Orkestrasyonu (lib/ai/praisonOrchestrator.ts): ResearchAgent (veri analizi, risk düşük/orta/yüksek) → PlanAgent (3 adımlı aksiyon planı, ACİL/NORMAL/DÜŞÜK) → ExecuteAgent (STOK→ERP, VARDİYA→HR davet, BİLDİRİM→VIP hattı, MÜZİK→DJ BPM, TESİS→Sentinel bakım) zinciri. Sci-Fi HUD Access Node (components/SciFiLockScreen.tsx): kuantum/neon grid + terminal veri akışı + PIN + güvenlik jetonu onay animasyonu, Session Lock + 5 hatalı denemede 30sn kilit (layout ta PatronLock yerine geçti). AI Araç & Model Yönlendirici (lib/ai/toolRegistry.ts): 8 görev tipi (METİN/KOD/GÖRSEL/ANALİZ/SES/VERİ/ÇEVİRİ/ÖZET) için 23 araçlık kayıt defteri; detectTaskType komuttan tipi tahmin eder, selectToolForTask anahtar yoksa yerel kural motoruna (Plan Z) düşer; örn. kod→DeepSeek V3, analiz→Speed Radar, çeviri→Gemini Translate.',
   },
 
+  {
+    id: 'rbac-openlive',
+    title: 'Logto RBAC & OpenLive Ses Köprüsü',
+    icon: '🔐',
+    keywords: ['rbac', 'logto', 'rol', 'yetki', 'ssn', 'role guard', 'openlive', 'ses', 'voice', 'mediarecorder', 'mikrofon', 'tts', 'konuşma'],
+    content:
+      'RBAC (lib/access/roleGuard.ts): Logto uyumlu merkezi kimlik — 6 rol (CEO süper yetki, Tesis Müdürü, Antrenör, Daze Crew, Müşteri, Misafir), kaynak bazlı izinler (module:<id>:view/edit, action:<ad>), can() joker desteği, guardAction(), rol hiyerarşisi (canInherited) ve Logto token claim den resolveRoleFromToken köprüsü. OpenLive (lib/voice/openLive.ts): çift yönlü ses köprüsü — Web Speech yoksa MediaRecorder fallback (startOpenLiveRecording, süreye dayalı deterministik transkript), yanıtları SpeechSynthesis ile seslendirir (speakResponse). CEO Chat entegrasyonu: PraisonAI ajan zinciri (detectPraisonTask: stok/vardiya/tesis/müzik/bildirim/finans/spor komutlarından sayıları okuyup Research→Plan→Execute sonucunu chatte gösterir) ve mikrofon butonu MediaRecorder fallback.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

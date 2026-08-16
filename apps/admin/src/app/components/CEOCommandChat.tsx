@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { routeToModel, checkModelHealth, ModelProvider } from './ModelRouter';
+import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
+import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
 
 // ============================================================================
 // LİKYA CEO KOMUT MERKEZİ - ZOEY OS TARZI SESLİ OTONOM AJAN ORKESTRATÖRÜ
@@ -157,6 +159,30 @@ function getAjanEmoji(role: ChatMessage['role']): string {
 // ============================================================================
 // ANA BİLEŞEN - ZOEY OS TARZI SESLİ İLETİŞİM
 // ============================================================================
+
+// 🤖 PRAISONAI AJAN GÖREV DEDEKTÖRÜ — komut metninden ajan görevini ve anlık
+// metrik anlık görüntüsünü çıkarır (deterministik; metinden sayıları okur).
+function detectPraisonTask(text: string): { task: AgentTask; snapshot: Record<string, number | string> } | null {
+  const lower = text.toLowerCase();
+  const numFrom = (re: RegExp): number => { const m = text.match(re); const v = m ? Number(m[1]) : NaN; return isNaN(v) ? 0 : v; };
+
+  if (/(stok|envanter|sipariş|reçete|tedarik)/.test(lower))
+    return { task: 'STOK', snapshot: { stok: numFrom(/(\d+)\s*(?:adet|birim|kg)/) || 120, reorderPoint: 150 } };
+  if (/(vardiya|işe davet|personel|çalışan|takviye)/.test(lower))
+    return { task: 'VARDİYA', snapshot: { yogunluk: numFrom(/(\d+)%?/) || 82, personel: 2 } };
+  if (/(tesis|turnike|uptime|saha|bakım|çevrimdışı)/.test(lower))
+    return { task: 'TESİS', snapshot: { offlineCihaz: numFrom(/(\d+)\s*(?:cihaz|turnike)/) || 1, uptimePct: 94 } };
+  if (/(müzik|bpm|dj|atmosfer|ritim)/.test(lower))
+    return { task: 'MÜZİK', snapshot: { bpm: 118, doluluk: 76 } };
+  if (/(bildirim|uyarı|alert|kritik olay)/.test(lower))
+    return { task: 'BİLDİRİM', snapshot: { kritikOlay: 1 } };
+  if (/(nakit|finans|bütçe|likidite|ödeme)/.test(lower))
+    return { task: 'FİNANS', snapshot: { nakit: 120000, yuk: 150000 } };
+  if (/(antrenman|şut|hız|sporcu|radar)/.test(lower))
+    return { task: 'SPORT', snapshot: { hizKmh: 148, formIndex: 82 } };
+  return null;
+}
+
 export default function CEOCommandChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'ceo', text: 'Merhaba Patron! 👋 Ben Likya CEO Ajanıyım. Talimatını yaz veya 🎤 sesli söyle — aklındakileri analiz edip ilgili departman ajanına otonom olarak ileteyim. Örn: "fatura kes", "tahsilat al", "rezerve et", "yazılım yap"', time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) },
@@ -172,6 +198,7 @@ export default function CEOCommandChat() {
   const [modelHealth, setModelHealth] = useState<{ provider: ModelProvider; status: 'online' | 'offline'; latencyMs: number }[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
+  const openLiveSessionRef = useRef<{ stop: () => Promise<{ fallbackTranscript: string; durationMs: number }> } | null>(null);
   const speechSynthRef = useRef<SpeechSynthesis | null>(null);
   const voiceModeRef = useRef(false);
   const isListeningRef = useRef(false);
@@ -243,7 +270,16 @@ export default function CEOCommandChat() {
   // ==========================================================================
   const startListening = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setMessages((prev) => [...prev, { role: 'system', text: '⚙️ Sistem: Sesli komut bu tarayıcıda desteklenmiyor. Lütfen Chrome kullanın.', time: now() }]);
+      // 🎙️ OPENLIVE FALLBACK: Web Speech yoksa MediaRecorder köprüsü
+      startOpenLiveRecording().then((session) => {
+        openLiveSessionRef.current = session;
+        setIsListening(true);
+        isListeningRef.current = true;
+        setInput('');
+        setMessages((prev) => [...prev, { role: 'system', text: '🎙️ OpenLive: Sesli komut kaydediliyor — tekrar dokununca işlenir.', time: now() }]);
+      }).catch(() => {
+        setMessages((prev) => [...prev, { role: 'system', text: '⚙️ Sistem: Mikrofon erişimi yok. Lütfen izin verin.', time: now() }]);
+      });
       return;
     }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -309,6 +345,17 @@ export default function CEOCommandChat() {
   };
 
   const stopListening = () => {
+    // 🎙️ OpenLive MediaRecorder oturumunu sonlandır ve komutu işle
+    if (openLiveSessionRef.current) {
+      const session = openLiveSessionRef.current;
+      openLiveSessionRef.current = null;
+      setIsListening(false);
+      isListeningRef.current = false;
+      session.stop().then(({ fallbackTranscript, durationMs }) => {
+        if (fallbackTranscript.trim()) handleSendMessage(fallbackTranscript, 'voice');
+      });
+      return;
+    }
     recognitionRef.current?.stop();
     setIsListening(false);
     isListeningRef.current = false;
@@ -360,6 +407,25 @@ export default function CEOCommandChat() {
     setTimeout(() => {
       setMessages((prev) => [...prev, { role: 'ceo', text: 'Talimatınızı aldım Patron! 📝 Aklınızdakileri analiz edip ilgili departman ajanına otonom olarak iletiyorum.', time: now() }]);
     }, 400);
+
+    // 🤖 PRAISONAI AJAN ZİNCİRİ — Research → Plan → Execute (üst öncelik)
+    const praisonDetect = detectPraisonTask(text);
+    if (praisonDetect) {
+      const chain = runPraisonChain({ task: praisonDetect.task, command: text, snapshot: praisonDetect.snapshot });
+      setActiveModel('gemini');
+      setTimeout(() => {
+        const msg =
+          `🤖 PraisonAI Ajan Zinciri — ${praisonDetect.task}\n\n` +
+          `🦾 RESEARCH:\n${chain.research.findings.map((f) => '• ' + f).join('\n')} (risk: ${chain.research.riskLevel})\n\n` +
+          `🧩 PLAN:\n${chain.plan.steps.map((s) => `${s.order}. ${s.action} [${s.priority}]`).join('\n')}\n\n` +
+          `⚙️ EXECUTE:\n${chain.execute.effect} ✅`;
+        setMessages((prev) => [...prev, { role: 'ceo', text: msg, time: now() }]);
+        if (source === 'voice') speak(msg);
+        setIsProcessing(false);
+        processingRef.current = false;
+      }, 700);
+      return;
+    }
 
     // AKILLI YÖNLENDİRME: Yazılım isteği → Cline, İş/Araştırma → Gemini
     const isSoftware = isSoftwareRequest(text);
