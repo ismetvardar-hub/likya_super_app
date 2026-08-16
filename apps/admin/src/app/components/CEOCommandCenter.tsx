@@ -33,7 +33,7 @@ import { openLiveBridgeStatus, createSpeechRecognitionBridge, isSpeechRecognitio
 import { chatwootBridgeStatus } from '../lib/support/chatwootBridge';
 import { gestureTrackerStatus } from '../lib/vision/gestureTracker';
 import { openRouterStatus } from '../lib/ai/openRouterAdapter';
-import { ttsEngineStatus } from '../lib/voice/ttsEngine';
+import { ttsEngineStatus, speakText } from '../lib/voice/ttsEngine';
 import { runnerHStatus } from '../lib/ai/runnerHEngine';
 import { in3dBridgeStatus } from '../lib/vision/in3dAvatarBridge';
 import { meshyStatus } from '../lib/vision/meshyAssetGenerator';
@@ -1561,6 +1561,21 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                       }}>
                         {renderMarkdown(m.text)}
                       </div>
+                      {/* 🎙️ TTS — CEO yanıtını seslendirme butonu */}
+                      {m.role === 'ceo' && (
+                        <button
+                          title="Yanıtı sesli dinle (TTS)"
+                          onClick={() => speakText(m.text.replace(/[#*`]/g, ''), { lang: 'tr-TR', rate: 1.0 })}
+                          style={{
+                            marginTop: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px',
+                            padding: '3px 9px', borderRadius: '999px', cursor: 'pointer',
+                            border: '1px solid rgba(0,242,254,0.35)', background: 'rgba(0,242,254,0.08)',
+                            color: '#67e8f9', fontSize: '10px', fontWeight: 600,
+                          }}
+                        >
+                          🔊 Sesli Oku
+                        </button>
+                      )}
                       {m.memoryOffer && m.role === 'ceo' && (
                         <div style={{
                           marginTop: '12px',
