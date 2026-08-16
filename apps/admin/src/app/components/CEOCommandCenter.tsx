@@ -335,14 +335,105 @@ const MODEL_OPTIONS = [
   { id: 'cline', label: 'Cline (Otonom Kodlayıcı)', icon: '🛠️', desc: 'Kod üretimi' },
 ];
 
-// Basit & güvenli Markdown vurgulayıcı (Gemini tarzı tipografi — **kalın** desteği)
+// Basit & güvenli Markdown renderer — başlık, kalın, italik, liste, kod, ayraç.
+// React string'leri otomatik escape ettiği için XSS güvenlidir; ham etiketler
+// (###, *, **, -, 1.) artık düz metin olarak görünmez.
+const inlineMarkdown = (text: string) => {
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**'))
+      return <strong key={i} style={{ color: '#fff', fontWeight: '700' }}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith('`') && part.endsWith('`'))
+      return <code key={i} style={{ background: 'rgba(255,255,255,0.1)', padding: '1px 5px', borderRadius: '4px', fontSize: '0.92em', color: '#00f2fe' }}>{part.slice(1, -1)}</code>;
+    if (part.startsWith('*') && part.endsWith('*'))
+      return <em key={i} style={{ color: '#cbd5e1' }}>{part.slice(1, -1)}</em>;
+    return <span key={i}>{part}</span>;
+  });
+};
+
 const renderMarkdown = (text: string) => {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
-  return parts.map((part, i) =>
-    part.startsWith('**') && part.endsWith('**')
-      ? <strong key={i} style={{ color: '#fff', fontWeight: '700' }}>{part.slice(2, -2)}</strong>
-      : <span key={i}>{part}</span>
-  );
+  const lines = text.split('\n');
+  const blocks: React.ReactNode[] = [];
+  let list: React.ReactNode[] = [];
+  let listOrdered = false;
+
+  const flushList = () => {
+    if (list.length === 0) return;
+    const key = `l-${blocks.length}`;
+    blocks.push(
+      listOrdered
+        ? <ol key={key} style={{ margin: '4px 0 4px 20px', paddingLeft: '4px' }}>{list}</ol>
+        : <ul key={key} style={{ margin: '4px 0 4px 4px', paddingLeft: '16px' }}>{list}</ul>
+    );
+    list = [];
+    listOrdered = false;
+  };
+
+  lines.forEach((line, i) => {
+    const t = line.trim();
+    if (!t) { flushList(); return; }
+
+    // Başlık: ### / ## / #
+    if (/^#{1,3}\s/.test(t)) {
+      flushList();
+      const level = t.match(/^#+/)?.[0].length ?? 1;
+      const content = t.replace(/^#+\s/, '');
+      blocks.push(
+        <div key={`h-${i}`} style={{
+          fontWeight: '700', color: '#fff',
+          fontSize: level === 1 ? '17px' : level === 2 ? '15px' : '13px',
+          margin: '8px 0 4px', letterSpacing: '0.2px',
+        }}>
+          {inlineMarkdown(content)}
+        </div>
+      );
+      return;
+    }
+
+    // Sırasız liste: - veya •
+    if (/^[-•]\s/.test(t)) {
+      listOrdered = false;
+      list.push(<li key={`li-${i}`} style={{ margin: '2px 0' }}>{inlineMarkdown(t.replace(/^[-•]\s/, ''))}</li>);
+      return;
+    }
+
+    // Sıralı liste: 1. 2. 3.
+    if (/^\d+\.\s/.test(t)) {
+      listOrdered = true;
+      list.push(<li key={`oli-${i}`} style={{ margin: '2px 0' }}>{inlineMarkdown(t.replace(/^\d+\.\s/, ''))}</li>);
+      return;
+    }
+
+    // Yatay ayraç: ---
+    if (/^-{3,}$/.test(t)) {
+      flushList();
+      blocks.push(<div key={`hr-${i}`} style={{ borderTop: '1px solid rgba(255,255,255,0.15)', margin: '8px 0' }} />);
+      return;
+    }
+
+    // Kod bloğu: ```...```
+    if (/^```/.test(t)) {
+      flushList();
+      const endIdx = lines.findIndex((l, j) => j > i && l.trim().startsWith('```'));
+      const codeLines = endIdx === -1 ? [] : lines.slice(i + 1, endIdx);
+      blocks.push(
+        <pre key={`pre-${i}`} style={{
+          background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(0,242,254,0.25)',
+          borderRadius: '8px', padding: '8px 12px', fontSize: '12px', overflowX: 'auto',
+          margin: '6px 0', color: '#a5f3fc', whiteSpace: 'pre-wrap',
+        }}>
+          {codeLines.join('\n')}
+        </pre>
+      );
+      return;
+    }
+
+    // Normal paragraf
+    flushList();
+    blocks.push(<span key={`p-${i}`} style={{ display: 'block', margin: '3px 0' }}>{inlineMarkdown(t)}</span>);
+  });
+  flushList();
+  return <>{blocks}</>;
 };
 
 // Sohbet Konu Başlıkları (Chat History Threads)
@@ -729,6 +820,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
 
   const handleSend = async (overrideText?: string, approved?: boolean) => {
     const text = (overrideText ?? input).trim();
+    const attach = pendingAttachment; // null'lanmadan önce yakala (multimodal görsel için)
     if (!text || isProcessing) return;
 
     setMessages((prev) => [...prev, { role: 'user', text, time: now(), attachment: pendingAttachment || undefined }]);
@@ -776,7 +868,14 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
       const response = await fetch('/api/v1/ceo/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command: text, ...(approved ? { approved: true } : {}) }),
+        body: JSON.stringify({
+          command: text,
+          ...(approved ? { approved: true } : {}),
+          // 👁️ Multimodal görsel payload — Gemini inlineData: { mimeType, data }
+          ...(attach && attach.type.startsWith('image/')
+            ? { image: { name: attach.name, mimeType: attach.type, data: attach.dataUrl.split(',')[1] ?? attach.dataUrl } }
+            : {}),
+        }),
         signal: controller.signal,
       });
       clearTimeout(timeoutId);

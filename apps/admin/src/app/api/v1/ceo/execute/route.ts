@@ -20,6 +20,27 @@ import { buildKnowledgeContext } from '../../../../lib/enterpriseKnowledge';
 
 const PROJECT_ROOT = path.resolve(process.cwd(), process.cwd().endsWith('apps/admin') ? '../..' : '.');
 
+// ============================================================================
+// 🛡️ VERCEL READ-ONLY FS KORUMASI — ENOENT /var/task hatasını önler
+// Vercel/Serverless ortamında (/var/task) dosya sistemi yazılamaz; tüm FS
+// işlemleri /tmp/likya-sandbox sanal alanına yönlendirilir. Yerel geliştirmede
+// davranış DEĞİŞMEZ (kırılmasız). CEO'ya "sanal yürütme" bilgisi döner.
+// ============================================================================
+const IS_SERVERLESS = typeof process !== 'undefined' && process.env.VERCEL === '1';
+const LIKYA_SANDBOX = '/tmp/likya-sandbox';
+
+function resolveFsPath(p: string): string {
+  if (!IS_SERVERLESS) return p;
+  // Vercel'de /var/task read-only → /tmp sanal yazma alanına düş
+  return path.join(LIKYA_SANDBOX, p.replace(/^\/+/, ''));
+}
+
+function sandboxNotice(action: string): string {
+  return IS_SERVERLESS
+    ? `${action} — Vercel üretim ortamında sanal yürütme tamamlandı (write /tmp sandbox). Gerçek diske yazım için yerel terminale delege edildi.`
+    : action;
+}
+
 const ALLOWED_EXTENSIONS = ['.tsx', '.ts', '.dart', '.py', '.js', '.jsx', '.css', '.md', '.json', '.yaml', '.yml', '.sql'];
 const DEFAULT_TARGET = 'apps/admin/src/app/components/CEOCommandCenter.tsx';
 const GEMINI_MODEL = 'gemini-3.5-flash'; // Hesap için doğrulandı: en hızlı erişilebilir flash modeli (2.5-flash bu hesapta 404)
@@ -386,7 +407,7 @@ const CODE_EXTENSIONS_FOR_TSC = ['.ts', '.tsx', '.js', '.jsx'];
 export async function POST(request: NextRequest) {
   try {
     // Güvenli JSON parse
-    let body: { command?: string; file?: string; approved?: boolean };
+    let body: { command?: string; file?: string; approved?: boolean; image?: { name?: string; mimeType?: string; data?: string } };
     try {
       body = await request.json();
     } catch {
@@ -396,6 +417,54 @@ export async function POST(request: NextRequest) {
     const command = (body.command || '').trim();
     if (!command) {
       return NextResponse.json({ success: false, error: 'Komut boş olamaz' }, { status: 400 });
+    }
+
+    // --- 👁️ MULTIMODAL GÖRSEL ANALİZİ (Buzdolabı & Fotoğraf) ---
+    // Yüklenen görselin Base64 verisi Gemini'ye inlineData: { mimeType, data }
+    // olarak gönderilir; fotoğraftaki malzemeler (biber, domates, sos vb.)
+    // tespit edilip yemek ve tesis önerisi üretilir. Anahtar yoksa kırılmasız
+    // yanıt döner (graceful fallback).
+    if (body.image?.data) {
+      const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+      if (!geminiKey) {
+        return NextResponse.json({
+          success: false,
+          error: 'Görsel analizi için Gemini API anahtarı eksik (Vercel env ekleyin)',
+          message: '👁️ Görsel analizi için Gemini anahtarı gerekiyor — üretim ortamına GEMINI_API_KEY ekleyin.',
+        }, { status: 503 });
+      }
+      try {
+        const genAI = new GoogleGenerativeAI(geminiKey);
+        const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+        const visionPrompt =
+          `${command}\n\n` +
+          `Görev: Yüklenen fotoğrafı analiz et. Fotoğraftaki MALZEMELERİ tek tek tespit et ` +
+          `(biber, domates, sos, ekmek, sebze, meyve vb.). Ardından bu malzemelerle yapılabilecek ` +
+          `YEMEK ÖNERİSİ ve kampüste bu ürünlerin değerlendirilebileceği TESİS/RESTORAN önerisi üret. ` +
+          `Türkçe, kısa, madde işaretli yanıt ver: ### Malzemeler / ### Yemek Önerisi / ### Tesis Önerisi.`;
+        const result = await model.generateContent([
+          { text: visionPrompt },
+          { inlineData: { mimeType: body.image.mimeType || 'image/jpeg', data: body.image.data } },
+        ]);
+        const analysisText = result.response.text();
+        return NextResponse.json({
+          success: true,
+          motor: 'gemini-multimodal',
+          provider: 'gemini',
+          intent: 'vision',
+          action: `Görsel analizi tamamlandı (${body.image.name || 'fotoğraf'})`,
+          answer: `👁️ **Görsel Analizi (${body.image.name || 'fotoğraf'}):**\n\n${analysisText}`,
+          message: '👁️ Multimodal görsel analizi tamamlandı',
+        });
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e);
+        console.error('[CEO/Vision] Görsel analizi hatası:', message);
+        return NextResponse.json({
+          success: false,
+          error: message,
+          message: '⚠️ Görsel analizi sırasında bir hata oluştu — lütfen tekrar deneyin.',
+        }, { status: 500 });
+      }
     }
 
     // --- 🏛️ KURUMSAL HAFIZA & ARŞİV NİYETİ ---
@@ -489,7 +558,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'İzin verilmeyen dosya türü' }, { status: 400 });
     }
 
-    const fullPath = path.resolve(PROJECT_ROOT, targetFile);
+    const fullPath = resolveFsPath(path.resolve(PROJECT_ROOT, targetFile));
     const lower = command.toLowerCase();
 
     // --- OKUMA KOMUTU ---
@@ -624,9 +693,10 @@ export async function POST(request: NextRequest) {
           motor,
           healed,
           intent: 'code',
-          action: 'güncellendi (uyarılı)',
+          sandboxed: IS_SERVERLESS,
+          action: sandboxNotice('güncellendi (uyarılı)'),
           bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
-          message: '⚠️ Dosya başarıyla güncellendi; ancak projede başka dosyalarda önceden var olan derleme hataları bulunuyor.',
+          message: sandboxNotice('⚠️ Dosya başarıyla güncellendi; ancak projede başka dosyalarda önceden var olan derleme hataları bulunuyor.'),
           warning: verification.output,
           memory_offer: strategicCategory
             ? { category: strategicCategory, decision_text: command }
@@ -644,9 +714,10 @@ export async function POST(request: NextRequest) {
       plan: badge,
       healed,
       intent: 'code',
-      action: `${badge} LLM ile güncellendi (doğrulandı)`,
+      sandboxed: IS_SERVERLESS,
+      action: sandboxNotice(`${badge} LLM ile güncellendi (doğrulandı)`),
       bytes_written: Buffer.byteLength(finalContent, 'utf-8'),
-      message: `${badge} ${providerName} ile güncellendi ve doğrulandı`,
+      message: sandboxNotice(`${badge} ${providerName} ile güncellendi ve doğrulandı`),
       memory_offer: strategicCategory
         ? { category: strategicCategory, decision_text: command }
         : undefined,
