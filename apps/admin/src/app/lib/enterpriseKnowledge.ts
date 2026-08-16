@@ -190,6 +190,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'components/MarketplaceGallery.tsx — fotoğraflı pazaryeri vitrini: 3 segment (🏷️ Sıfır Mağaza: Babolat Pure Aero 2026, Bullpadel Vertex 04, Daze Techform Tişört; 🔄 2. El Pazarı: Wilson Blade V9 %90 A+ Doğrulanmış, Head Speed Pro; 🎪 Kiralama/TBYB: 4 Kişilik Glamping Çadırı, Slinger Top Fırlatma, Padel Test Kiti). Her kartta 4:3 responsive görsel (Unsplash; onError → ikon+degrade fallback — asla boş kart yok), durum rozetleri (Sıfır yeşil / A+ Doğrulanmış mor / Teste Uygun cyan), TBYB rozeti, fiyat (₺/satış veya ₺/günlük) ve aksiyon butonu (Satın Al / Hemen Kirala / 3D İncele). 🧊 3D Görüntüle rozeti → Meshy GLTF + in3D köprülü modal (detay listesi + köprü rozetleri). Responsive: masaüstünde auto-fill grid (minmax 240px), mobilde (<768px) yatay scroll + scroll-snap. CEOCommandCenter market view üstünde LikyaMarketplace yönetim panelinin ÜZERİNE bindirilir (kırılmasız).',
   },
 
+  {
+    id: 'supabase-resilient',
+    title: 'Dayanıklı Supabase Client Katmanı',
+    icon: '🗄️',
+    keywords: ['supabase', 'veritabanı', 'fallback', 'mock', 'parcels', 'sports_facilities', 'pos_transactions', 'staff_tasks', 'resilient', 'dayanıklı'],
+    content:
+      'lib/db/supabaseClient.ts — kırılmasız veri katmanı: SUPABASE_DB_URL / anahtar eksik olsa bile uygulama asla çökmez; queryLiveTable() deterministik mock fallback döner (parcels, sports_facilities, pos_transactions, staff_tasks örnek satırları). supabaseEnvReady() + getSafeSupabaseClient() env hazır olduğunda @supabase/supabase-js dynamic import ile canlı sorgu atar (kod değişikliği gerekmez). IoTSensorMap, AIAgentAutonomousController ve MonitoringPanel bu köprüyle dinamik sorgu yapabilir.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
