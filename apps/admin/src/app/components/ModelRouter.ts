@@ -68,7 +68,7 @@ export async function routeToReasoningModel(prompt: string, systemPrompt: string
 // ============================================================================
 export async function checkModelHealth(): Promise<{ provider: ModelProvider; status: 'online' | 'offline'; latencyMs: number }[]> {
   try {
-    const res = await fetch(`${AI_PROXY}/health`, { cache: 'no-store' });
+    const res = await fetch(AI_PROXY, { cache: 'no-store' });
     if (!res.ok) return [];
     const data = (await res.json()) as {
       plans?: { plan: string; name: string; active: boolean }[];
