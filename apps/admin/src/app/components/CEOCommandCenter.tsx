@@ -15,6 +15,7 @@ import FacilityMaintenanceAgent from './FacilityMaintenanceAgent';
 import SmartCaravanPark from './SmartCaravanPark';
 import SmartTentStore from './SmartTentStore';
 import LikyaMarketplace from './LikyaMarketplace';
+import MarketplaceGallery from './MarketplaceGallery';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -1264,7 +1265,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'facility' && <FacilityMaintenanceAgent />}
               {activeView === 'caravan' && <SmartCaravanPark />}
               {activeView === 'tent' && <SmartTentStore />}
-              {activeView === 'market' && <LikyaMarketplace />}
+              {activeView === 'market' && (
+                <>
+                  <MarketplaceGallery />
+                  <LikyaMarketplace />
+                </>
+              )}
               {activeView === 'room' && <RoomOnlyConcept />}
               {(() => {
                 const cm = customModules.find((c) => c.id === activeView);

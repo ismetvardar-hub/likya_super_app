@@ -181,6 +181,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       '7 kırılmasız eklenti: (1) lib/ai/openRouterAdapter.ts — OpenRouter Gateway: tek anahtar üzerinden Claude/DeepSeek/Llama/Gemini model yönlendirme (modelFromPrompt), routeViaOpenRouter; modelMatrix.ts Plan E korunur, generateWithOpenRouterGateway eklenir. (2) lib/voice/ttsEngine.ts — Ultra doğal ses: Web Speech + Dia TTS/VoiceBox uyumlu köprü, pickVoice Türkçe ses önceliği, speakText. (3) lib/ai/runnerHEngine.ts — Runner H: tek talimat yürütücü, 16 alt modül eşleme kuralı (padel/stok/vardiya/bilet...), parseCommand + executeCommand. (4) lib/vision/in3dAvatarBridge.ts — in3D Avatar: 33 nokta iskelet eşleme, limbAngle/classifyPose, Sport Vision 3D bağlantısı. (5) lib/vision/meshyAssetGenerator.ts — Meshy 3D: text-to-3d üretim (MESHY_API_KEY varsa gerçek, yoksa simülasyon), GLTFLoader köprüsü. (6) lib/marketing/viralClipEngine.ts — Viral Klip Motoru: maç anlarından Reels/Short taslağı (viralScore, suggestBpm, generateReelDraft). (7) styles/form-validation.css — sıfır JS maliyetli :invalid/:valid/:focus-visible form doğrulama stilleri (layout.tsx import eder). CEO chat headerında 10 eklenti rozeti görünür.',
   },
 
+  {
+    id: 'market-gallery',
+    title: 'Pazaryeri Görsel Vitrini (MarketplaceGallery)',
+    icon: '🖼️',
+    keywords: ['vitrin', 'gallery', 'fotoğraf', 'ürün kartı', 'sıfır', '2. el', 'kiralama', 'tbyb', 'try before you buy', '3d görüntüle', 'gltf', 'unsplash'],
+    content:
+      'components/MarketplaceGallery.tsx — fotoğraflı pazaryeri vitrini: 3 segment (🏷️ Sıfır Mağaza: Babolat Pure Aero 2026, Bullpadel Vertex 04, Daze Techform Tişört; 🔄 2. El Pazarı: Wilson Blade V9 %90 A+ Doğrulanmış, Head Speed Pro; 🎪 Kiralama/TBYB: 4 Kişilik Glamping Çadırı, Slinger Top Fırlatma, Padel Test Kiti). Her kartta 4:3 responsive görsel (Unsplash; onError → ikon+degrade fallback — asla boş kart yok), durum rozetleri (Sıfır yeşil / A+ Doğrulanmış mor / Teste Uygun cyan), TBYB rozeti, fiyat (₺/satış veya ₺/günlük) ve aksiyon butonu (Satın Al / Hemen Kirala / 3D İncele). 🧊 3D Görüntüle rozeti → Meshy GLTF + in3D köprülü modal (detay listesi + köprü rozetleri). Responsive: masaüstünde auto-fill grid (minmax 240px), mobilde (<768px) yatay scroll + scroll-snap. CEOCommandCenter market view üstünde LikyaMarketplace yönetim panelinin ÜZERİNE bindirilir (kırılmasız).',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
