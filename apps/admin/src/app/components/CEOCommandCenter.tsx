@@ -28,6 +28,9 @@ import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
 import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
+import { openLiveBridgeStatus } from '../lib/ai/openLiveBridge';
+import { chatwootBridgeStatus } from '../lib/support/chatwootBridge';
+import { gestureTrackerStatus } from '../lib/vision/gestureTracker';
 import HRDispatchDashboard from './HRDispatchDashboard';
 import StrategicRiskShield from './StrategicRiskShield';
 import SmartDestinationEngine from './SmartDestinationEngine';
@@ -1249,6 +1252,30 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                     }}
                   />
                 </div>
+              </div>
+
+              {/* 🧩 EKLENTİ DURUMU — kırılmasız plugin rozetleri */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px', alignItems: 'center' }}>
+                {[
+                  { label: '🎙️ OpenLive VAD+BargeIn', status: openLiveBridgeStatus() },
+                  { label: '💬 Chatwoot', status: chatwootBridgeStatus() },
+                  { label: '✋ Gesture (Ghost/Pinch)', status: gestureTrackerStatus() },
+                  { label: '🔐 Logto 4L RBAC', status: 'SUPER_ADMIN→CREW guard kapısı' },
+                ].map((p) => (
+                  <span
+                    key={p.label}
+                    title={p.status}
+                    style={{
+                      fontSize: '9px', padding: '3px 8px', borderRadius: '999px',
+                      border: '1px solid rgba(0,242,254,0.35)',
+                      background: 'rgba(0,242,254,0.08)',
+                      color: '#67e8f9', fontWeight: 600, letterSpacing: '0.3px',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {p.label}
+                  </span>
+                ))}
               </div>
 
               {/* Chat Messages Area - Dinamik */}

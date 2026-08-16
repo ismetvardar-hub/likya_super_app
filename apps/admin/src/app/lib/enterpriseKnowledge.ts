@@ -163,6 +163,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'RBAC (lib/access/roleGuard.ts): Logto uyumlu merkezi kimlik — 6 rol (CEO süper yetki, Tesis Müdürü, Antrenör, Daze Crew, Müşteri, Misafir), kaynak bazlı izinler (module:<id>:view/edit, action:<ad>), can() joker desteği, guardAction(), rol hiyerarşisi (canInherited) ve Logto token claim den resolveRoleFromToken köprüsü. OpenLive (lib/voice/openLive.ts): çift yönlü ses köprüsü — Web Speech yoksa MediaRecorder fallback (startOpenLiveRecording, süreye dayalı deterministik transkript), yanıtları SpeechSynthesis ile seslendirir (speakResponse). CEO Chat entegrasyonu: PraisonAI ajan zinciri (detectPraisonTask: stok/vardiya/tesis/müzik/bildirim/finans/spor komutlarından sayıları okuyup Research→Plan→Execute sonucunu chatte gösterir) ve mikrofon butonu MediaRecorder fallback.',
   },
 
+  {
+    id: 'plugin-kit',
+    title: 'Kırılmasız Eklenti Paketi (Add-on/Plugin)',
+    icon: '🧩',
+    keywords: ['plugin', 'eklenti', 'addon', 'openlive bridge', 'vad', 'barge-in', 'chatwoot', 'whatsapp', 'gesture', 'ghost', 'pinch', '4 seviye', 'logto guard'],
+    content:
+      '4 bağımsız eklenti adaptörü (mevcut 42 modüle kırılmasız eklenir): (1) lib/ai/openLiveBridge.ts — Web Audio VAD (RMS enerji eşiği) + Barge-In (araya girme) destekli çift yönlü ses köprüsü, AnalyserNode tabanlı VadDetector, createOpenLiveBridge(). (2) lib/support/chatwootBridge.ts — WhatsApp/Web/Messenger/Email webhook normalize + kanal bazlı yönlendirme (routeInbound), token yoksa simülasyon modu. (3) lib/vision/gestureTracker.ts — 21 noktalı el landmarklarından Ghost (kaydırma) ve Pinch (sıkıştırma) jestleri, trackHandSequence majority voting. (4) lib/auth/roleGuard.ts — Logto uyumlu 4 seviyeli RBAC (SUPER_ADMIN, FACILITY_MANAGER, COACH, CREW), resolveRole(claims), requireRole(), guardMiddleware() Next.js route handler sarmalayıcısı. CEO chat headerında eklenti durum rozetleri görünür.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
