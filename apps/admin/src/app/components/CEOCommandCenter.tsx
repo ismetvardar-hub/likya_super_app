@@ -29,7 +29,7 @@ import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
 import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
-import { openLiveBridgeStatus } from '../lib/ai/openLiveBridge';
+import { openLiveBridgeStatus, createSpeechRecognitionBridge, isSpeechRecognitionSupported } from '../lib/ai/openLiveBridge';
 import { chatwootBridgeStatus } from '../lib/support/chatwootBridge';
 import { gestureTrackerStatus } from '../lib/vision/gestureTracker';
 import { openRouterStatus } from '../lib/ai/openRouterAdapter';
@@ -569,11 +569,21 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
   // 🎙️ OpenLive ses köprüsü durumu
   const [voiceActive, setVoiceActive] = useState(false);
   const openLiveRef = useRef<{ stop: () => Promise<{ fallbackTranscript: string; durationMs: number }> } | null>(null);
+  const speechRecognitionRef = useRef<ReturnType<typeof createSpeechRecognitionBridge> | null>(null);
 
   // 🎙️ OpenLive ses köprüsü — mikrofon düğmesi toggle'ı
+  // GERÇEK STT: Web Speech Recognition (tr-TR) önceliklidir; desteklenmiyorsa
+  // MediaRecorder + süre-bazlı fallback transkript devreye girer (kırılmasız).
   const toggleVoice = () => {
     if (voiceActive) {
       setVoiceActive(false);
+      // 1) Gerçek STT oturumu kapat
+      if (speechRecognitionRef.current) {
+        speechRecognitionRef.current.stop();
+        speechRecognitionRef.current = null;
+        return;
+      }
+      // 2) MediaRecorder fallback oturumu kapat
       if (openLiveRef.current) {
         const session = openLiveRef.current;
         openLiveRef.current = null;
@@ -583,6 +593,38 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
       }
       return;
     }
+    // Gerçek STT başlat (Web Speech — tr-TR)
+    if (isSpeechRecognitionSupported()) {
+      const bridge = createSpeechRecognitionBridge({
+        lang: 'tr-TR',
+        interimResults: true,
+        onResult: (finalTranscript) => {
+          if (finalTranscript.trim()) {
+            setInput(finalTranscript.trim());
+            handleSend(finalTranscript.trim());
+          }
+        },
+        onEnd: () => {
+          setVoiceActive(false);
+          speechRecognitionRef.current = null;
+        },
+        onError: (error) => {
+          setVoiceActive(false);
+          speechRecognitionRef.current = null;
+          if (error === 'not-allowed') {
+            setMessages((prev) => [...prev, { role: 'ceo', text: '⚙️ Sistem: Mikrofon izni reddedildi. Lütfen tarayıcı ayarlarından izin verin.', time: now() }]);
+          }
+        },
+      });
+      if (bridge) {
+        speechRecognitionRef.current = bridge;
+        setVoiceActive(true);
+        setMessages((prev) => [...prev, { role: 'ceo', text: '🎙️ OpenLive (Web Speech): Dinliyorum Patron — konuşun, metin anında girdiye aktarılır. Tekrar dokununca durdururum.', time: now() }]);
+        bridge.start();
+        return;
+      }
+    }
+    // MediaRecorder fallback (Web Speech yoksa)
     startOpenLiveRecording().then((session) => {
       openLiveRef.current = session;
       setVoiceActive(true);

@@ -85,7 +85,7 @@ function classifyIntent(command: string): 'code' | 'research' {
 
 // DeepSeek Coder/V3 — saf kod motoru (düşük maliyet, token verimli)
 async function generateWithDeepSeek(prompt: string): Promise<string> {
-  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
+  const apiKey = process.env.DEEPSEEK_API_KEY || '';
   if (!apiKey) throw new Error('DeepSeek API anahtarı bulunamadı');
   const response = await fetch(DEEPSEEK_URL, {
     method: 'POST',
@@ -111,7 +111,7 @@ async function generateWithDeepSeek(prompt: string): Promise<string> {
 
 // Gemini/Ollama — araştırma, medya ve çeviri hattı (centilmen üslup)
 async function generateResearchWithGemini(command: string): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+  const apiKey = process.env.GEMINI_API_KEY || '';
   if (!apiKey) throw new Error('Gemini API anahtarı bulunamadı');
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
@@ -425,7 +425,7 @@ export async function POST(request: NextRequest) {
     // tespit edilip yemek ve tesis önerisi üretilir. Anahtar yoksa kırılmasız
     // yanıt döner (graceful fallback).
     if (body.image?.data) {
-      const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+      const geminiKey = process.env.GEMINI_API_KEY || '';
       if (!geminiKey) {
         return NextResponse.json({
           success: false,

@@ -103,6 +103,99 @@ export function transcribeFallback(durationMs: number): string {
   return 'Tesis ve saha durumunu analiz et, kritikse beni bilgilendir';
 }
 
+// ============================================================================
+// 🎙️ GERÇEK SES TANIMA (STT) — Web Speech API köprüsü (tr-TR)
+// webkitSpeechRecognition / SpeechRecognition motorunu kullanır; mikrofon
+// kaydı bittiğinde konuşulan metni anında callback'e iletir.
+// Desteklenmiyorsa null döner (çağıran taraf MediaRecorder fallback kullanır).
+// ============================================================================
+
+export interface SpeechRecognitionBridgeOptions {
+  lang?: string;
+  continuous?: boolean;
+  interimResults?: boolean;
+  onResult?: (finalTranscript: string) => void;
+  onEnd?: () => void;
+  onError?: (error: string) => void;
+}
+
+export interface SpeechRecognitionBridge {
+  start: () => void;
+  stop: () => void;
+  isActive: () => boolean;
+  supported: boolean;
+}
+
+export function isSpeechRecognitionSupported(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    !!(window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition
+  );
+}
+
+export function createSpeechRecognitionBridge(opts: SpeechRecognitionBridgeOptions = {}): SpeechRecognitionBridge | null {
+  if (!isSpeechRecognitionSupported()) return null;
+  const SR = (window as unknown as { webkitSpeechRecognition: new () => {
+    lang: string;
+    continuous: boolean;
+    interimResults: boolean;
+    start: () => void;
+    stop: () => void;
+    abort: () => void;
+    onresult: ((e: any) => void) | null;
+    onend: (() => void) | null;
+    onerror: ((e: { error: string }) => void) | null;
+  } }).webkitSpeechRecognition;
+  const recognition = new SR();
+  recognition.lang = opts.lang ?? 'tr-TR';
+  recognition.continuous = opts.continuous ?? false;
+  recognition.interimResults = opts.interimResults ?? false;
+
+  let active = false;
+  let finalTranscript = '';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalTranscript += transcript + ' ';
+      else interim += transcript;
+    }
+    if (interim && opts.interimResults) opts.onResult?.(finalTranscript + interim);
+  };
+
+  recognition.onend = () => {
+    active = false;
+    opts.onEnd?.();
+    if (finalTranscript.trim()) opts.onResult?.(finalTranscript.trim());
+    finalTranscript = '';
+  };
+
+  recognition.onerror = (e) => {
+    active = false;
+    opts.onError?.(e.error);
+  };
+
+  return {
+    supported: true,
+    start: () => {
+      finalTranscript = '';
+      active = true;
+      try {
+        recognition.start();
+      } catch {
+        active = false;
+      }
+    },
+    stop: () => {
+      active = false;
+      try { recognition.stop(); } catch { /* ignore */ }
+    },
+    isActive: () => active,
+  };
+}
+
+
 // VAD + Barge-In destekli tam köprü
 export async function createOpenLiveBridge(opts: OpenLiveBridgeOptions = {}): Promise<OpenLiveBridge> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

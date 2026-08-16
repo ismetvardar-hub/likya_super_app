@@ -146,7 +146,7 @@ async function callOpenAICompatible(
 // Anthropic Claude çağrısı (kendi API şeması — OpenAI uyumlu değildir)
 // ----------------------------------------------------------------------------
 async function callAnthropic(model: string, systemPrompt: string, prompt: string, maxTokens = 8192): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || '';
+  const apiKey = process.env.ANTHROPIC_API_KEY || '';
   if (!apiKey) throw new Error('Anthropic anahtarı yok');
   const response = await fetchWithTimeout(
     'https://api.anthropic.com/v1/messages',
@@ -186,7 +186,7 @@ async function callAnthropic(model: string, systemPrompt: string, prompt: string
 // OpenAI GPT çağrısı (OpenAI uyumlu şema)
 // ----------------------------------------------------------------------------
 async function callOpenAI(model: string, systemPrompt: string, prompt: string): Promise<string> {
-  const apiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY || '';
+  const apiKey = process.env.OPENAI_API_KEY || '';
   if (!apiKey) throw new Error('OpenAI anahtarı yok');
   return callOpenAICompatible('https://api.openai.com/v1', apiKey, model, systemPrompt, prompt, 8192);
 }
@@ -199,7 +199,7 @@ async function callOllama(model: string, prompt: string, timeoutMs = 90000): Pro
   if (isCloudRuntime()) {
     throw new Error('Bulut ortamında (Vercel) yerel Ollama kullanılamaz — Plan F atlandı');
   }
-  const ollamaUrl = process.env.NEXT_PUBLIC_OLLAMA_URL || 'http://localhost:11434';
+  const ollamaUrl = process.env.OLLAMA_URL || 'http://localhost:11434';
   const response = await fetchWithTimeout(
     `${ollamaUrl}/api/generate`,
     {
@@ -225,7 +225,7 @@ async function callOllama(model: string, prompt: string, timeoutMs = 90000): Pro
 // DeepSeek (Kodlama Plan A)
 // ----------------------------------------------------------------------------
 async function callDeepSeek(systemPrompt: string, prompt: string): Promise<string> {
-  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
+  const apiKey = process.env.DEEPSEEK_API_KEY || '';
   if (!apiKey) throw new Error('DeepSeek anahtarı yok');
   return callOpenAICompatible(
     'https://api.deepseek.com',
@@ -241,7 +241,7 @@ async function callDeepSeek(systemPrompt: string, prompt: string): Promise<strin
 // Gemini (Sohbet/Araştırma Plan A)
 // ----------------------------------------------------------------------------
 async function callGemini(systemPrompt: string, prompt: string): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
+  const apiKey = process.env.GEMINI_API_KEY || '';
   if (!apiKey) throw new Error('Gemini anahtarı yok');
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
@@ -264,11 +264,11 @@ const CHAT_SYSTEM_PROMPT =
 
 function buildCodePlans(): MatrixPlan[] {
   const plans: MatrixPlan[] = [];
-  const deepseekKey = process.env.DEEPSEEK_API_KEY || process.env.NEXT_PUBLIC_DEEPSEEK_API_KEY || '';
-  const groqKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || '';
-  const openaiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY || '';
-  const anthropicKey = process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || '';
-  const mistralKey = process.env.MISTRAL_API_KEY || process.env.NEXT_PUBLIC_MISTRAL_API_KEY || '';
+  const deepseekKey = process.env.DEEPSEEK_API_KEY || '';
+  const groqKey = process.env.GROQ_API_KEY || '';
+  const openaiKey = process.env.OPENAI_API_KEY || '';
+  const anthropicKey = process.env.ANTHROPIC_API_KEY || '';
+  const mistralKey = process.env.MISTRAL_API_KEY || '';
 
   if (deepseekKey) {
     plans.push({
@@ -304,7 +304,7 @@ function buildCodePlans(): MatrixPlan[] {
   if (!isCloudRuntime()) {
     plans.push({
       letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
-      run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+      run: (p) => callOllama(process.env.OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
     });
   }
   // Plan Z: Deterministik kural motoru — bulutta anahtar yoksa "fetch failed" yerine sistem yanıtı
@@ -317,11 +317,11 @@ function buildCodePlans(): MatrixPlan[] {
 
 function buildResearchPlans(): MatrixPlan[] {
   const plans: MatrixPlan[] = [];
-  const geminiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
-  const groqKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || '';
-  const openaiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY || '';
-  const anthropicKey = process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY || '';
-  const openrouterKey = process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || '';
+  const geminiKey = process.env.GEMINI_API_KEY || '';
+  const groqKey = process.env.GROQ_API_KEY || '';
+  const openaiKey = process.env.OPENAI_API_KEY || '';
+  const anthropicKey = process.env.ANTHROPIC_API_KEY || '';
+  const openrouterKey = process.env.OPENROUTER_API_KEY || '';
 
   if (geminiKey) {
     plans.push({
@@ -357,7 +357,7 @@ function buildResearchPlans(): MatrixPlan[] {
   if (!isCloudRuntime()) {
     plans.push({
       letter: 'F', name: 'Ollama qwen2.5-coder', badge: '[💻 Plan F: Yerel Ollama]',
-      run: (p) => callOllama(process.env.NEXT_PUBLIC_OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
+      run: (p) => callOllama(process.env.OLLAMA_MODEL || 'qwen2.5-coder:7b', p),
     });
   }
   // Plan Z: Deterministik kural motoru — asla "fetch failed" dönmez
@@ -413,7 +413,7 @@ export async function generateWithWaterfall(prompt: string, mode: MatrixMode): P
 // veya hata olursa mevcut A→B→C→D şelalesine düşer (graceful fallback).
 // ----------------------------------------------------------------------------
 export async function generateWithOpenRouterGateway(prompt: string, mode: MatrixMode): Promise<MatrixResult> {
-  const key = process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || '';
+  const key = process.env.OPENROUTER_API_KEY || '';
   if (!key) {
     return generateWithWaterfall(prompt, mode);
   }
