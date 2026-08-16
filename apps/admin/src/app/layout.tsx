@@ -1,5 +1,5 @@
 import './globals.css';
-import './styles/form-validation.css';
+import '../styles/form-validation.css';
 import type { Metadata, Viewport } from 'next';
 import SciFiLockScreen from './components/SciFiLockScreen';
 import PWARegister from './components/PWARegister';
