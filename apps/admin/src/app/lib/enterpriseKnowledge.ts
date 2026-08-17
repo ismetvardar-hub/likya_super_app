@@ -343,6 +343,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'Faz 2 canlı veri köprüleri (supabaseClient.ts\'e insertLiveRow/updateLiveRow eklendi): lib/ops/bookingWriter.ts — CEO Chat/BookingAgent rezervasyonlarını parcels/sports_facilities/TBYB tablolarına yazar, generateReferenceCode dinamik referans + confirmationCard onay kartı üretir. lib/ops/dazeChefPosBridge.ts — mutfak siparişlerini pos_transactions/upcycling_items kaydeder, kitchenReceiptDisplay 120s sayacı için fiş formatı üretir. lib/marketplace/rentalTransactionEngine.ts — "Hemen Kirala"/"Test Et (TBYB)" işlemlerini try_before_buy_bookings + sales_commissions (%10) işler. Tümü supabaseEnvReady() kontrolüyle env yoksa localStorage mock fallback (asla çökme).',
   },
 
+  {
+    id: 'phase3-sync-pwa-chatwoot',
+    title: 'Faz 3 — Mobil Sync Köprüsü, PWA Bildirim Motoru ve Chatwoot Panel',
+    icon: '📱',
+    keywords: ['mobile sync', 'flutter', 'supabase_service', 'ai_vision_service', 'image diagnosis', 'senkron', 'pwa push', 'notification', 'service worker', 'offline kuyruk', 'chatwoot', 'canlı destek simülasyonu'],
+    content:
+      'lib/sync/mobileSyncBridge.ts — Flutter supabase_service.dart + ai_vision_service.dart ile tam uyumlu TS arayüzler (MobileUser/MobileSession, ImageDiagnosisResult) + eşleme fonksiyonları (mapMobileReservation, mapBiomechanicScore, mapKitchenOrder) + localStorage senkron kuyruğu. lib/pwa/notificationEngine.ts — Service Worker push: ensureNotificationPermission, notifyServiceWorker postMessage, showBrowserNotification, dispatchPush (rezervasyon/kritik-arıza/mutfak-hazır) + offline kuyruk. components/ChatwootSupportPanel.tsx — Chatwoot iframe (token varsa) veya şık Canlı Destek Simülasyonu (token yoksa); dept view içinde render.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

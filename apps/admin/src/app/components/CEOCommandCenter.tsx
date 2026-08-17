@@ -34,6 +34,7 @@ import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
 import McpA2aOpsCard from './McpA2aOpsCard';
 import MultiAgentSportsCard from './MultiAgentSportsCard';
 import DazeSentinelHud from './DazeSentinelHud';
+import ChatwootSupportPanel from './ChatwootSupportPanel';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1324,6 +1325,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 <>
                   <DepartmentAgents />
                   <CrmCustomerCard />
+                  <ChatwootSupportPanel />
                 </>
               )}
               {activeView === 'hr' && <HRPayrollAgent />}
