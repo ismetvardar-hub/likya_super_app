@@ -307,6 +307,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/localOllamaAdapter.ts — yerel Ollama (127.0.0.1:11434): checkOllamaHealth online/offline, callLocalOllama (qwen2.5-coder:7b, deepseek-r1:8b, llama3.2:3b), routeWithOllamaFallback cloud düşünce otomatik yerel motora geçer (Plan Z güvenli). lib/ai/hermesAgentEngine.ts — Hermes Agentic OS: Kanban görev listesi, skills (Function Calling), decomposeInstruction talimatı alt adımlara böler, runHermesLoop otonom döngü (skill + Ollama/Plan A fallback). lib/ai/openRouterAdapter.ts — OmniRoute Free Pool: 4 :free model (Llama 3.3 70B, DeepSeek R1, Gemini 2.0 Flash, Qwen Coder 32B), freeModelFromPrompt deterministik seçim. modelMatrix Plan E artık free havuzdan model seçer; /api/ceo/health localLlm.ollama + freePool durumu raporlar.',
   },
 
+  {
+    id: 'booking-validator-specialists',
+    title: '7/24 Booking Ajanı, Level-5 Validator Döngüsü ve Uzman Ajan Ağı',
+    icon: '🏨',
+    keywords: ['rezervasyon', 'booking agent', 'karavan', 'glamping', 'padel', 'tenis', 'gece kuyruğu', 'level 5', 'validator', 'generator', 'retry', 'specialist', 'support', 'scouting', 'ops sentinel', 'agency agents'],
+    content:
+      'lib/ai/bookingAgent.ts — 7/24 otonom rezervasyon ajanı: parseBookingRequest tarih/kişi/alan ayrıştırır, checkAvailability slot sorgular, createBooking gece (22:00-08:00) taleplerini kuyruğa alır (sabah onayı) veya anlık rezervasyon oluşturur; Daze nezaket filtresi. lib/ai/autonomousValidator.ts — Level-5 doğrulama döngüsü: Generator→Validator (4 kural: boş/kısa/parantez dengesi/JSON)→Retry Loop (autoFix, max 2 retry); 6 Levels of Agentic AI standardı. lib/ai/specialistAgents.ts — Agency-Agents uzman rol dağılımı: SupportAgent, BookingAgent (createBooking köprüsü), ScoutingAgent, OpsSentinel; routeToSpecialist keyword ile görevi uzman ajana yönlendirir.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
