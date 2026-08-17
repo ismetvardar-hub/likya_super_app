@@ -21,6 +21,7 @@ import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
 import NeonGraphView from './NeonGraphView';
 import vaultData from '../lib/rag/vaultData.json';
+import CrmCustomerCard from './CrmCustomerCard';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -1307,7 +1308,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'payment' && <PaymentIntegration />}
               {activeView === 'security' && <SecurityIncidentAgent />}
               {activeView === 'marketing' && <AutoMarketingAgent />}
-              {activeView === 'dept' && <DepartmentAgents />}
+              {activeView === 'dept' && (
+                <>
+                  <DepartmentAgents />
+                  <CrmCustomerCard />
+                </>
+              )}
               {activeView === 'hr' && <HRPayrollAgent />}
               {activeView === 'facility' && <FacilityMaintenanceAgent />}
               {activeView === 'caravan' && <SmartCaravanPark />}

@@ -208,6 +208,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'Master eklenti paketi: (1) scripts/generate-vault.js 50 notluk vault üretici + lib/rag/vaultData.json (seed). (2) lib/rag/localRagEngine.ts — Ollama yerel RAG; kapalıysa keyword fallback (Plan Z). (3) components/NeonGraphView.tsx — vault notlarını neon node-edge graph olarak render (toolsagents view). (4) lib/finance/mrrValuationEngine.ts + components/VerifiedRevenueWidget.tsx — TrustMRR MRR→çarpan→değerleme (finance view). (5) components/TrustLeaderboard.tsx — departman ciro sıralaması. (6) lib/marketing/agencyMarketing.ts — 8 yetenekli ajans (campaign-plan→landing-page). (7) lib/ai/agentSwarmBus.ts — publish/subscribe ajan mesajlaşma. (8) lib/ai/miniAppGenerator.ts — emergent mini-app stub. (9) lib/marketing/aiCmoEngine.ts — Okara modeli 10 ajanlı CMO. (10) lib/social/socialMediaBridge.ts — Zernio/Blotato MCP köprüsü. (11) lib/support/hugoTicketResolver.ts — otomatik bilet çözücü. (12) lib/marketing/sponsorshipSlots.ts — sponsorluk yuvaları. (13) lib/payments/creemGlobalBridge.ts — Creem MoR dijital satış + lisans anahtarı. (14) lib/ai/b2bLeadAgent.ts — Gojiberry lead skorlama. (15) lib/marketing/influencerBridge.ts — Shoutcart influencer köprüsü. (16) lib/marketplace/digitalAssets.ts — dijital asset kataloğu.',
   },
 
+  {
+    id: 'open-crm-tier-s',
+    title: 'Likya Open-CRM (Twenty) + Agent Tier Router',
+    icon: '📇',
+    keywords: ['crm', 'twenty', 'müşteri', 'üye', 'rezervasyon geçmişi', 'harcama', 'sponsor temas', 'tier s', 'tier b', 'tier c', 'ajan yönlendirme', 'yönlendirme matrisi'],
+    content:
+      'lib/crm/twentyCrmBridge.ts — Twenty CRM uyumlu open-CRM adaptörü: üye profilleri (vip/aktif/misafir), rezervasyon geçmişi, harcama alışkanlıkları ve sponsor temas noktaları; getMemberProfile LTV/tier hesaplar, logSponsorTouchpoint temas kaydeder. lib/ai/agentTierRouter.ts — Tier-S ajan yönlendirme matrisi: görev skorlaması (Tier S: otonom icra→Cline, Tier B: içerik→Ajans/CMO, Tier C: bilgi→RAG/Gemini), routeTask deterministik güven 0.4-0.97. components/CrmCustomerCard.tsx — koyu neon müşteri kartı (dept view): durum rozeti, üyelik tier, harcama/rezervasyon metrikleri, geçmiş aktiviteler, sponsor temas uyarısı.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
