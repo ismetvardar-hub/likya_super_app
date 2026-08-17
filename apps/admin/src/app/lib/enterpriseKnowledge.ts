@@ -262,6 +262,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/simulators/extremeSportsSimulator.ts — Dry-Ski (Sentetik Kayak), Indoor Rowing (Kapalı Kürek Havuzu) ve Wave Pool (Dalga Havuzu) üniteleri: ekipman durumu, kapasite, saatlik ücret, güvenlik skoru; simulateSession tür bazlı metrikler (pist eğimi/split/şut gücü/dalga boyu) + performans skoru üretir. base44AppEngine.ts ve zeroTrustShield.ts önceki turlardan korunur (metin prompt → JSON şema + React UI; SQLi/XSS/CSRF/API key filtreleri). components/ExtremeSimulatorSecurityCard.tsx — 3 sekmeli neon HUD (🎿 Extreme Sports & Dry-Ski / 🚀 App Builder / 🛡️ Security); 3D Park Twin (twin) view içinde render edilir.',
   },
 
+  {
+    id: 'finance-pm-hooks-vault',
+    title: 'Gemini 9-Adım Finans, Agile PM, 60 Viral Hook ve Vault Dizinleri',
+    icon: '💰',
+    keywords: ['gemini finance', 'fatura', 'vade', 'mutabakat', 'nakit akışı', 'laba', 'agile pm', 'darboğaz', 'viral hook', '60 hook', 'eğitim platformu', 'gelir modeli'],
+    content:
+      'lib/finance/geminiFinanceAutomator.ts — 9 adımlı finans otomasyonu: fatura okuma (OCR stub), vade takibi, POS-kasa mutabakatı, 7 günlük nakit akışı tahmini; Daze nezaket filtresi tüm hatırlatıcı metinlerde zorunludur (applyPoliteFilter). lib/pm/agileContextEngine.ts — Laba blueprint: toplantı metni → aksiyon maddeleri + takvim görevleri + darboğaz analizi (nazik ton). lib/marketing/hookLibrary60.ts — 60 viral hook (6 kategori × 10) + buildSocialContent yapılandırıcı. lib/vault/aiLearningDirectory.ts — 20 ücretsiz AI eğitim platformu + 50 gelir modeli aranabilir dizin. components/FinancePmDashboardCard.tsx — 3 sekmeli neon HUD (💰 Finance Workflow / 📊 Agile PM / 🎣 Viral Hooks); finance view içinde.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

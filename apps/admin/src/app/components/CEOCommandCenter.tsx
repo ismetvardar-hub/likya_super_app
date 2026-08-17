@@ -29,6 +29,7 @@ import PokeTokenTracker from './PokeTokenTracker';
 import SecurityAppBuilderCard from './SecurityAppBuilderCard';
 import SportsVisionMemoryCard from './SportsVisionMemoryCard';
 import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
+import FinancePmDashboardCard from './FinancePmDashboardCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1399,6 +1400,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   <AutonomousFinanceAgents />
                   <VerifiedRevenueWidget />
                   <TrustLeaderboard />
+                  <FinancePmDashboardCard />
                 </>
               )}
               {activeView === 'legal' && <DepartmentAgents />}
