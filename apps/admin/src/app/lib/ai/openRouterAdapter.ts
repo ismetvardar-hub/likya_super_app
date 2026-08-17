@@ -17,6 +17,30 @@ export function modelFromPrompt(prompt: string): string {
   return 'meta-llama/llama-3.3-70b-instruct:free'; // varsayılan
 }
 
+
+// 🌐 OMNIROUTE ÜCRETSİZ MODEL HAVUZU (`:free` katmanı — bütçe tüketmez)
+export const FREE_MODELS: { id: string; label: string; detect: RegExp[] }[] = [
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Llama 3.3 70B', detect: [/llama/, /meta/, /genel/] },
+  { id: 'deepseek/deepseek-r1:free', label: 'DeepSeek R1', detect: [/deepseek/, /kod/, /r1/] },
+  { id: 'google/gemini-2.0-flash-exp:free', label: 'Gemini 2.0 Flash', detect: [/gemini/, /google/] },
+  { id: 'qwen/qwen-2.5-coder-32b-instruct:free', label: 'Qwen 2.5 Coder 32B', detect: [/qwen/, /coder/, /yazılım/, /yaz/, /oluştur/] },
+];
+
+// Prompt'a göre ücretsiz model seçimi (deterministik)
+export function freeModelFromPrompt(prompt: string): string {
+  const lower = prompt.toLowerCase();
+  for (const m of FREE_MODELS) {
+    if (m.detect.some((re) => re.test(lower))) return m.id;
+  }
+  return FREE_MODELS[0].id; // varsayılan Llama free
+}
+
+// Ücretsiz havuz durum rozeti
+export function openRouterFreePoolStatus(): string {
+  const hasKey = typeof process !== 'undefined' && !!(process.env.OPENROUTER_API_KEY || '');
+  return `OmniRoute Free Pool [${FREE_MODELS.length} :free model • Llama/DeepSeek-R1/Gemini-Flash/Qwen-Coder • ${hasKey ? 'API bağlı' : 'anahtar bekliyor'}]`;
+}
+
 export interface OpenRouterOptions {
   model?: string;
   temperature?: number;

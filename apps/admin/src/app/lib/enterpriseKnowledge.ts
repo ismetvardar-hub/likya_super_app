@@ -298,6 +298,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/multiAgentResearch.ts — Multi-Agent Research System: Coordinator komutasında Web Search, Document Analyzer, Synthesis ve Reporting ajanları paralel çalışır; runResearch 5 ajanlı rapor üretir. lib/sports/claudeSportsManager.ts — Otonom Kulüp Direktörü: padel/tenis/basketbol/su-sporları için antrenman planı, performans özeti, scouting ve maç raporu. lib/simulators/facilitySafetyAudit.ts — Ekipman Güvenlik Denetçisi: tesis/kort/oyun ekipmanlarını standartlara (EN/FIBA/ITF/TSE) göre denetler, kritik durumda Sentinel bakım servisine otomatik bilet açar. components/MultiAgentSportsCard.tsx — 3 sekmeli neon HUD (📊 Research / 🎾 Sports Manager / 🛡️ Safety Checklist); Spor Vizyon (sportvision) view içinde.',
   },
 
+  {
+    id: 'hermes-omni-ollama',
+    title: 'Hermes Agentic OS + OmniRoute Free Pool + Yerel Ollama',
+    icon: '🤖',
+    keywords: ['hermes', 'agentic os', 'kanban', 'skill', 'function calling', 'omni route', 'free model', 'openrouter', 'ollama', 'yerel', 'qwen', 'deepseek r1', 'fallback'],
+    content:
+      'lib/ai/localOllamaAdapter.ts — yerel Ollama (127.0.0.1:11434): checkOllamaHealth online/offline, callLocalOllama (qwen2.5-coder:7b, deepseek-r1:8b, llama3.2:3b), routeWithOllamaFallback cloud düşünce otomatik yerel motora geçer (Plan Z güvenli). lib/ai/hermesAgentEngine.ts — Hermes Agentic OS: Kanban görev listesi, skills (Function Calling), decomposeInstruction talimatı alt adımlara böler, runHermesLoop otonom döngü (skill + Ollama/Plan A fallback). lib/ai/openRouterAdapter.ts — OmniRoute Free Pool: 4 :free model (Llama 3.3 70B, DeepSeek R1, Gemini 2.0 Flash, Qwen Coder 32B), freeModelFromPrompt deterministik seçim. modelMatrix Plan E artık free havuzdan model seçer; /api/ceo/health localLlm.ollama + freePool durumu raporlar.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

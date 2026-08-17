@@ -11,7 +11,7 @@
 // ============================================================================
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { routeViaOpenRouter, modelFromPrompt } from './openRouterAdapter';
+import { routeViaOpenRouter, modelFromPrompt, freeModelFromPrompt } from './openRouterAdapter';
 
 // ----------------------------------------------------------------------------
 // ☁️ BULUT ÇALIŞMA ZAMANI TESPİTİ — Vercel serverless'te yerel Ollama yasak
@@ -349,8 +349,9 @@ function buildResearchPlans(): MatrixPlan[] {
   }
   if (openrouterKey) {
     plans.push({
-      letter: 'E', name: 'OpenRouter Free', badge: '[🌐 Plan E: OpenRouter]',
-      run: (p) => callOpenAICompatible('https://openrouter.ai/api/v1', openrouterKey, 'meta-llama/llama-3.3-70b-instruct:free', CHAT_SYSTEM_PROMPT, p),
+      letter: 'E', name: 'OmniRoute Free Pool', badge: '[🌐 Plan E: OmniRoute Free]',
+      // 🌐 ÜCRETSİZ HAVUZ: prompt içeriğine göre :free model seçilir (bütçe tüketmez)
+      run: (p) => callOpenAICompatible('https://openrouter.ai/api/v1', openrouterKey, freeModelFromPrompt(p), CHAT_SYSTEM_PROMPT, p),
     });
   }
   // Plan F: Yerel Ollama — YALNIZCA bulut OLMAYAN ortamda (Vercel'de localhost yok)

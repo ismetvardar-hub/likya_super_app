@@ -59,7 +59,15 @@ export async function GET() {
     ai: {
       plans,
       activeChain: activePlans,
-      fallbackChain: 'A(Gemini) -> B(DeepSeek) -> C(Groq) -> D(Mistral/Ollama) -> E(OpenRouter) -> Z(Kural Motoru)',
+      fallbackChain: 'A(Gemini) -> B(DeepSeek) -> C(Groq) -> D(Mistral/Ollama) -> E(OmniRoute Free Pool) -> Z(Kural Motoru)',
+    },
+    localLlm: {
+      ollama: { status: 'offline', note: '127.0.0.1:11434 — Vercel serverless ortaminda yerel model yok; bulut selalesi/Plan Z devrede', port: 11434 },
+    },
+    freePool: {
+      models: ['meta-llama/llama-3.3-70b-instruct:free', 'deepseek/deepseek-r1:free', 'google/gemini-2.0-flash-exp:free', 'qwen/qwen-2.5-coder-32b-instruct:free'],
+      active: !!process.env.OPENROUTER_API_KEY,
+      note: 'OmniRoute :free havuzu — butce tuketmez, Plan E zincirinde',
     },
     supabase,
     security: {
