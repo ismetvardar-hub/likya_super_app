@@ -20,16 +20,10 @@ export function getVoiceSupport(): VoiceSupport {
   };
 }
 
-// Deterministik "transkript" fallback: süreye göre anlamlı demo komut
-export function transcribeFallback(durationMs: number): string {
-  if (durationMs < 1200) return 'Likya durum raporu nedir?';
-  if (durationMs < 2500) return 'Bugünkü yoğunluk ve stok durumunu özetle';
-  if (durationMs < 4000) return 'Otonom vardiya motorunu çalıştır ve personel davetini başlat';
-  return 'Tesis ve saha durumunu analiz et, kritikse beni bilgilendir';
-}
+// (Süre-bazlı simülasyon transkript KALDIRILDI — gerçek STT için Web Speech kullanılır)
 
 export interface OpenLiveSession {
-  stop: () => Promise<{ blob: Blob; durationMs: number; fallbackTranscript: string }>;
+  stop: () => Promise<{ blob: Blob; durationMs: number }>;
   state: () => 'inactive' | 'recording';
 }
 
@@ -51,7 +45,7 @@ export async function startOpenLiveRecording(): Promise<OpenLiveSession> {
           stream.getTracks().forEach((t) => t.stop());
           const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
           const durationMs = Date.now() - startedAt;
-          resolve({ blob, durationMs, fallbackTranscript: transcribeFallback(durationMs) });
+          resolve({ blob, durationMs });
         };
         recorder.stop();
       }),

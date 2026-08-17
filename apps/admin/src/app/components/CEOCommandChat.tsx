@@ -198,7 +198,7 @@ export default function CEOCommandChat() {
   const [modelHealth, setModelHealth] = useState<{ provider: ModelProvider; status: 'online' | 'offline'; latencyMs: number }[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
-  const openLiveSessionRef = useRef<{ stop: () => Promise<{ fallbackTranscript: string; durationMs: number }> } | null>(null);
+  const openLiveSessionRef = useRef<{ stop: () => Promise<{ blob: Blob; durationMs: number }> } | null>(null);
   const speechSynthRef = useRef<SpeechSynthesis | null>(null);
   const voiceModeRef = useRef(false);
   const isListeningRef = useRef(false);
@@ -345,14 +345,14 @@ export default function CEOCommandChat() {
   };
 
   const stopListening = () => {
-    // 🎙️ OpenLive MediaRecorder oturumunu sonlandır ve komutu işle
+    // 🎙️ OpenLive MediaRecorder oturumunu sonlandır (transkript için Web Speech kullanılır)
     if (openLiveSessionRef.current) {
       const session = openLiveSessionRef.current;
       openLiveSessionRef.current = null;
       setIsListening(false);
       isListeningRef.current = false;
-      session.stop().then(({ fallbackTranscript, durationMs }) => {
-        if (fallbackTranscript.trim()) handleSendMessage(fallbackTranscript, 'voice');
+      session.stop().then(() => {
+        setMessages((prev) => [...prev, { role: 'system', text: '🎙️ Ses kaydı alındı — transkript için Web Speech (Chrome/Edge) gerekli.', time: now() }]);
       });
       return;
     }

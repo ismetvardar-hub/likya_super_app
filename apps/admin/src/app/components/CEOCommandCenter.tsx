@@ -46,7 +46,6 @@ import DazeSmartCampus from './DazeSmartCampus';
 import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
-import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
 import { openLiveBridgeStatus, createSpeechRecognitionBridge, isSpeechRecognitionSupported } from '../lib/ai/openLiveBridge';
 import { chatwootBridgeStatus } from '../lib/support/chatwootBridge';
 import { gestureTrackerStatus } from '../lib/vision/gestureTracker';
@@ -586,28 +585,17 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
 
   // 🎙️ OpenLive ses köprüsü durumu
   const [voiceActive, setVoiceActive] = useState(false);
-  const openLiveRef = useRef<{ stop: () => Promise<{ fallbackTranscript: string; durationMs: number }> } | null>(null);
   const speechRecognitionRef = useRef<ReturnType<typeof createSpeechRecognitionBridge> | null>(null);
 
   // 🎙️ OpenLive ses köprüsü — mikrofon düğmesi toggle'ı
-  // GERÇEK STT: Web Speech Recognition (tr-TR) önceliklidir; desteklenmiyorsa
-  // MediaRecorder + süre-bazlı fallback transkript devreye girer (kırılmasız).
+  // GERÇEK STT: Web Speech Recognition (tr-TR) — süre-bazlı simülasyon
+  // transkript KALDIRILDI; desteklenmeyen tarayıcıda açık bilgi verilir.
   const toggleVoice = () => {
     if (voiceActive) {
       setVoiceActive(false);
-      // 1) Gerçek STT oturumu kapat
       if (speechRecognitionRef.current) {
         speechRecognitionRef.current.stop();
         speechRecognitionRef.current = null;
-        return;
-      }
-      // 2) MediaRecorder fallback oturumu kapat
-      if (openLiveRef.current) {
-        const session = openLiveRef.current;
-        openLiveRef.current = null;
-        session.stop().then(({ fallbackTranscript }) => {
-          if (fallbackTranscript.trim()) handleSend(fallbackTranscript);
-        });
       }
       return;
     }
@@ -642,14 +630,8 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
         return;
       }
     }
-    // MediaRecorder fallback (Web Speech yoksa)
-    startOpenLiveRecording().then((session) => {
-      openLiveRef.current = session;
-      setVoiceActive(true);
-      setMessages((prev) => [...prev, { role: 'ceo', text: '🎙️ OpenLive: Sesli komut kaydediliyor — tekrar dokununca işlenir.', time: now() }]);
-    }).catch(() => {
-      setMessages((prev) => [...prev, { role: 'ceo', text: '⚙️ Sistem: Mikrofon erişimi yok. Lütfen izin verin.', time: now() }]);
-    });
+    // Web Speech desteklenmiyor → açık bilgi (simülasyon transkript YOK)
+    setMessages((prev) => [...prev, { role: 'ceo', text: '🎙️ Sesli komut bu tarayıcıda desteklenmiyor (Web Speech gerekli). Lütfen Chrome veya Microsoft Edge kullanın.', time: now() }]);
   };
 
   const [showModuleModal, setShowModuleModal] = useState(false);

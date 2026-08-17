@@ -87,27 +87,20 @@ export interface OpenLiveBridge {
   isListening: () => boolean;
   /** VAD durumunu döndürür */
   vad: () => VadFrame;
-  /** Kaydı sonlandır → ses blob'u + süre + fallback transkript */
-  stop: () => Promise<{ blob: Blob; durationMs: number; fallbackTranscript: string }>;
+  /** Kaydı sonlandır → ses blob'u + süre (transkript için Web Speech STT kullanılır) */
+  stop: () => Promise<{ blob: Blob; durationMs: number }>;
   /** Barge-in: aktif konuşmayı keser, yeni komut için kanalı açar */
   bargeIn: () => void;
   /** Kaynakları temizle */
   dispose: () => void;
 }
 
-// Süreye dayalı deterministik fallback transkript
-export function transcribeFallback(durationMs: number): string {
-  if (durationMs < 1200) return 'Likya durum raporu nedir?';
-  if (durationMs < 2500) return 'Bugünkü yoğunluk ve stok durumunu özetle';
-  if (durationMs < 4000) return 'Otonom vardiya motorunu çalıştır ve personel davetini başlat';
-  return 'Tesis ve saha durumunu analiz et, kritikse beni bilgilendir';
-}
 
 // ============================================================================
 // 🎙️ GERÇEK SES TANIMA (STT) — Web Speech API köprüsü (tr-TR)
 // webkitSpeechRecognition / SpeechRecognition motorunu kullanır; mikrofon
 // kaydı bittiğinde konuşulan metni anında callback'e iletir.
-// Desteklenmiyorsa null döner (çağıran taraf MediaRecorder fallback kullanır).
+// Desteklenmiyorsa null döner. (Süre-bazlı simülasyon transkript KALDIRILDI.)
 // ============================================================================
 
 export interface SpeechRecognitionBridgeOptions {
@@ -252,7 +245,7 @@ export async function createOpenLiveBridge(opts: OpenLiveBridgeOptions = {}): Pr
           if (ctx && ctx.state !== 'closed') ctx.close().catch(() => undefined);
           const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
           const durationMs = Date.now() - startedAt;
-          resolve({ blob, durationMs, fallbackTranscript: transcribeFallback(durationMs) });
+          resolve({ blob, durationMs });
         };
         recorder.stop();
       }),
