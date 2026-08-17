@@ -30,13 +30,30 @@ function aiPlanStatus(): PlanStatus[] {
   ];
 }
 
-// Supabase bağlantı durumu — secret tanımlıysa "ayarlı", değilse "bagli degil"
-function supabaseStatus(): { connected: boolean; mode: string; url: string | null } {
-  const url = process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-  if (url && key) return { connected: true, mode: 'canli (URL + anahtar tanimli)', url };
-  if (url) return { connected: false, mode: 'URL tanimli ama anahtar eksik', url };
-  return { connected: false, mode: 'bagli degil (SUPABASE_DB_URL bekleniyor)', url: null };
+// Supabase bağlantı durumu — placeholder/dummy URL'yi ASLA "canlı" sayma.
+// Env tanımlı değilse → unconfigured; placeholder ise → standby; gerçek ise → ready.
+const SUPABASE_PLACEHOLDER_MARKERS = ['<your-project-id>', 'placeholder', 'example.com', 'your-project', 'dummy'];
+
+function resolveSupabaseUrl(): string {
+  return process.env.SUPABASE_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+}
+
+function resolveSupabaseKey(): string {
+  return process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+}
+
+function supabaseStatus(): { status: 'ready' | 'standby' | 'unconfigured'; connected: boolean; mode: string; url: string | null } {
+  const url = resolveSupabaseUrl();
+  const key = resolveSupabaseKey();
+  if (!url || !key) {
+    return { status: 'unconfigured', connected: false, mode: 'Supabase env tanimli degil (SUPABASE_URL + SUPABASE_ANON_KEY bekleniyor)', url: url || null };
+  }
+  const isPlaceholder = SUPABASE_PLACEHOLDER_MARKERS.some((m) => url.toLowerCase().includes(m));
+  if (isPlaceholder) {
+    return { status: 'standby', connected: false, mode: 'Placeholder URL tespit edildi — canli baglanti kurulmadi; gercek Supabase URL + anahtar bekleniyor', url };
+  }
+  // Gerçek SELECT 1 ping burada yapılamıyorsa "ready/ayarli" raporlanır; ilk gerçek sorguda doğrulanır.
+  return { status: 'ready', connected: true, mode: 'URL + anahtar tanimli — dinamik gecis hazir (parcels/staff_tasks/pos_transactions)', url };
 }
 
 export async function GET() {
@@ -47,6 +64,15 @@ export async function GET() {
   // Fonksiyon yanıt süresi — Vercel fonksiyonunun canlı olduğunun kanıtı
   const latencyMs = Date.now() - startedAt;
 
+  // Bellek kullanımı (serverless heap) — Node runtime'da mevcut
+  const mem = typeof process !== 'undefined' && process.memoryUsage
+    ? {
+        heapUsedMB: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        heapTotalMB: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+        rssMB: Math.round(process.memoryUsage().rss / 1024 / 1024),
+      }
+    : null;
+
   const activePlans = plans.filter((p) => p.active).map((p) => p.plan).join('->');
 
   return NextResponse.json({
@@ -54,6 +80,7 @@ export async function GET() {
     checkedAt: new Date().toISOString(),
     runtime: 'vercel-serverless',
     latencyMs,
+    memory: mem,
     health: 'healthy',
     nextJs: { status: 'up', note: 'fonksiyon yanit veriyor' },
     ai: {

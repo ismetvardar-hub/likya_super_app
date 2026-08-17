@@ -1,10 +1,11 @@
 // ============================================================================
-// 🗄️ LİKYA DAYANIKLI SUPABASE CLIENT — kırılmasız veri katmanı
-// SUPABASE_DB_URL / NEXT_PUBLIC_SUPABASE_URL + anahtar EKSİK olsa bile uygulama
-// ASLA çökmez: queryLiveTable() mock-data fallback (simulated) döner.
-// Gerçek bağlantı: SUPABASE_DB_URL + SUPABASE_SERVICE_ROLE_KEY eklendiğinde
-// aynı fonksiyon canlı tablolara (parcels, sports_facilities, pos_transactions,
-// staff_tasks) dinamik sorgu atar — kod değişikliği GEREKMEZ.
+// 🗄️ LİKYA DAYANIKLI SUPABASE CLIENT — kırılmasız + dinamik canlı geçiş katmanı
+// SUPABASE_URL / SUPABASE_DB_URL / NEXT_PUBLIC_SUPABASE_URL + anahtar EKSİK olsa
+// bile uygulama ASLA çökmez: queryLiveTable() mock-data fallback (simulated) döner.
+// 🔄 CANLI GEÇİŞ: SUPABASE_URL + SUPABASE_ANON_KEY (veya SUPABASE_DB_URL +
+// SERVICE_ROLE_KEY / NEXT_PUBLIC çifti) tanımlanır tanımlanmaz aynı fonksiyon
+// sıfır kod değişikliğiyle canlı tablolara (parcels, staff_tasks,
+// pos_transactions) dinamik sorgu atar. Placeholder URL'ler sayılmaz.
 // ============================================================================
 
 export const LIVE_TABLES = ['parcels', 'sports_facilities', 'pos_transactions', 'staff_tasks'] as const;
@@ -18,19 +19,40 @@ export interface SupabaseQueryResult<T = Record<string, unknown>> {
   latencyMs: number;
 }
 
-// Env hazır mı? (sunucu + istemci anahtarları)
+// Placeholder/dummy URL tespiti — gerçek canlı bağlantı sayılmaz
+const SUPABASE_PLACEHOLDER_MARKERS = ['<your-project-id>', 'placeholder', 'example.com', 'your-project', 'dummy', 'localhost'];
+
+export function resolveSupabaseUrl(): string {
+  return process.env.SUPABASE_URL || process.env.SUPABASE_DB_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+}
+
+export function resolveSupabaseKey(): string {
+  return process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+}
+
+// Env hazır mı? (gerçek URL + anahtar — placeholder sayılmaz)
 export function supabaseEnvReady(): boolean {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_DB_URL || '';
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-  return !!(url && key);
+  const url = resolveSupabaseUrl();
+  const key = resolveSupabaseKey();
+  if (!url || !key) return false;
+  return !SUPABASE_PLACEHOLDER_MARKERS.some((m) => url.toLowerCase().includes(m));
+}
+
+// Dinamik geçiş durumu (UI/health için dürüst rapor)
+export function supabaseSwitchStatus(): { status: 'ready' | 'standby' | 'unconfigured'; mode: string } {
+  const url = resolveSupabaseUrl();
+  const key = resolveSupabaseKey();
+  if (!url || !key) return { status: 'unconfigured', mode: 'Supabase env tanimli degil (SUPABASE_URL + SUPABASE_ANON_KEY bekleniyor)' };
+  if (SUPABASE_PLACEHOLDER_MARKERS.some((m) => url.toLowerCase().includes(m))) return { status: 'standby', mode: 'Placeholder URL — canli gecis bekleniyor' };
+  return { status: 'ready', mode: 'Canli gecis hazir — parcels/staff_tasks/pos_transactions dinamik sorgu aktif' };
 }
 
 export type SafeSupabaseClient = ReturnType<typeof createSupabaseFromModule>;
 
 // Dinamik createClient — @supabase/supabase-js yalnızca env hazırken yüklenir
 function createSupabaseFromModule(module: { createClient: (url: string, key: string) => unknown }) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_DB_URL || '';
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+  const url = resolveSupabaseUrl();
+  const key = resolveSupabaseKey();
   return module.createClient(url, key) as unknown as {
     from: (table: string) => {
       select: (cols?: string) => { limit?: (n: number) => { order?: (col: string, opts?: { ascending?: boolean }) => Promise<{ data: unknown; error: unknown }> } };
