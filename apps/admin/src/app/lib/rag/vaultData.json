@@ -1,0 +1,601 @@
+{
+  "generatedAt": "2026-08-17T06:23:08.974Z",
+  "count": 50,
+  "notes": [
+    {
+      "id": "note-001",
+      "title": "KVKK Rıza — Not 1",
+      "category": "Spor & Biyomekanik",
+      "content": "[Spor & Biyomekanik] KVKK md.5/1-a açık rıza şablonu 18 yaş altı sporcular için veli muvafakatnamesi gerektirir. (detay #1: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "spor",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-002",
+      "title": "Padel Rezervasyon — Not 2",
+      "category": "Tesis & Konaklama",
+      "content": "[Tesis & Konaklama] Padel kort rezervasyonları 60 dk dilimlerle yapılır; iptal ücretsiz, 15 dk geç kalma slotu düşürür. (detay #2: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "tesis",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-003",
+      "title": "Daze Chef Reçete — Not 3",
+      "category": "Pazaryeri & Kiralama",
+      "content": "[Pazaryeri & Kiralama] Daze Chef 120s motoru buzdolabı görselini multimodal Gemini ile analiz eder ve reçete üretir. (detay #3: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazaryeri",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-004",
+      "title": "Kiralama Depozitosu — Not 4",
+      "category": "Müzik & Atmosfer",
+      "content": "[Müzik & Atmosfer] Pazaryeri kiralama depozitosu %20, Try Before You Buy beğenirse kiralama bedeli satıştan düşülür. (detay #4: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "müzik",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-005",
+      "title": "Nöro-Akustik Ritim — Not 5",
+      "category": "Sistem & AI Altyapı",
+      "content": "[Sistem & AI Altyapı] Likya Müzik nöro-akustik DJ, tesis doluluk oranına göre 90-140 BPM arası ritim seçer. (detay #5: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "sistem",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-006",
+      "title": "MRR Çarpanı — Not 6",
+      "category": "Hukuk & KVKK",
+      "content": "[Hukuk & KVKK] Finans motoru günlük cirodan MRR üretir; çarpan 2.4x ile 8x arasında dikey bazlı değişir. (detay #6: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "hukuk",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-007",
+      "title": "Turnike Logları — Not 7",
+      "category": "Pazarlama & Büyüme",
+      "content": "[Pazarlama & Büyüme] IoT turnike logları gate_access_logs tablosuna yazılır; anomali tespiti Daze Sentinel tarafından yapılır. (detay #7: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazarlama",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-008",
+      "title": "Scouting İndeksi — Not 8",
+      "category": "İnsan Kaynakları",
+      "content": "[İnsan Kaynakları] Scouting ajanı biyomekanik kartlardan performans indeksi hesaplar; 85+ skor öncelikli aday işaretlenir. (detay #8: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇nsan",
+        "kaynakları"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-009",
+      "title": "Kurumsal Hafıza — Not 9",
+      "category": "Operasyon",
+      "content": "[Operasyon] Kurumsal hafıza her patron onayını arşive yazar; çelişkili kararlarda en son onay geçerlidir. (detay #9: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "operasyon"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-010",
+      "title": "Vardiya Akışı — Not 10",
+      "category": "İşletme & Finans",
+      "content": "[İşletme & Finans] Daze Hub çalışan vardiya akışı 7/24 kesintisiz çalışır; kritik dönüşlerde otomatik takviye ajanı devreye girer. (detay #10: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇şletme",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-011",
+      "title": "KVKK Rıza — Not 11",
+      "category": "Spor & Biyomekanik",
+      "content": "[Spor & Biyomekanik] KVKK md.5/1-a açık rıza şablonu 18 yaş altı sporcular için veli muvafakatnamesi gerektirir. (detay #11: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "spor",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-012",
+      "title": "Padel Rezervasyon — Not 12",
+      "category": "Tesis & Konaklama",
+      "content": "[Tesis & Konaklama] Padel kort rezervasyonları 60 dk dilimlerle yapılır; iptal ücretsiz, 15 dk geç kalma slotu düşürür. (detay #12: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "tesis",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-013",
+      "title": "Daze Chef Reçete — Not 13",
+      "category": "Pazaryeri & Kiralama",
+      "content": "[Pazaryeri & Kiralama] Daze Chef 120s motoru buzdolabı görselini multimodal Gemini ile analiz eder ve reçete üretir. (detay #13: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazaryeri",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-014",
+      "title": "Kiralama Depozitosu — Not 14",
+      "category": "Müzik & Atmosfer",
+      "content": "[Müzik & Atmosfer] Pazaryeri kiralama depozitosu %20, Try Before You Buy beğenirse kiralama bedeli satıştan düşülür. (detay #14: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "müzik",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-015",
+      "title": "Nöro-Akustik Ritim — Not 15",
+      "category": "Sistem & AI Altyapı",
+      "content": "[Sistem & AI Altyapı] Likya Müzik nöro-akustik DJ, tesis doluluk oranına göre 90-140 BPM arası ritim seçer. (detay #15: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "sistem",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-016",
+      "title": "MRR Çarpanı — Not 16",
+      "category": "Hukuk & KVKK",
+      "content": "[Hukuk & KVKK] Finans motoru günlük cirodan MRR üretir; çarpan 2.4x ile 8x arasında dikey bazlı değişir. (detay #16: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "hukuk",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-017",
+      "title": "Turnike Logları — Not 17",
+      "category": "Pazarlama & Büyüme",
+      "content": "[Pazarlama & Büyüme] IoT turnike logları gate_access_logs tablosuna yazılır; anomali tespiti Daze Sentinel tarafından yapılır. (detay #17: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazarlama",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-018",
+      "title": "Scouting İndeksi — Not 18",
+      "category": "İnsan Kaynakları",
+      "content": "[İnsan Kaynakları] Scouting ajanı biyomekanik kartlardan performans indeksi hesaplar; 85+ skor öncelikli aday işaretlenir. (detay #18: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇nsan",
+        "kaynakları"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-019",
+      "title": "Kurumsal Hafıza — Not 19",
+      "category": "Operasyon",
+      "content": "[Operasyon] Kurumsal hafıza her patron onayını arşive yazar; çelişkili kararlarda en son onay geçerlidir. (detay #19: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "operasyon"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-020",
+      "title": "Vardiya Akışı — Not 20",
+      "category": "İşletme & Finans",
+      "content": "[İşletme & Finans] Daze Hub çalışan vardiya akışı 7/24 kesintisiz çalışır; kritik dönüşlerde otomatik takviye ajanı devreye girer. (detay #20: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇şletme",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-021",
+      "title": "KVKK Rıza — Not 21",
+      "category": "Spor & Biyomekanik",
+      "content": "[Spor & Biyomekanik] KVKK md.5/1-a açık rıza şablonu 18 yaş altı sporcular için veli muvafakatnamesi gerektirir. (detay #21: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "spor",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-022",
+      "title": "Padel Rezervasyon — Not 22",
+      "category": "Tesis & Konaklama",
+      "content": "[Tesis & Konaklama] Padel kort rezervasyonları 60 dk dilimlerle yapılır; iptal ücretsiz, 15 dk geç kalma slotu düşürür. (detay #22: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "tesis",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-023",
+      "title": "Daze Chef Reçete — Not 23",
+      "category": "Pazaryeri & Kiralama",
+      "content": "[Pazaryeri & Kiralama] Daze Chef 120s motoru buzdolabı görselini multimodal Gemini ile analiz eder ve reçete üretir. (detay #23: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazaryeri",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-024",
+      "title": "Kiralama Depozitosu — Not 24",
+      "category": "Müzik & Atmosfer",
+      "content": "[Müzik & Atmosfer] Pazaryeri kiralama depozitosu %20, Try Before You Buy beğenirse kiralama bedeli satıştan düşülür. (detay #24: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "müzik",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-025",
+      "title": "Nöro-Akustik Ritim — Not 25",
+      "category": "Sistem & AI Altyapı",
+      "content": "[Sistem & AI Altyapı] Likya Müzik nöro-akustik DJ, tesis doluluk oranına göre 90-140 BPM arası ritim seçer. (detay #25: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "sistem",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-026",
+      "title": "MRR Çarpanı — Not 26",
+      "category": "Hukuk & KVKK",
+      "content": "[Hukuk & KVKK] Finans motoru günlük cirodan MRR üretir; çarpan 2.4x ile 8x arasında dikey bazlı değişir. (detay #26: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "hukuk",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-027",
+      "title": "Turnike Logları — Not 27",
+      "category": "Pazarlama & Büyüme",
+      "content": "[Pazarlama & Büyüme] IoT turnike logları gate_access_logs tablosuna yazılır; anomali tespiti Daze Sentinel tarafından yapılır. (detay #27: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazarlama",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-028",
+      "title": "Scouting İndeksi — Not 28",
+      "category": "İnsan Kaynakları",
+      "content": "[İnsan Kaynakları] Scouting ajanı biyomekanik kartlardan performans indeksi hesaplar; 85+ skor öncelikli aday işaretlenir. (detay #28: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇nsan",
+        "kaynakları"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-029",
+      "title": "Kurumsal Hafıza — Not 29",
+      "category": "Operasyon",
+      "content": "[Operasyon] Kurumsal hafıza her patron onayını arşive yazar; çelişkili kararlarda en son onay geçerlidir. (detay #29: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "operasyon"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-030",
+      "title": "Vardiya Akışı — Not 30",
+      "category": "İşletme & Finans",
+      "content": "[İşletme & Finans] Daze Hub çalışan vardiya akışı 7/24 kesintisiz çalışır; kritik dönüşlerde otomatik takviye ajanı devreye girer. (detay #30: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇şletme",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-031",
+      "title": "KVKK Rıza — Not 31",
+      "category": "Spor & Biyomekanik",
+      "content": "[Spor & Biyomekanik] KVKK md.5/1-a açık rıza şablonu 18 yaş altı sporcular için veli muvafakatnamesi gerektirir. (detay #31: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "spor",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-032",
+      "title": "Padel Rezervasyon — Not 32",
+      "category": "Tesis & Konaklama",
+      "content": "[Tesis & Konaklama] Padel kort rezervasyonları 60 dk dilimlerle yapılır; iptal ücretsiz, 15 dk geç kalma slotu düşürür. (detay #32: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "tesis",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-033",
+      "title": "Daze Chef Reçete — Not 33",
+      "category": "Pazaryeri & Kiralama",
+      "content": "[Pazaryeri & Kiralama] Daze Chef 120s motoru buzdolabı görselini multimodal Gemini ile analiz eder ve reçete üretir. (detay #33: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazaryeri",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-034",
+      "title": "Kiralama Depozitosu — Not 34",
+      "category": "Müzik & Atmosfer",
+      "content": "[Müzik & Atmosfer] Pazaryeri kiralama depozitosu %20, Try Before You Buy beğenirse kiralama bedeli satıştan düşülür. (detay #34: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "müzik",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-035",
+      "title": "Nöro-Akustik Ritim — Not 35",
+      "category": "Sistem & AI Altyapı",
+      "content": "[Sistem & AI Altyapı] Likya Müzik nöro-akustik DJ, tesis doluluk oranına göre 90-140 BPM arası ritim seçer. (detay #35: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "sistem",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-036",
+      "title": "MRR Çarpanı — Not 36",
+      "category": "Hukuk & KVKK",
+      "content": "[Hukuk & KVKK] Finans motoru günlük cirodan MRR üretir; çarpan 2.4x ile 8x arasında dikey bazlı değişir. (detay #36: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "hukuk",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-037",
+      "title": "Turnike Logları — Not 37",
+      "category": "Pazarlama & Büyüme",
+      "content": "[Pazarlama & Büyüme] IoT turnike logları gate_access_logs tablosuna yazılır; anomali tespiti Daze Sentinel tarafından yapılır. (detay #37: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazarlama",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-038",
+      "title": "Scouting İndeksi — Not 38",
+      "category": "İnsan Kaynakları",
+      "content": "[İnsan Kaynakları] Scouting ajanı biyomekanik kartlardan performans indeksi hesaplar; 85+ skor öncelikli aday işaretlenir. (detay #38: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇nsan",
+        "kaynakları"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-039",
+      "title": "Kurumsal Hafıza — Not 39",
+      "category": "Operasyon",
+      "content": "[Operasyon] Kurumsal hafıza her patron onayını arşive yazar; çelişkili kararlarda en son onay geçerlidir. (detay #39: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "operasyon"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-040",
+      "title": "Vardiya Akışı — Not 40",
+      "category": "İşletme & Finans",
+      "content": "[İşletme & Finans] Daze Hub çalışan vardiya akışı 7/24 kesintisiz çalışır; kritik dönüşlerde otomatik takviye ajanı devreye girer. (detay #40: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇şletme",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-041",
+      "title": "KVKK Rıza — Not 41",
+      "category": "Spor & Biyomekanik",
+      "content": "[Spor & Biyomekanik] KVKK md.5/1-a açık rıza şablonu 18 yaş altı sporcular için veli muvafakatnamesi gerektirir. (detay #41: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "spor",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-042",
+      "title": "Padel Rezervasyon — Not 42",
+      "category": "Tesis & Konaklama",
+      "content": "[Tesis & Konaklama] Padel kort rezervasyonları 60 dk dilimlerle yapılır; iptal ücretsiz, 15 dk geç kalma slotu düşürür. (detay #42: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "tesis",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-043",
+      "title": "Daze Chef Reçete — Not 43",
+      "category": "Pazaryeri & Kiralama",
+      "content": "[Pazaryeri & Kiralama] Daze Chef 120s motoru buzdolabı görselini multimodal Gemini ile analiz eder ve reçete üretir. (detay #43: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazaryeri",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-044",
+      "title": "Kiralama Depozitosu — Not 44",
+      "category": "Müzik & Atmosfer",
+      "content": "[Müzik & Atmosfer] Pazaryeri kiralama depozitosu %20, Try Before You Buy beğenirse kiralama bedeli satıştan düşülür. (detay #44: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "müzik",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-045",
+      "title": "Nöro-Akustik Ritim — Not 45",
+      "category": "Sistem & AI Altyapı",
+      "content": "[Sistem & AI Altyapı] Likya Müzik nöro-akustik DJ, tesis doluluk oranına göre 90-140 BPM arası ritim seçer. (detay #45: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "sistem",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-046",
+      "title": "MRR Çarpanı — Not 46",
+      "category": "Hukuk & KVKK",
+      "content": "[Hukuk & KVKK] Finans motoru günlük cirodan MRR üretir; çarpan 2.4x ile 8x arasında dikey bazlı değişir. (detay #46: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "hukuk",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-047",
+      "title": "Turnike Logları — Not 47",
+      "category": "Pazarlama & Büyüme",
+      "content": "[Pazarlama & Büyüme] IoT turnike logları gate_access_logs tablosuna yazılır; anomali tespiti Daze Sentinel tarafından yapılır. (detay #47: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "pazarlama",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-048",
+      "title": "Scouting İndeksi — Not 48",
+      "category": "İnsan Kaynakları",
+      "content": "[İnsan Kaynakları] Scouting ajanı biyomekanik kartlardan performans indeksi hesaplar; 85+ skor öncelikli aday işaretlenir. (detay #48: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇nsan",
+        "kaynakları"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-049",
+      "title": "Kurumsal Hafıza — Not 49",
+      "category": "Operasyon",
+      "content": "[Operasyon] Kurumsal hafıza her patron onayını arşive yazar; çelişkili kararlarda en son onay geçerlidir. (detay #49: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "operasyon"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    },
+    {
+      "id": "note-050",
+      "title": "Vardiya Akışı — Not 50",
+      "category": "İşletme & Finans",
+      "content": "[İşletme & Finans] Daze Hub çalışan vardiya akışı 7/24 kesintisiz çalışır; kritik dönüşlerde otomatik takviye ajanı devreye girer. (detay #50: Likya Holding bilgi tabanı otomatik notu)",
+      "tags": [
+        "i̇şletme",
+        "&"
+      ],
+      "updatedAt": "2026-08-17",
+      "source": "master-vault-generator"
+    }
+  ]
+}

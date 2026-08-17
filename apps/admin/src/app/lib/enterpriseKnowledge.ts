@@ -199,6 +199,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/db/supabaseClient.ts — kırılmasız veri katmanı: SUPABASE_DB_URL / anahtar eksik olsa bile uygulama asla çökmez; queryLiveTable() deterministik mock fallback döner (parcels, sports_facilities, pos_transactions, staff_tasks örnek satırları). supabaseEnvReady() + getSafeSupabaseClient() env hazır olduğunda @supabase/supabase-js dynamic import ile canlı sorgu atar (kod değişikliği gerekmez). IoTSensorMap, AIAgentAutonomousController ve MonitoringPanel bu köprüyle dinamik sorgu yapabilir.',
   },
 
+  {
+    id: 'master-addon-pack',
+    title: 'Master Add-on Paketi (RAG, Vault, Graph, MRR, CMO, Creem)',
+    icon: '🧰',
+    keywords: ['ollama', 'rag', 'vault', '50 not', 'neon graph', 'trustmrr', 'leaderboard', 'cmo', 'okara', 'creem', 'mor', 'b2b lead', 'gojiberry', 'influencer', 'shoutcart', 'swarm bus', 'mini-app', 'hugo ai', 'sponsorluk'],
+    content:
+      'Master eklenti paketi: (1) scripts/generate-vault.js 50 notluk vault üretici + lib/rag/vaultData.json (seed). (2) lib/rag/localRagEngine.ts — Ollama yerel RAG; kapalıysa keyword fallback (Plan Z). (3) components/NeonGraphView.tsx — vault notlarını neon node-edge graph olarak render (toolsagents view). (4) lib/finance/mrrValuationEngine.ts + components/VerifiedRevenueWidget.tsx — TrustMRR MRR→çarpan→değerleme (finance view). (5) components/TrustLeaderboard.tsx — departman ciro sıralaması. (6) lib/marketing/agencyMarketing.ts — 8 yetenekli ajans (campaign-plan→landing-page). (7) lib/ai/agentSwarmBus.ts — publish/subscribe ajan mesajlaşma. (8) lib/ai/miniAppGenerator.ts — emergent mini-app stub. (9) lib/marketing/aiCmoEngine.ts — Okara modeli 10 ajanlı CMO. (10) lib/social/socialMediaBridge.ts — Zernio/Blotato MCP köprüsü. (11) lib/support/hugoTicketResolver.ts — otomatik bilet çözücü. (12) lib/marketing/sponsorshipSlots.ts — sponsorluk yuvaları. (13) lib/payments/creemGlobalBridge.ts — Creem MoR dijital satış + lisans anahtarı. (14) lib/ai/b2bLeadAgent.ts — Gojiberry lead skorlama. (15) lib/marketing/influencerBridge.ts — Shoutcart influencer köprüsü. (16) lib/marketplace/digitalAssets.ts — dijital asset kataloğu.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

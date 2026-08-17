@@ -17,6 +17,10 @@ import SmartTentStore from './SmartTentStore';
 import LikyaMarketplace from './LikyaMarketplace';
 import MarketplaceGallery from './MarketplaceGallery';
 import DazeChef from './DazeChef';
+import VerifiedRevenueWidget from './VerifiedRevenueWidget';
+import TrustLeaderboard from './TrustLeaderboard';
+import NeonGraphView from './NeonGraphView';
+import vaultData from '../lib/rag/vaultData.json';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -1338,7 +1342,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
               {activeView === 'holistic' && <HolisticChildDashboard />}
               {activeView === 'scouting' && <ScoutingEcosystem />}
-              {activeView === 'toolsagents' && <ToolsAndAgentsDashboard />}
+              {activeView === 'toolsagents' && (
+                <>
+                  <ToolsAndAgentsDashboard />
+                  <NeonGraphView notes={(vaultData.notes ?? []).map((n) => ({ id: n.id, title: n.title, category: n.category, content: n.content }))} />
+                </>
+              )}
               {activeView === 'smartcampus' && <DazeSmartCampus />}
               {activeView === 'mediacom' && <SportMediaCommerceDashboard />}
               {activeView === 'procurement' && <ProcurementDashboard />}
@@ -1354,7 +1363,13 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'pricing' && <DynamicLoyaltyPricing />}
               {activeView === 'stress' && <SystemStressTestAndEdgeController />}
               {activeView === 'monitor' && <MonitoringPanel />}
-              {activeView === 'finance' && <AutonomousFinanceAgents />}
+              {activeView === 'finance' && (
+                <>
+                  <AutonomousFinanceAgents />
+                  <VerifiedRevenueWidget />
+                  <TrustLeaderboard />
+                </>
+              )}
               {activeView === 'legal' && <DepartmentAgents />}
               {activeView === 'gift' && <AutoMarketingAgent />}
               {activeView === 'telemetry' && <AgentTelemetryPanel />}
