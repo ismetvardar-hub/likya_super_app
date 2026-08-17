@@ -325,6 +325,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/llmStackConfig.ts — LLM Stack standartları: (1) MCP Tool Registry (vault/booking/finance/sentinel/database araçları + canAccessTool erişim kontrolü), (2) Daze Guardrail (kaba kalıp temizleme + "Lütfen" nezaket kuralı), (3) ContextWindowManager (max-token trim + sistem prompt + oturum bağlamı). lib/ai/agentTemplates.ts — Claude Code ajan rol şablonları: Frontend Architect (React/Tailwind), Backend & DB Engineer (Supabase/API), QA & Code Reviewer (tsc/parantez), Operations Sentinel (IoT/enerji); templateForTask keyword yönlendirme + runWithTemplate deterministik üretim; Hermes OS ve PraisonAI uyumlu.',
   },
 
+  {
+    id: 'holmes-strix-sentinel',
+    title: 'Holmes RCA + Strix Güvenlik Tarayıcı + Daze Sentinel HUD',
+    icon: '🔍',
+    keywords: ['holmes', 'root cause', 'rca', 'sre', 'diagnostic', '500', 'timeout', 'db fail', 'strix', 'snyk', 'anahtar tarama', 'next_public', 'auto remediate', 'sentinel hud', 'monitoring'],
+    content:
+      'lib/ops/holmesDiagnosticEngine.ts — HolmesGPT mantığı RCA: classifyIncident 500/timeout/db-fail/memory/api-key kalıplarını tanır, diagnose kök neden + çözüm + severity + autoRemediable döner; autoRemediate SRE kuralıyla otomatik iyileştirme emüle eder; scanHealthLogs /api/health + log besler. lib/security/strixSecurityAudit.ts — Snyk yaklaşımı: API key (AIza/sk-), JWT, private key, hardcoded NEXT_PUBLIC_ kalıplarını tarar, runStrixAudit skor üretir. components/DazeSentinelHud.tsx — MonitoringPanel (monitor view) ile birlikte: AI Olay İnceleme (RCA) + Tek Tıkla Auto-Remediate + Strix anahtar tarama özeti.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

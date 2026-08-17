@@ -33,6 +33,7 @@ import FinancePmDashboardCard from './FinancePmDashboardCard';
 import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
 import McpA2aOpsCard from './McpA2aOpsCard';
 import MultiAgentSportsCard from './MultiAgentSportsCard';
+import DazeSentinelHud from './DazeSentinelHud';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1386,7 +1387,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'supplier' && <SupplierManagement />}
               {activeView === 'pricing' && <DynamicLoyaltyPricing />}
               {activeView === 'stress' && <SystemStressTestAndEdgeController />}
-              {activeView === 'monitor' && <MonitoringPanel />}
+              {activeView === 'monitor' && (
+                <>
+                  <MonitoringPanel />
+                  <DazeSentinelHud />
+                </>
+              )}
               {activeView === 'finance' && (
                 <>
                   <AutonomousFinanceAgents />
