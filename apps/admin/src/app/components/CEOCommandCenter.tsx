@@ -27,6 +27,7 @@ import { loadContext } from '../lib/lifeos/executiveContextEngine';
 import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
 import PokeTokenTracker from './PokeTokenTracker';
 import SecurityAppBuilderCard from './SecurityAppBuilderCard';
+import SportsVisionMemoryCard from './SportsVisionMemoryCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1356,7 +1357,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 ) : null;
               })()}
               {activeView === 'athlete' && <AthletePerformanceAI />}
-              {activeView === 'sportvision' && <SportVisionDashboard />}
+              {activeView === 'sportvision' && (
+                <>
+                  <SportVisionDashboard />
+                  <SportsVisionMemoryCard />
+                </>
+              )}
               {activeView === 'sportvisionx' && <SportVisionX />}
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
               {activeView === 'holistic' && <HolisticChildDashboard />}

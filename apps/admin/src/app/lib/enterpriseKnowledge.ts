@@ -244,6 +244,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/base44AppEngine.ts — Base44/Replit uyumlu otonom app motoru: doğal dil fikir → JSON şema (AppSchemaField), auth kuralları (roles/permission/sessionTtl) ve canlı React UI kodu; 6 tür (dashboard/market/booking/form/crm/scoreboard), /tmp sandbox çalıştırılabilir. lib/security/zeroTrustShield.ts — 30 katmanlı Zero-Trust kalkanı: SQLi sanitize (7 kalıp), XSS payload temizliği (8 kalıp), API anahtar sızıntı engeli (redact), session hijacking flag + CSRF token kontrolü; TÜM kontroller sessiz/fail-safe. components/SecurityAppBuilderCard.tsx — 2 sekmeli neon HUD (Instant App Generator + Shield Live Monitor); security view içinde; CEO Chat handleSend girdileri sanitizeInput ile otomatik süzülür.',
   },
 
+  {
+    id: 'sports-vision-memory-pack',
+    title: 'Sports Vision Radar, Mem0 Hafıza, Gotify Push ve PHV Müfredatı',
+    icon: '👁️',
+    keywords: ['sports vision', 'hız radarı', 'km/h', 'reaksiyon', 'mem0', 'uzun süreli hafıza', 'gotify', 'daze-reminder', 'phv', 'müfredat', 'basketball ready 360', '150 ajan'],
+    content:
+      'lib/vision/sportsVisionRadar.ts — Computer Vision stub: top hızı km/h, oyuncu reaksiyon ms, araç giriş/çıkış olayları (simüle + analiz). lib/ai/mem0LongTermMemory.ts — Mem0 mimarisi: üye tercihleri, antrenman geçmişi, Daze Chef ikram alışkanlıkları; localStorage kalıcı; memoryContextForMember AI promptuna bağlam verir. lib/notifications/gotifyPushBridge.ts — Daze-Reminder: 120s sipariş hazır + kort saati WebSocket push (Gotify token yoksa simülasyon). lib/sports/phvAthleticCurriculum.ts — Basketball Ready 360/OTA: 6-16 yaş PHV evresi (pre/phv/post) tespiti + drill planlama. lib/ai/agentCatalog.ts — 150 ajanlık sektörel katalog (15 sektör × 10 uzman). components/SportsVisionMemoryCard.tsx — 3 sekmeli HUD (Speed Radar / Long-Term Memory / Gotify Push); sportvision view içinde.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
