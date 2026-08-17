@@ -30,6 +30,7 @@ import SecurityAppBuilderCard from './SecurityAppBuilderCard';
 import SportsVisionMemoryCard from './SportsVisionMemoryCard';
 import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
 import FinancePmDashboardCard from './FinancePmDashboardCard';
+import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1319,7 +1320,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 </>
               )}
               {activeView === 'iot' && <IoTSensorMap />}
-              {activeView === 'ai' && <AIAgentAutonomousController />}
+              {activeView === 'ai' && (
+                <>
+                  <AIAgentAutonomousController />
+                  <AgentMatrixSafetyCard />
+                </>
+              )}
               {activeView === 'crew' && <LikyaCrew />}
               {activeView === 'payment' && <PaymentIntegration />}
               {activeView === 'security' && (

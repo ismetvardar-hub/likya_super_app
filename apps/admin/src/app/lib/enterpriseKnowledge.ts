@@ -271,6 +271,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/finance/geminiFinanceAutomator.ts — 9 adımlı finans otomasyonu: fatura okuma (OCR stub), vade takibi, POS-kasa mutabakatı, 7 günlük nakit akışı tahmini; Daze nezaket filtresi tüm hatırlatıcı metinlerde zorunludur (applyPoliteFilter). lib/pm/agileContextEngine.ts — Laba blueprint: toplantı metni → aksiyon maddeleri + takvim görevleri + darboğaz analizi (nazik ton). lib/marketing/hookLibrary60.ts — 60 viral hook (6 kategori × 10) + buildSocialContent yapılandırıcı. lib/vault/aiLearningDirectory.ts — 20 ücretsiz AI eğitim platformu + 50 gelir modeli aranabilir dizin. components/FinancePmDashboardCard.tsx — 3 sekmeli neon HUD (💰 Finance Workflow / 📊 Agile PM / 🎣 Viral Hooks); finance view içinde.',
   },
 
+  {
+    id: 'airllm-agentmatrix-safety',
+    title: 'AirLLM 70B Katmanlı Motor + Claude Agent Matrix + AI Safety Guardrails',
+    icon: '🦙',
+    keywords: ['airllm', '70b', 'katman', 'vram', '4gb gpu', 'claude', 'agent matrix', 'skills', 'hooks', 'subagents', 'mcp', 'prompt injection', 'jailbreak', 'rate limit', 'verification', 'json validation'],
+    content:
+      'lib/ai/airLlmReserveEngine.ts — AirLLM 70B katmanlı çıkarım: 80 katman × 48MB ≈ 3.75GB VRAM ile 4GB GPU üzerinde 70B model simülasyonu; offline yedek, Plan Z güvenli. lib/ai/agentMatrixConfig.ts — Claude uyumlu matris: .md standing briefs (DazeStyleRules.md öncelik 100), Skills (çağrılabilir iş akışı), Hooks (otomatik olay), Subagents (4 uzman), MCP bağlayıcılar. lib/security/aiSafetyGuardrails.ts — prompt injection sanitize, jailbreak kalkanı, rate limit (30/dk), verification loop, Zod/Pydantic benzeri JSON şema doğrulama; TÜM kontroller sessiz/fail-safe. apps/admin/DazeStyleRules.md — nezaket filtresi master kural dosyası. components/AgentMatrixSafetyCard.tsx — 3 sekmeli neon HUD (🧩 Matrix / 🦙 AirLLM / 🛡️ Safety); AI view içinde.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
