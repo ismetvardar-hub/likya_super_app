@@ -31,6 +31,7 @@ import SportsVisionMemoryCard from './SportsVisionMemoryCard';
 import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
 import FinancePmDashboardCard from './FinancePmDashboardCard';
 import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
+import McpA2aOpsCard from './McpA2aOpsCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1383,6 +1384,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'toolsagents' && (
                 <>
                   <ToolsAndAgentsDashboard />
+                  <McpA2aOpsCard />
                   <NeonGraphView notes={(vaultData.notes ?? []).map((n) => ({ id: n.id, title: n.title, category: n.category, content: n.content }))} />
                 </>
               )}

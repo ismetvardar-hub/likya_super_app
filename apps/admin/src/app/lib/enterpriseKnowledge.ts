@@ -280,6 +280,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/airLlmReserveEngine.ts — AirLLM 70B katmanlı çıkarım: 80 katman × 48MB ≈ 3.75GB VRAM ile 4GB GPU üzerinde 70B model simülasyonu; offline yedek, Plan Z güvenli. lib/ai/agentMatrixConfig.ts — Claude uyumlu matris: .md standing briefs (DazeStyleRules.md öncelik 100), Skills (çağrılabilir iş akışı), Hooks (otomatik olay), Subagents (4 uzman), MCP bağlayıcılar. lib/security/aiSafetyGuardrails.ts — prompt injection sanitize, jailbreak kalkanı, rate limit (30/dk), verification loop, Zod/Pydantic benzeri JSON şema doğrulama; TÜM kontroller sessiz/fail-safe. apps/admin/DazeStyleRules.md — nezaket filtresi master kural dosyası. components/AgentMatrixSafetyCard.tsx — 3 sekmeli neon HUD (🧩 Matrix / 🦙 AirLLM / 🛡️ Safety); AI view içinde.',
   },
 
+  {
+    id: 'mcp-a2a-546-seo',
+    title: 'MCP×A2A Hibrit Orkestratör, 546 Oto Görev ve SEO/AEO Pipeline',
+    icon: '🔌',
+    keywords: ['mcp', 'a2a', 'protokol', 'orkestrasyon', '546 görev', 'otomasyon', 'seo', 'aeo', 'keyword', 'n8n', 'dataforseo', 'ai bot görünürlük'],
+    content:
+      'lib/ai/mcpA2aOrchestrator.ts — MCP (5 dış sistem aracı) × A2A (4 uzman ajan) hibrit yönlendirme: routeHybrid görevi dış sistem (MCP) veya ajan delegasyonu (A2A) olarak sınıflandırır. lib/ops/automatedTasks546.ts — 546 otomatik iş görevi: 5 süreç (operasyon/finans/İK/satış/destek) × 10 şablon × 10 varyant + 46 özel; kadans ve aktiflik bayrakları. lib/marketing/seoKeywordPipeline.ts — n8n/DataForSEO mantığı SEO/AEO keyword dizini: arama hacmi, zorluk, AEO skoru (AI bot görünürlük), intent; buildContentPlan FAQPage+HowTo+LocalBusiness şema. components/McpA2aOpsCard.tsx — 3 sekmeli neon HUD (🔌 MCP vs A2A / ⚙️ 546 Tasks / 🚀 SEO/AEO); Tools & Agents view içinde.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
