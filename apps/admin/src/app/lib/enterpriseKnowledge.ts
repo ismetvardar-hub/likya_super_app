@@ -316,6 +316,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/bookingAgent.ts — 7/24 otonom rezervasyon ajanı: parseBookingRequest tarih/kişi/alan ayrıştırır, checkAvailability slot sorgular, createBooking gece (22:00-08:00) taleplerini kuyruğa alır (sabah onayı) veya anlık rezervasyon oluşturur; Daze nezaket filtresi. lib/ai/autonomousValidator.ts — Level-5 doğrulama döngüsü: Generator→Validator (4 kural: boş/kısa/parantez dengesi/JSON)→Retry Loop (autoFix, max 2 retry); 6 Levels of Agentic AI standardı. lib/ai/specialistAgents.ts — Agency-Agents uzman rol dağılımı: SupportAgent, BookingAgent (createBooking köprüsü), ScoutingAgent, OpsSentinel; routeToSpecialist keyword ile görevi uzman ajana yönlendirir.',
   },
 
+  {
+    id: 'llm-stack-claude-templates',
+    title: 'LLM Stack Standartları (MCP/Guardrail/Memory) + Claude Code Ajan Şablonları',
+    icon: '🧱',
+    keywords: ['llm stack', 'mcp', 'tool access', 'guardrail', 'daze üslup', 'context window', 'memory', 'claude code', 'agent template', 'frontend architect', 'backend db', 'qa reviewer', 'ops sentinel'],
+    content:
+      'lib/ai/llmStackConfig.ts — LLM Stack standartları: (1) MCP Tool Registry (vault/booking/finance/sentinel/database araçları + canAccessTool erişim kontrolü), (2) Daze Guardrail (kaba kalıp temizleme + "Lütfen" nezaket kuralı), (3) ContextWindowManager (max-token trim + sistem prompt + oturum bağlamı). lib/ai/agentTemplates.ts — Claude Code ajan rol şablonları: Frontend Architect (React/Tailwind), Backend & DB Engineer (Supabase/API), QA & Code Reviewer (tsc/parantez), Operations Sentinel (IoT/enerji); templateForTask keyword yönlendirme + runWithTemplate deterministik üretim; Hermes OS ve PraisonAI uyumlu.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
