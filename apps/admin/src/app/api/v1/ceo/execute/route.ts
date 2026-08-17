@@ -181,7 +181,8 @@ KURALLAR:
 5. Eksiksiz, derlenebilir TypeScript/TSX kodu üret. TODO veya placeholder bırakma.
 6. Üslup: Kod yorumlarında ve üretilen metinlerde centilmen, naif, sıcak ve insani bir dil kullan; asla soğuk, robotik veya mekanik olma.
 7. Yanıtlar kısa, net, gerçekçi ve doğrudan sonuca yönelik olmalıdır. Uzun edebiyat ve gereksiz dolgu cümleleri yasaktır.
-8. Dosya içeriğini eksiksiz, tüm JSX etiketlerini ve parantezleri eksiksiz kapatacak şekilde TEK PARÇA üret. Eksik kod veya placeholder bırakma.`;
+8. Dosya içeriğini eksiksiz, tüm JSX etiketlerini ve parantezleri eksiksiz kapatacak şekilde TEK PARÇA üret. Eksik kod veya placeholder bırakma.
+9. KRİTİK: Döndüreceğin içerik, MEVCUT DOSYANIN tamamının değiştirilmiş kopyası olmalıdır. Asla yalnızca değişen JSX bloğunu veya kısmi bir parçayı döndürme; import/export ve bileşen tanımını koru.`;
 }
 
 // ============================================================================
@@ -283,6 +284,26 @@ function extractCodeFromResponse(text: string): string {
   return cleaned.trim();
 }
 
+
+// 🧮 HIZLI PARANTEZ/SÜSLÜ PARANTEZ/KÖŞELİ PARANTEZ DENGESİ KONTROLÜ
+// LLM dosyanın tamamı yerine kısmi JSX bloğu ürettiğinde bu kapı çalışır:
+// { } ( ) [ ] eşleşme sayısı eşit değilse yazma asla gerçekleşmez.
+function balancedSyntax(content: string): { ok: boolean; diff?: string } {
+  const pairs: [string, string][] = [
+    ['{', '}'],
+    ['(', ')'],
+    ['[', ']'],
+  ];
+  for (const [open, close] of pairs) {
+    const opens = (content.split(open).length - 1);
+    const closes = (content.split(close).length - 1);
+    if (opens !== closes) {
+      return { ok: false, diff: `${open}${close}: ${opens} açık / ${closes} kapalı` };
+    }
+  }
+  return { ok: true };
+}
+
 // ============================================================================
 // 🛡️ SYNTAX KORUMA KAPISI — LLM çıktısı derlenemiyorsa ASLA diske yazma
 // Önceki arıza: CEO chat dosyayı yarıda kesip sayfayı kilitlemişti (TS17008).
@@ -328,6 +349,33 @@ function validateGeneratedCode(filePath: string, content: string, existingConten
       }
     } catch (e) {
       return { ok: false, error: `Derleyici hatası — yazma iptal edildi: ${e instanceof Error ? e.message : String(e)}` };
+    }
+
+    // --- 🧮 PARANTEZ DENGESİ KORUMASI (kısmi JSX/parça bloğu) ---
+    // LLM "logo değiştir" tarzı komutlarda dosyanın tamamı yerine yalnızca
+    // değişen JSX parçasını döndürebilir; bu parça yazılırsa süslü/parantez
+    // dengesi bozulur. Bu kapı existingContent'ten BAĞIMSIZ çalışır.
+    const balance = balancedSyntax(content);
+    if (!balance.ok) {
+      return {
+        ok: false,
+        error: `Parantez dengesi bozuk (${balance.diff}) — LLM kısmi/parçalı blok üretti. Dosyanın TAMAMI yeniden istenmeli. Yazma iptal edildi.`,
+      };
+    }
+
+    // --- 🧩 MODÜL BÜTÜNLÜĞÜ KORUMASI (existingContent'ten bağımsız) ---
+    // React/TS bileşeni hedefleniyorsa üretilen içerik temel modül yapısı
+    // (import/export + bileşen tanımı) içermelidir; aksi hâlde LLM yalnızca
+    // bir JSX bloğu döndürmüştür. Vercel sandbox'ta existingContent boş
+    // olsa bile bu kapı çalışır.
+    const hasModuleStructure = /(^|\n)\s*(import|export)\s/.test(content) || /export default/.test(content);
+    const hasComponentDef = /(function|const|class)\s+\w+|React\./.test(content);
+    if (!hasModuleStructure || !hasComponentDef) {
+      return {
+        ok: false,
+        error:
+          'Modül bütünlüğü bozuk: üretilen içerikte import/export + bileşen tanımı yok — LLM dosyanın tamamı yerine yalnızca JSX bloğu üretti. Yazma iptal edildi.',
+      };
     }
 
     // --- 🧩 MODÜL BÜTÜNLÜĞÜ KORUMASI (LLM parça/JSX bloğu yazarsa) ---
