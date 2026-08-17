@@ -334,6 +334,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ops/holmesDiagnosticEngine.ts — HolmesGPT mantığı RCA: classifyIncident 500/timeout/db-fail/memory/api-key kalıplarını tanır, diagnose kök neden + çözüm + severity + autoRemediable döner; autoRemediate SRE kuralıyla otomatik iyileştirme emüle eder; scanHealthLogs /api/health + log besler. lib/security/strixSecurityAudit.ts — Snyk yaklaşımı: API key (AIza/sk-), JWT, private key, hardcoded NEXT_PUBLIC_ kalıplarını tarar, runStrixAudit skor üretir. components/DazeSentinelHud.tsx — MonitoringPanel (monitor view) ile birlikte: AI Olay İnceleme (RCA) + Tek Tıkla Auto-Remediate + Strix anahtar tarama özeti.',
   },
 
+  {
+    id: 'phase2-data-bridges',
+    title: 'Faz 2 Veri Köprüleri — Booking Writer, Daze Chef POS, Kiralama Motoru',
+    icon: '🏨',
+    keywords: ['booking writer', 'rezervasyon yazma', 'parcels', 'sports_facilities', 'try_before_buy_bookings', 'pos_transactions', 'upcycling_items', 'sales_commissions', 'referans kodu', 'fiş', 'daze chef pos', 'kiralama', 'tbyb', 'insert live row'],
+    content:
+      'Faz 2 canlı veri köprüleri (supabaseClient.ts\'e insertLiveRow/updateLiveRow eklendi): lib/ops/bookingWriter.ts — CEO Chat/BookingAgent rezervasyonlarını parcels/sports_facilities/TBYB tablolarına yazar, generateReferenceCode dinamik referans + confirmationCard onay kartı üretir. lib/ops/dazeChefPosBridge.ts — mutfak siparişlerini pos_transactions/upcycling_items kaydeder, kitchenReceiptDisplay 120s sayacı için fiş formatı üretir. lib/marketplace/rentalTransactionEngine.ts — "Hemen Kirala"/"Test Et (TBYB)" işlemlerini try_before_buy_bookings + sales_commissions (%10) işler. Tümü supabaseEnvReady() kontrolüyle env yoksa localStorage mock fallback (asla çökme).',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

@@ -56,6 +56,8 @@ function createSupabaseFromModule(module: { createClient: (url: string, key: str
   return module.createClient(url, key) as unknown as {
     from: (table: string) => {
       select: (cols?: string) => { limit?: (n: number) => { order?: (col: string, opts?: { ascending?: boolean }) => Promise<{ data: unknown; error: unknown }> } };
+      insert: (rows: Record<string, unknown> | Record<string, unknown>[], opts?: { returning?: string }) => Promise<{ data: unknown; error: unknown }>;
+      update: (patch: Record<string, unknown>) => { eq: (col: string, val: unknown) => Promise<{ data: unknown; error: unknown }> };
     };
   };
 }
@@ -71,6 +73,52 @@ export async function getSafeSupabaseClient(): Promise<SafeSupabaseClient | null
     return cachedClient;
   } catch {
     return null; // kurulum/import hatası → fallback
+  }
+}
+
+// ── CANLI YAZMA KÖPRÜLERİ (insert/update) — env yoksa mock fallback ──
+
+export interface WriteResult {
+  ok: boolean;
+  simulated: boolean;
+  rowId: string | null;
+  error: string | null;
+  table: string;
+}
+
+// Satır ekle (canlı Supabase → insert; env yoksa deterministik simülasyon)
+export async function insertLiveRow(table: string, row: Record<string, unknown>): Promise<WriteResult> {
+  const client = await getSafeSupabaseClient();
+  const rowId = `id_${Date.now().toString(36)}_${Math.floor(Math.random() * 1e4)}`;
+  if (!client) {
+    // Env yok → mock fallback (asla çökme)
+    try { if (typeof window !== 'undefined') { const key = `likya_write_${table}_v1`; const raw = window.localStorage.getItem(key); const list = raw ? (JSON.parse(raw) as unknown[]) : []; window.localStorage.setItem(key, JSON.stringify([...list, { ...row, id: rowId }])); } } catch { /* ignore */ }
+    return { ok: true, simulated: true, rowId, error: null, table };
+  }
+  try {
+    const { error } = await client.from(table).insert(row);
+    if (error) throw new Error(String(error));
+    return { ok: true, simulated: false, rowId, error: null, table };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, simulated: true, rowId: null, error: msg, table };
+  }
+}
+
+// Satır güncelle (canlı Supabase → update + eq; env yoksa mock fallback)
+export async function updateLiveRow(table: string, matchCol: string, matchVal: unknown, patch: Record<string, unknown>): Promise<WriteResult> {
+  const client = await getSafeSupabaseClient();
+  const rowId = `upd_${Date.now().toString(36)}`;
+  if (!client) {
+    return { ok: true, simulated: true, rowId, error: null, table };
+  }
+  try {
+    const { error } = await client.from(table).update(patch).eq(matchCol, matchVal);
+    if (error) throw new Error(String(error));
+    return { ok: true, simulated: false, rowId, error: null, table };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return { ok: false, simulated: true, rowId: null, error: msg, table };
   }
 }
 
