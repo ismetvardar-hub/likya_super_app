@@ -226,6 +226,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/lifeos/executiveContextEngine.ts — LifeOS Modeli: CEO günlük ritmi (routine/cadence), stratejik hedefler (trajectory: hedef, faz, kilometre taşları, odak %), kampüs seyahatleri ve VIP ilişkileri tek bağlam nesnesinde (JSON/LocalStorage likya_lifeos_context_v1); updateGoal/addTravel kalıcı güncelleme. lib/lifeos/contextPromptBuilder.ts — bağlam sarmalayıcı: wrapWithContext() kullanıcı mesajına bağlamı enjekte eder, buildContextualSystemPrompt sistem promptuna ekler. components/ExecutiveLifeOSCard.tsx — 5 sekmeli koyu neon LifeOS HUD (Habits 🔥 / Travel ✈️ / Deep Work 🧠 / VIP Relations 🤝 / App Builder 🧩); CEO Chat üstünde render edilir; handleSend komutları LifeOS bağlamıyla Gemini veya Ollama aracılığıyla otomatik sarılır.',
   },
 
+  {
+    id: 'bolt-freellm-poketoken-ledger',
+    title: 'Bolt Engine, Free LLM Şelalesi, PokeToken ve PayPal Ledger',
+    icon: '⚡',
+    keywords: ['bolt', 'mini-app', 'groq', 'cohere', 'openrouter free', 'free llm', 'token', 'oyunlaştırma', 'ledger', 'paypal', 'fraud', 'çift girişli'],
+    content:
+      'lib/ai/boltAppEngine.ts — bolt.diy mini-app motoru: "Bana X uygulamasını kodla" talebinden 6 tür (dashboard/form/list/market/booking/scoreboard) React bileşen kodu + önizleme üretir. lib/ai/freeLlmProviders.ts — Groq (Llama-3 70B) + Cohere + OpenRouter-free katmanları; freeLlmWaterfall kotalar dolduğunda kesintisiz geçiş yapar. components/PokeTokenTracker.tsx — oyunlaştırılmış token rozeti: günlük harcama, bütçe, XP/seviye (🥉→👑) localStorage kalıcılığı; CEO Chat üstünde render edilir. lib/finance/paypalLedgerEngine.ts — PayPal prensipli çift girişli ledger (postDoubleEntry borç+alacak çifti) + fraud tespiti (50K₺ üstü işlem, 100K₺ günlük anormallik).',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

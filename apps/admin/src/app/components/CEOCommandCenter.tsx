@@ -25,6 +25,7 @@ import CrmCustomerCard from './CrmCustomerCard';
 import ExecutiveLifeOSCard from './ExecutiveLifeOSCard';
 import { loadContext } from '../lib/lifeos/executiveContextEngine';
 import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
+import PokeTokenTracker from './PokeTokenTracker';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -1439,6 +1440,9 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
 
               {/* 🧬 LifeOS Executive Context — CEO bağlamı */}
               <ExecutiveLifeOSCard />
+
+              {/* 🎮 PokeToken Tracker — oyunlaştırılmış token rozeti */}
+              <PokeTokenTracker />
 
               {/* 🧩 EKLENTİ DURUMU — kırılmasız plugin rozetleri */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px', alignItems: 'center' }}>
