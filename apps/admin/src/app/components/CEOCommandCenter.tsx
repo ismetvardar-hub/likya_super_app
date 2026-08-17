@@ -32,6 +32,7 @@ import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
 import FinancePmDashboardCard from './FinancePmDashboardCard';
 import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
 import McpA2aOpsCard from './McpA2aOpsCard';
+import MultiAgentSportsCard from './MultiAgentSportsCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1375,6 +1376,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 <>
                   <SportVisionDashboard />
                   <SportsVisionMemoryCard />
+                  <MultiAgentSportsCard />
                 </>
               )}
               {activeView === 'sportvisionx' && <SportVisionX />}

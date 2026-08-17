@@ -289,6 +289,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/mcpA2aOrchestrator.ts — MCP (5 dış sistem aracı) × A2A (4 uzman ajan) hibrit yönlendirme: routeHybrid görevi dış sistem (MCP) veya ajan delegasyonu (A2A) olarak sınıflandırır. lib/ops/automatedTasks546.ts — 546 otomatik iş görevi: 5 süreç (operasyon/finans/İK/satış/destek) × 10 şablon × 10 varyant + 46 özel; kadans ve aktiflik bayrakları. lib/marketing/seoKeywordPipeline.ts — n8n/DataForSEO mantığı SEO/AEO keyword dizini: arama hacmi, zorluk, AEO skoru (AI bot görünürlük), intent; buildContentPlan FAQPage+HowTo+LocalBusiness şema. components/McpA2aOpsCard.tsx — 3 sekmeli neon HUD (🔌 MCP vs A2A / ⚙️ 546 Tasks / 🚀 SEO/AEO); Tools & Agents view içinde.',
   },
 
+  {
+    id: 'research-sports-safety',
+    title: 'Multi-Agent Research, Claude Sports Manager ve Ekipman Güvenlik Denetçisi',
+    icon: '📊',
+    keywords: ['multi-agent research', 'araştırma ajanı', 'koordinatör', 'web search', 'document analyzer', 'synthesis', 'sports manager', 'antrenman', 'scouting', 'maç raporu', 'safety audit', 'sentinel bilet', 'ekipman güvenliği'],
+    content:
+      'lib/ai/multiAgentResearch.ts — Multi-Agent Research System: Coordinator komutasında Web Search, Document Analyzer, Synthesis ve Reporting ajanları paralel çalışır; runResearch 5 ajanlı rapor üretir. lib/sports/claudeSportsManager.ts — Otonom Kulüp Direktörü: padel/tenis/basketbol/su-sporları için antrenman planı, performans özeti, scouting ve maç raporu. lib/simulators/facilitySafetyAudit.ts — Ekipman Güvenlik Denetçisi: tesis/kort/oyun ekipmanlarını standartlara (EN/FIBA/ITF/TSE) göre denetler, kritik durumda Sentinel bakım servisine otomatik bilet açar. components/MultiAgentSportsCard.tsx — 3 sekmeli neon HUD (📊 Research / 🎾 Sports Manager / 🛡️ Safety Checklist); Spor Vizyon (sportvision) view içinde.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------
