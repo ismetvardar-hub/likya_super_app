@@ -217,6 +217,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/crm/twentyCrmBridge.ts — Twenty CRM uyumlu open-CRM adaptörü: üye profilleri (vip/aktif/misafir), rezervasyon geçmişi, harcama alışkanlıkları ve sponsor temas noktaları; getMemberProfile LTV/tier hesaplar, logSponsorTouchpoint temas kaydeder. lib/ai/agentTierRouter.ts — Tier-S ajan yönlendirme matrisi: görev skorlaması (Tier S: otonom icra→Cline, Tier B: içerik→Ajans/CMO, Tier C: bilgi→RAG/Gemini), routeTask deterministik güven 0.4-0.97. components/CrmCustomerCard.tsx — koyu neon müşteri kartı (dept view): durum rozeti, üyelik tier, harcama/rezervasyon metrikleri, geçmiş aktiviteler, sponsor temas uyarısı.',
   },
 
+  {
+    id: 'lifeos-executive',
+    title: 'LifeOS Executive Context & Trajectory Engine',
+    icon: '🧬',
+    keywords: ['lifeos', 'executive context', 'bağlam', 'habit', 'deep work', 'travel', 'vip relationships', 'trajectory', 'hedef', 'cadence'],
+    content:
+      'lib/lifeos/executiveContextEngine.ts — LifeOS Modeli: CEO günlük ritmi (routine/cadence), stratejik hedefler (trajectory: hedef, faz, kilometre taşları, odak %), kampüs seyahatleri ve VIP ilişkileri tek bağlam nesnesinde (JSON/LocalStorage likya_lifeos_context_v1); updateGoal/addTravel kalıcı güncelleme. lib/lifeos/contextPromptBuilder.ts — bağlam sarmalayıcı: wrapWithContext() kullanıcı mesajına bağlamı enjekte eder, buildContextualSystemPrompt sistem promptuna ekler. components/ExecutiveLifeOSCard.tsx — 5 sekmeli koyu neon LifeOS HUD (Habits 🔥 / Travel ✈️ / Deep Work 🧠 / VIP Relations 🤝 / App Builder 🧩); CEO Chat üstünde render edilir; handleSend komutları LifeOS bağlamıyla Gemini veya Ollama aracılığıyla otomatik sarılır.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

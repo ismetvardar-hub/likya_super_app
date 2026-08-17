@@ -22,6 +22,9 @@ import TrustLeaderboard from './TrustLeaderboard';
 import NeonGraphView from './NeonGraphView';
 import vaultData from '../lib/rag/vaultData.json';
 import CrmCustomerCard from './CrmCustomerCard';
+import ExecutiveLifeOSCard from './ExecutiveLifeOSCard';
+import { loadContext } from '../lib/lifeos/executiveContextEngine';
+import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -918,7 +921,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          command: text,
+          command: wrapWithContext(loadContext(), text),
           ...(approved ? { approved: true } : {}),
           // 👁️ Multimodal görsel payload — Gemini inlineData: { mimeType, data }
           ...(attach && attach.type.startsWith('image/')
@@ -1433,6 +1436,9 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   />
                 </div>
               </div>
+
+              {/* 🧬 LifeOS Executive Context — CEO bağlamı */}
+              <ExecutiveLifeOSCard />
 
               {/* 🧩 EKLENTİ DURUMU — kırılmasız plugin rozetleri */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px', alignItems: 'center' }}>
