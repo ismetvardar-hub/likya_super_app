@@ -35,6 +35,8 @@ import McpA2aOpsCard from './McpA2aOpsCard';
 import MultiAgentSportsCard from './MultiAgentSportsCard';
 import DazeSentinelHud from './DazeSentinelHud';
 import ChatwootSupportPanel from './ChatwootSupportPanel';
+import DazeCrewView from './DazeCrewView';
+import DazeVisionOrderTracker from './DazeVisionOrderTracker';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1312,7 +1314,13 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   <AgentMatrixSafetyCard />
                 </>
               )}
-              {activeView === 'crew' && <LikyaCrew />}
+              {activeView === 'crew' && (
+                <>
+                  <LikyaCrew />
+                  <DazeCrewView />
+                  <DazeVisionOrderTracker />
+                </>
+              )}
               {activeView === 'payment' && <PaymentIntegration />}
               {activeView === 'security' && (
                 <>

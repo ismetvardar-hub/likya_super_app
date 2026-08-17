@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'daze-hub-event-bus',
+    title: 'Daze Hub — Vision/Chef/Crew Dinamik Olay Köprüsü',
+    icon: '🔄',
+    keywords: ['daze hub', 'event bus', 'order placed', 'kitchen timer', 'staff task', 'daze reminder', 'crew', 'vision', 'chef', 'termal koruma'],
+    content:
+      'lib/ops/dazeHubEventBus.ts — Vision➔Chef➔Crew olay zincirini yöneten EventEmitter/LocalStorage state dağıtıcısı: ORDER_PLACED (Vision siparişi), KITCHEN_TIMER_TICK (Chef 120s), STAFF_TASK_DISPATCHED (Crew görev + kazanç + puan), DAZE_REMINDER_TRIGGERED (2dk aşımında termal koruma bayrağı). subscribe/emit/eventHistory + buildHubState durum panosu. components/DazeCrewView.tsx — canlı görev kuyruğu, tamamlanan sipariş puanı, vardiya performans rozeti (🏆 VIP Hizmet Yıldızı). components/DazeVisionOrderTracker.tsx — müşteri siparişinin mutfak/servis durumunu 120s sayaçla izleyen takip + Daze-Gift ikram kartı (termal koruma → ikram hakkı).',
+  },
+
+  {
     id: 'phase3-sync-pwa-chatwoot',
     title: 'Faz 3 — Mobil Sync Köprüsü, PWA Bildirim Motoru ve Chatwoot Panel',
     icon: '📱',
