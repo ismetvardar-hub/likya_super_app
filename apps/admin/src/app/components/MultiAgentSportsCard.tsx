@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { runResearch, researchStatus } from '../lib/ai/multiAgentResearch';
 import { TEAM_STATS, planTraining, generateMatchReport, sportsManagerStatus, type SportBranch } from '../lib/sports/claudeSportsManager';
 import { runSafetyAudit, safetyAuditStatus } from '../lib/simulators/facilitySafetyAudit';
+import { simulateLayerLoading, totalVramMb, airLlmStatus } from '../lib/ai/airLlmReserveEngine';
 
 // ============================================================================
 // 🎛️ RESEARCH & SPORTS HUD (koyu neon)
@@ -11,7 +12,7 @@ import { runSafetyAudit, safetyAuditStatus } from '../lib/simulators/facilitySaf
 // Kırılmasız: bağımsız bileşen; deterministik motorlar + nezaket filtresi.
 // ============================================================================
 
-type TabId = 'research' | 'sports' | 'safety';
+type TabId = 'research' | 'sports' | 'safety' | 'airllm';
 
 export default function MultiAgentSportsCard() {
   const [tab, setTab] = useState<TabId>('research');
@@ -21,6 +22,8 @@ export default function MultiAgentSportsCard() {
   const [match, setMatch] = useState(() => generateMatchReport('padel', 'Rakip Kulüp'));
 
   const audit = runSafetyAudit();
+  const airLayers = simulateLayerLoading();
+  const vramGb = (totalVramMb() / 1024).toFixed(2);
 
   const startResearch = async () => {
     if (!researchTopic.trim()) return;
@@ -43,13 +46,13 @@ export default function MultiAgentSportsCard() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
         <div>
           <div style={{ fontSize: '14px', fontWeight: 800, color: '#fff' }}>📊 Araştırma & Spor Direktörlüğü</div>
-          <div style={{ fontSize: '10px', color: '#64748b', marginTop: '2px' }}>{researchStatus()} · {sportsManagerStatus()} · {safetyAuditStatus()}</div>
+          <div style={{ fontSize: '10px', color: '#64748b', marginTop: '2px' }}>{researchStatus()} · {sportsManagerStatus()} · {safetyAuditStatus()} · {airLlmStatus()}</div>
         </div>
       </div>
 
       {/* Sekmeler */}
       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-        {([['research', '📊 Multi-Agent Research'], ['sports', '🎾 Sports Manager'], ['safety', '🛡️ Safety Checklist']] as [TabId, string][]).map(([id, label]) => (
+        {([['research', '📊 Multi-Agent Research'], ['sports', '🎾 Sports Manager'], ['safety', '🛡️ Safety Audit'], ['airllm', '🦙 AirLLM 70B']] as [TabId, string][]).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -162,6 +165,32 @@ export default function MultiAgentSportsCard() {
               {audit.sentinelTickets.map((t) => <div key={t}>{t}</div>)}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Sekme 4: AirLLM 70B */}
+      {tab === 'airllm' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(0,242,254,0.25)', flex: 1, minWidth: '100px' }}>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>MODEL</div>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: '#00f2fe' }}>70B Local</div>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(167,139,250,0.3)', flex: 1, minWidth: '100px' }}>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>KATMAN</div>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: '#a78bfa' }}>{airLayers.length}</div>
+            </div>
+            <div style={{ padding: '10px', borderRadius: '10px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(34,197,94,0.3)', flex: 1, minWidth: '100px' }}>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>VRAM</div>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: '#4ade80' }}>{vramGb}GB</div>
+            </div>
+          </div>
+          <div style={{ height: '8px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: '100%', borderRadius: '999px', background: 'linear-gradient(90deg,#00f2fe,#a78bfa)' }} />
+          </div>
+          <div style={{ fontSize: '10px', color: '#64748b', lineHeight: '1.6' }}>
+            🦙 {airLlmStatus()} — Katman katman bellek yükleme: 80 katman × 48MB ≈ {vramGb}GB → <b>4GB GPU üzerinde 70B model</b>. Yerel Ollama kurulunca gerçek katmanlı çıkarım başlar (Plan Z güvenli offline yedek).
+          </div>
         </div>
       )}
     </div>
