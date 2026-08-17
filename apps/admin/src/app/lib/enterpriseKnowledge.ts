@@ -235,6 +235,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/ai/boltAppEngine.ts — bolt.diy mini-app motoru: "Bana X uygulamasını kodla" talebinden 6 tür (dashboard/form/list/market/booking/scoreboard) React bileşen kodu + önizleme üretir. lib/ai/freeLlmProviders.ts — Groq (Llama-3 70B) + Cohere + OpenRouter-free katmanları; freeLlmWaterfall kotalar dolduğunda kesintisiz geçiş yapar. components/PokeTokenTracker.tsx — oyunlaştırılmış token rozeti: günlük harcama, bütçe, XP/seviye (🥉→👑) localStorage kalıcılığı; CEO Chat üstünde render edilir. lib/finance/paypalLedgerEngine.ts — PayPal prensipli çift girişli ledger (postDoubleEntry borç+alacak çifti) + fraud tespiti (50K₺ üstü işlem, 100K₺ günlük anormallik).',
   },
 
+  {
+    id: 'base44-zerotrust',
+    title: 'Base44 Instant App Builder + Zero-Trust 30 Katman Kalkanı',
+    icon: '🚀',
+    keywords: ['base44', 'replit', 'app builder', 'instant app', 'zero trust', 'owasp', 'sqli', 'xss', 'csrf', 'session hijacking', 'api key', 'güvenlik'],
+    content:
+      'lib/ai/base44AppEngine.ts — Base44/Replit uyumlu otonom app motoru: doğal dil fikir → JSON şema (AppSchemaField), auth kuralları (roles/permission/sessionTtl) ve canlı React UI kodu; 6 tür (dashboard/market/booking/form/crm/scoreboard), /tmp sandbox çalıştırılabilir. lib/security/zeroTrustShield.ts — 30 katmanlı Zero-Trust kalkanı: SQLi sanitize (7 kalıp), XSS payload temizliği (8 kalıp), API anahtar sızıntı engeli (redact), session hijacking flag + CSRF token kontrolü; TÜM kontroller sessiz/fail-safe. components/SecurityAppBuilderCard.tsx — 2 sekmeli neon HUD (Instant App Generator + Shield Live Monitor); security view içinde; CEO Chat handleSend girdileri sanitizeInput ile otomatik süzülür.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

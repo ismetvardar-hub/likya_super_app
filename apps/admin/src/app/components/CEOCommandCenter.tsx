@@ -26,6 +26,8 @@ import ExecutiveLifeOSCard from './ExecutiveLifeOSCard';
 import { loadContext } from '../lib/lifeos/executiveContextEngine';
 import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
 import PokeTokenTracker from './PokeTokenTracker';
+import SecurityAppBuilderCard from './SecurityAppBuilderCard';
+import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
 import SportVisionDashboard from './SportVisionDashboard';
@@ -872,7 +874,9 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
   };
 
   const handleSend = async (overrideText?: string, approved?: boolean) => {
-    const text = (overrideText ?? input).trim();
+    const rawText = (overrideText ?? input).trim();
+    // 🛡️ Zero-Trust Kalkanı: zararlı payloadları sessizce temizle (meşru kullanıcı asla engellenmez)
+    const text = sanitizeInput(rawText).clean;
     const attach = pendingAttachment; // null'lanmadan önce yakala (multimodal görsel için)
     if (!text || isProcessing) return;
 
@@ -1310,7 +1314,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'ai' && <AIAgentAutonomousController />}
               {activeView === 'crew' && <LikyaCrew />}
               {activeView === 'payment' && <PaymentIntegration />}
-              {activeView === 'security' && <SecurityIncidentAgent />}
+              {activeView === 'security' && (
+                <>
+                  <SecurityIncidentAgent />
+                  <SecurityAppBuilderCard />
+                </>
+              )}
               {activeView === 'marketing' && <AutoMarketingAgent />}
               {activeView === 'dept' && (
                 <>
