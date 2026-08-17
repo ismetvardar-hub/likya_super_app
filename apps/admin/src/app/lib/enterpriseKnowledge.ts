@@ -253,6 +253,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
       'lib/vision/sportsVisionRadar.ts — Computer Vision stub: top hızı km/h, oyuncu reaksiyon ms, araç giriş/çıkış olayları (simüle + analiz). lib/ai/mem0LongTermMemory.ts — Mem0 mimarisi: üye tercihleri, antrenman geçmişi, Daze Chef ikram alışkanlıkları; localStorage kalıcı; memoryContextForMember AI promptuna bağlam verir. lib/notifications/gotifyPushBridge.ts — Daze-Reminder: 120s sipariş hazır + kort saati WebSocket push (Gotify token yoksa simülasyon). lib/sports/phvAthleticCurriculum.ts — Basketball Ready 360/OTA: 6-16 yaş PHV evresi (pre/phv/post) tespiti + drill planlama. lib/ai/agentCatalog.ts — 150 ajanlık sektörel katalog (15 sektör × 10 uzman). components/SportsVisionMemoryCard.tsx — 3 sekmeli HUD (Speed Radar / Long-Term Memory / Gotify Push); sportvision view içinde.',
   },
 
+  {
+    id: 'extreme-sim-hud',
+    title: 'Ekstrem Spor Simülatörleri + App Builder + Zero-Trust HUD',
+    icon: '🎿',
+    keywords: ['dry-ski', 'sentetik kayak', 'rowing', 'kürek havuzu', 'wave pool', 'dalga havuzu', 'simülatör', 'base44', 'app builder', 'zero trust', 'owasp'],
+    content:
+      'lib/simulators/extremeSportsSimulator.ts — Dry-Ski (Sentetik Kayak), Indoor Rowing (Kapalı Kürek Havuzu) ve Wave Pool (Dalga Havuzu) üniteleri: ekipman durumu, kapasite, saatlik ücret, güvenlik skoru; simulateSession tür bazlı metrikler (pist eğimi/split/şut gücü/dalga boyu) + performans skoru üretir. base44AppEngine.ts ve zeroTrustShield.ts önceki turlardan korunur (metin prompt → JSON şema + React UI; SQLi/XSS/CSRF/API key filtreleri). components/ExtremeSimulatorSecurityCard.tsx — 3 sekmeli neon HUD (🎿 Extreme Sports & Dry-Ski / 🚀 App Builder / 🛡️ Security); 3D Park Twin (twin) view içinde render edilir.',
+  },
+
 ];
 
 // ----------------------------------------------------------------------------

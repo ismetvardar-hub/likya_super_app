@@ -28,6 +28,7 @@ import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
 import PokeTokenTracker from './PokeTokenTracker';
 import SecurityAppBuilderCard from './SecurityAppBuilderCard';
 import SportsVisionMemoryCard from './SportsVisionMemoryCard';
+import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import AthletePerformanceAI from './AthletePerformanceAI';
@@ -1310,7 +1311,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {/* GERÇEK MODÜL BİLEŞENLERİ - activeView'e göre render */}
               {activeView === 'mesh' && <AgentMeshIntegration />}
               {activeView === 'campus' && <CampusOverviewModule />}
-              {activeView === 'twin' && <Park3DTwin />}
+              {activeView === 'twin' && (
+                <>
+                  <Park3DTwin />
+                  <ExtremeSimulatorSecurityCard />
+                </>
+              )}
               {activeView === 'iot' && <IoTSensorMap />}
               {activeView === 'ai' && <AIAgentAutonomousController />}
               {activeView === 'crew' && <LikyaCrew />}
