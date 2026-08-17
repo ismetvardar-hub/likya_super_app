@@ -4,7 +4,7 @@
 // Deterministik; Plan Z güvenli. Kırılmasız.
 // ============================================================================
 
-export type SimulatorKind = 'dry-ski' | 'rowing' | 'wave-pool';
+export type SimulatorKind = 'dry-ski' | 'rowing' | 'wave-pool' | 'wind-tunnel';
 
 export interface SimulatorUnit {
   id: string;
@@ -29,6 +29,7 @@ export const SIMULATOR_UNITS: SimulatorUnit[] = [
   { id: 'dry-ski-1', kind: 'dry-ski', name: 'Sentetik Kayak Pisti (Dry-Ski)', capacity: 8, equipmentStatus: 'hazir', hourlyRate: 250, safetyScore: 96 },
   { id: 'rowing-1', kind: 'rowing', name: 'Kapalı Kürek Havuzu (Indoor Rowing)', capacity: 12, equipmentStatus: 'hazir', hourlyRate: 180, safetyScore: 94 },
   { id: 'wave-1', kind: 'wave-pool', name: 'Dalga Havuzu (Wave Pool)', capacity: 24, equipmentStatus: 'bakim', hourlyRate: 300, safetyScore: 88 },
+  { id: 'wind-1', kind: 'wind-tunnel', name: 'Dikey Rüzgar Tüneli (Wind Tunnel)', capacity: 4, equipmentStatus: 'hazir', hourlyRate: 450, safetyScore: 92 },
 ];
 
 // Deterministik seans simülasyonu (tür bazlı metrikler)
@@ -44,6 +45,10 @@ export function simulateSession(kind: SimulatorKind, athlete: string, durationMi
       break;
     default:
       metrics = { waveHeightM: 1.2 + (seed % 6) / 10, rideSeconds: 8 + (seed % 9), aerialScore: 55 + (seed % 30) };
+  }
+  // 🌬️ Wind Tunnel (Dikey Rüzgar Tüneli) — uçuş stabilitesi metrikleri
+  if (kind === 'wind-tunnel') {
+    metrics = { windSpeedKmh: 180 + (seed % 60), flightSeconds: 40 + (seed % 35), controlScore: 60 + (seed % 32) };
   }
   const performanceScore = Math.min(100, Math.round(62 + (seed % 35)));
   return {

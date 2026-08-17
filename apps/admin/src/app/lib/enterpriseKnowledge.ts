@@ -259,7 +259,7 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
     icon: '🎿',
     keywords: ['dry-ski', 'sentetik kayak', 'rowing', 'kürek havuzu', 'wave pool', 'dalga havuzu', 'simülatör', 'base44', 'app builder', 'zero trust', 'owasp'],
     content:
-      'lib/simulators/extremeSportsSimulator.ts — Dry-Ski (Sentetik Kayak), Indoor Rowing (Kapalı Kürek Havuzu) ve Wave Pool (Dalga Havuzu) üniteleri: ekipman durumu, kapasite, saatlik ücret, güvenlik skoru; simulateSession tür bazlı metrikler (pist eğimi/split/şut gücü/dalga boyu) + performans skoru üretir. base44AppEngine.ts ve zeroTrustShield.ts önceki turlardan korunur (metin prompt → JSON şema + React UI; SQLi/XSS/CSRF/API key filtreleri). components/ExtremeSimulatorSecurityCard.tsx — 3 sekmeli neon HUD (🎿 Extreme Sports & Dry-Ski / 🚀 App Builder / 🛡️ Security); 3D Park Twin (twin) view içinde render edilir.',
+      'lib/simulators/extremeSportsSimulator.ts — Dry-Ski, Indoor Rowing, Wave Pool ve Wind Tunnel (Dikey Rüzgar Tüneli) üniteleri: ekipman durumu, kapasite, saatlik ücret, güvenlik skoru; simulateSession tür bazlı metrikler (pist eğimi/split/şut gücü/dalga boyu) + performans skoru üretir. base44AppEngine.ts ve zeroTrustShield.ts önceki turlardan korunur (metin prompt → JSON şema + React UI; SQLi/XSS/CSRF/API key filtreleri). components/ExtremeSimulatorSecurityCard.tsx — 3 sekmeli neon HUD (🎿 Extreme Sports & Dry-Ski / 🚀 App Builder / 🛡️ Security); 3D Park Twin (twin) view içinde render edilir.',
   },
 
   {

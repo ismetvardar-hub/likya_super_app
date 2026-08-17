@@ -37,7 +37,7 @@ export default function ExtremeSimulatorSecurityCard() {
     setScanResult({ clean: r.clean, flagged: r.verdict.flagged, action: r.verdict.action });
   };
 
-  const UNIT_ICON: Record<SimulatorKind, string> = { 'dry-ski': '⛷️', rowing: '🚣', 'wave-pool': '🌊' };
+  const UNIT_ICON: Record<SimulatorKind, string> = { 'dry-ski': '⛷️', rowing: '🚣', 'wave-pool': '🌊', 'wind-tunnel': '🌬️' };
 
   return (
     <div style={{
