@@ -77,7 +77,39 @@ jobs:
           npm run build
 
   # ==========================================================================
-  # 3. Supabase Database Migration Integrity Check
+  # 4. NestJS Backend CI (TypeScript strict build)
+  # ==========================================================================
+  backend-ci:
+    name: NestJS Backend CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'apps/backend/package-lock.json'
+
+      - name: Install Backend Dependencies
+        run: |
+          cd apps/backend
+          npm ci || npm install
+
+      - name: Typecheck Backend (strict)
+        run: |
+          cd apps/backend
+          npx tsc --noEmit
+
+      - name: Build Backend
+        run: |
+          cd apps/backend
+          npm run build
+
+  # ==========================================================================
+  # 5. Supabase Database Migration Integrity Check
   #    Yerel (local) dry-run — canlı secret gerekmez, pipeline'ı asla kırmaz.
   # ==========================================================================
   database-ci:
