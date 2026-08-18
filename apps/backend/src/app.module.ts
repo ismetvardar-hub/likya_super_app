@@ -11,6 +11,7 @@ import { TrailModule } from './modules/trail/trail.module';
 import { BookingModule } from './modules/booking/booking.module';
 import { MarketplaceModule } from './modules/marketplace/marketplace.module';
 import { WalletModule } from './modules/wallet/wallet.module';
+import { ClubFinanceModule } from './modules/club-finance/club-finance.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { WalletModule } from './modules/wallet/wallet.module';
     BookingModule,
     MarketplaceModule,
     WalletModule,
+    ClubFinanceModule,
   ],
   providers: [
     { provide: APP_INTERCEPTOR, useClass: RateLimitInterceptor },
