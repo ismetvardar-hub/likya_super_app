@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'csm-tactical-suite',
+    title: 'CSM Taktik Motoru + Frenleme Biyomekaniği + Taktik Drill Suiti',
+    icon: '🧠',
+    keywords: ['csm', 'competitive systems', 'one fix', 'identify', 'brake index', 'traction', 'deceleration', 'beat defender', 'diagonal sprint', 'taktik'],
+    content:
+      'lib/sports/csmTacticalEngine.ts — Identify (pozisyon hatası/rakip açığı) → One Fix (5 kural yerine tek net düzeltme) → Assign Responsibility (komut/uyarla/kademe) → Execution Feedback (sonraki pozisyonda 0-100 skor). 6 senaryo, deterministik FIX_LIBRARY; çözüm Daze Hub Event Bus personel görevine düşer. lib/sports/decelerationBiomechanics.ts — "Control the deceleration" Brake Index (plant öncesi hız düşürme oranı), Traction Check (zemin tutuş katsayısı: parke/lastik/çim/toprak + kayma + ıslak), sakatlık risk yük hesabı (G-kuvvet + haftalık sprint) + A-D not ve reçete. lib/sports/tacticalDrillsSuite.ts — Diagonal Sprint+Active Recovery (20yd+crossover), Beat Defender Without Speed (Pace/Hip Attack/Hesi/Separation), Passing & Cutting Spacing, 5-Round Full-Body Cardio; assignTacticalDrill ile tek tıkla atama. components/CsmTacticalPanel.tsx — SportVisionX görünümünde senaryo butonları, frenleme skor kartı ve drill atama kartları.',
+  },
+
+  {
     id: 'production-release',
     title: '%100 Üretim Paketi — Ödeme Geçidi + Daze-Reminder + Gerçek Ping',
     icon: '🚀',

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import CourtConditionerPanel from './CourtConditionerPanel';
+import CsmTacticalPanel from './CsmTacticalPanel';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -59,6 +60,9 @@ export default function SportVisionX() {
 
       {/* 📋 Drill Kütüphanesi — tüm sekmelerde erişilebilir (17s + U8-U16 matris) */}
       <CourtConditionerPanel />
+
+      {/* 🧠 CSM Taktik Problem Çözücü + Frenleme Biyomekaniği + Taktik Drill Suiti */}
+      <CsmTacticalPanel />
     </div>
   );
 }
