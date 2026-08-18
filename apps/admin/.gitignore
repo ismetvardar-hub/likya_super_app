@@ -1,1 +1,5 @@
 .vercel
+
+# TypeScript build artefact
+tsconfig.tsbuildinfo
+*.tsbuildinfo
