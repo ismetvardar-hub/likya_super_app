@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-ops-executor',
+    title: 'SportVisionX Kondisyon Motoru + Outcome-Driven İcra',
+    icon: '🏀',
+    keywords: ['17s', 'court conditioner', 'kondisyon', 'drill', 'u8', 'u16', 'atletik', 'outcome', 'patron komut', 'icra'],
+    content:
+      'lib/sports/courtConditionerEngine.ts — "The 17s Court Conditioner" 60s saha içi testi (3 ölçek: Başlangıç 9-11 / Orta 13-15 / İleri 17 geçiş), ayak dönüş pivot biyomekaniği (dominant/off foot, açı, denge) + nabız/toparlanma (resting/peak/recovery60/recoveryRate) veri yapısı; U8-U16 atletik gelişim matrisi (patlayıcı güç, dikey sıçrama, reaksiyon, çeviklik, haftalık yük) 5 yaş bandı hazır reçete. components/CourtConditionerPanel.tsx — antrenörlerin tek tıkla 17s Testi / Alt Vücut Kuvvet Protokolü / Reaksiyon Matrisi / Pivot Drilli seçip sporcuya atadığı kart kütüphanesi (atama → Daze Hub Event Bus görevi). lib/ops/outcomeExecutor.ts — SuperCool felsefesiyle patronun tek cümlelik komutunu ayrıştırıp bookingWriter + dazeHubEventBus (sipariş/personel) + notificationEngine (PWA) zincirini tek akışta çalıştıran outcome orkestratörü; CEOCommandChat handleSendMessage hattına bağlı.',
+  },
+
+  {
     id: 'daze-hub-event-bus',
     title: 'Daze Hub — Vision/Chef/Crew Dinamik Olay Köprüsü',
     icon: '🔄',

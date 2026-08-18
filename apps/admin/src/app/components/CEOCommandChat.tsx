@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { routeToModel, checkModelHealth, ModelProvider } from './ModelRouter';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
+import { detectOutcomeCommand, executeOutcomeCommand } from '../lib/ops/outcomeExecutor';
 import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
 
 // ============================================================================
@@ -407,6 +408,29 @@ export default function CEOCommandChat() {
     setTimeout(() => {
       setMessages((prev) => [...prev, { role: 'ceo', text: 'Talimatınızı aldım Patron! 📝 Aklınızdakileri analiz edip ilgili departman ajanına otonom olarak iletiyorum.', time: now() }]);
     }, 400);
+
+    // ⚡ OUTCOME-DRIVEN İCRA — patron operasyonel komutları (SuperCool felsefesi)
+    // "Şu müşteriye rezervasyon aç ve personeli görevlendir" → bookingWriter +
+    // dazeHubEventBus + notificationEngine tek zincirde.
+    if (detectOutcomeCommand(text)) {
+      setActiveModel('gemini');
+      setTimeout(async () => {
+        try {
+          const outcome = await executeOutcomeCommand(text);
+          const msg =
+            `⚡ Outcome-Driven İcra — "${text.length > 48 ? text.substring(0, 48) + '…' : text}"\n\n` +
+            outcome.steps.map((s) => `${s.status === 'ok' ? '✅' : s.status === 'failed' ? '❌' : '⏭️'} ${s.step}: ${s.detail}`).join('\n') +
+            `\n\n${outcome.message}`;
+          setMessages((prev) => [...prev, { role: 'ceo', text: msg, time: now() }]);
+          if (source === 'voice') speak(msg);
+        } catch {
+          setMessages((prev) => [...prev, { role: 'ceo', text: '⚠️ Outcome zinciri çalıştırılamadı — hatayı raporlayın Patron.', time: now() }]);
+        }
+        setIsProcessing(false);
+        processingRef.current = false;
+      }, 600);
+      return;
+    }
 
     // 🤖 PRAISONAI AJAN ZİNCİRİ — Research → Plan → Execute (üst öncelik)
     const praisonDetect = detectPraisonTask(text);
