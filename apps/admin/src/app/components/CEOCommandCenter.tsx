@@ -16,6 +16,7 @@ import SmartCaravanPark from './SmartCaravanPark';
 import SmartTentStore from './SmartTentStore';
 import LikyaMarketplace from './LikyaMarketplace';
 import MarketplaceGallery from './MarketplaceGallery';
+import MarketplacePaymentTerminal from './MarketplacePaymentTerminal';
 import DazeChef from './DazeChef';
 import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
@@ -1343,6 +1344,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               {activeView === 'market' && (
                 <>
                   <MarketplaceGallery />
+                  <MarketplacePaymentTerminal />
                   <LikyaMarketplace />
                 </>
               )}

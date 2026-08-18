@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'production-release',
+    title: '%100 Üretim Paketi — Ödeme Geçidi + Daze-Reminder + Gerçek Ping',
+    icon: '🚀',
+    keywords: ['production', 'üretim', 'ödeme', 'iyzico', 'stripe', 'payment', 'sandbox', 'daze reminder', 'termal koruma', 'ping', 'release'],
+    content:
+      'lib/payment/paymentGatewayAdapter.ts — iyzico/stripe korumalı ödeme geçidi: satış, kiralama depozitosu (%25), TBYB (%10); client-safe startPayment sunucu-only /api/v1/payment proxy hattına gider; secret yoksa güvenli Sandbox Test Modu (deterministik referans, asla çökme). MarketplacePaymentTerminal.tsx pazaryeri görünümünde (kiralama/TBYB/satış + Daze-Gift kupon üret/kullan). lib/ops/dazeReminderEngine.ts — 120s mutfak sayacı bitince WhatsApp (WHATSAPP_API_TOKEN) + PWA push tetikleyici; 2dk aşımında termal koruma bayrağı + otomatik DG-XXXX Daze-Gift ikram kuponu (coupons tablosu/localStorage). api/v1/ceo/health — artık GERÇEK ping: auth/v1/health + rest/v1 (anon key) iki kademeli, 2.5s timeout; standby/ready gerçek bağlantıya göre.',
+  },
+
+  {
     id: 'sports-ops-executor',
     title: 'SportVisionX Kondisyon Motoru + Outcome-Driven İcra',
     icon: '🏀',

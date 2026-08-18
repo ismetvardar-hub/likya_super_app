@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { startPayment, detectPaymentGateway } from '../lib/payment/paymentGatewayAdapter';
 
 // ============================================================================
-// LİKYA ÖDEME ENTEGRASYONU (iyzico / PayTR)
-// Faz 1: Ödeme sistemi entegrasyonu
+// LİKYA ÖDEME ENTEGRASYONU (iyzico / PayTR / POS)
+// Faz 1→Prod: simüle ödeme KALDIRILDI; paymentGatewayAdapter üzerinden sunucu
+// proxy (/api/v1/payment) çağrılır; secret yoksa güvenli Sandbox Test Modu.
 // ============================================================================
 
 type PaymentMethod = 'iyzico' | 'paytr' | 'pos';
@@ -16,18 +18,36 @@ export default function PaymentIntegration() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [transactionId, setTransactionId] = useState('');
+  const [modeLabel, setModeLabel] = useState('');
 
-  const handlePayment = () => {
+  const gateway = detectPaymentGateway();
+
+  const handlePayment = async () => {
     if (!amount || !customerName || !customerEmail) {
       setPaymentStatus('error');
       return;
     }
     setPaymentStatus('processing');
-    // Simüle edilmiş ödeme işlemi
-    setTimeout(() => {
-      setPaymentStatus('success');
-      setTransactionId(`IYZ-${Math.floor(100000 + Math.random() * 900000)}`);
-    }, 1500);
+    setTransactionId('');
+    try {
+      const res = await startPayment({
+        kind: 'sale',
+        amount: Number(amount),
+        item: activeMethod === 'pos' ? 'Fiziksel POS satışı' : `${activeMethod.toUpperCase()} satışı`,
+        customer: { name: customerName, email: customerEmail },
+        installment: activeMethod === 'iyzico' ? 3 : 1,
+      });
+      if (res.ok) {
+        setPaymentStatus('success');
+        setTransactionId(res.reference);
+        setModeLabel(res.mode === 'sandbox' ? 'sandbox-simülasyon' : `canlı-${res.gateway}`);
+        if (res.checkoutUrl) window.open(res.checkoutUrl, '_blank');
+      } else {
+        setPaymentStatus('error');
+      }
+    } catch {
+      setPaymentStatus('error');
+    }
   };
 
   const methods: { id: PaymentMethod; name: string; desc: string }[] = [
@@ -152,6 +172,12 @@ export default function PaymentIntegration() {
             Tutar: <strong>{amount} ₺</strong>
             <br />
             Yöntem: <strong>{activeMethod.toUpperCase()}</strong>
+            {modeLabel && (
+              <>
+                <br />
+                Mod: <strong style={{ color: modeLabel.startsWith('canlı') ? '#4ade80' : '#fbbf24' }}>{modeLabel}</strong>
+              </>
+            )}
           </div>
         )}
 

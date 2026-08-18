@@ -42,7 +42,7 @@ function resolveSupabaseKey(): string {
   return process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 }
 
-function supabaseStatus(): { status: 'ready' | 'standby' | 'unconfigured'; connected: boolean; mode: string; url: string | null } {
+async function supabaseStatus(): Promise<{ status: 'ready' | 'standby' | 'unconfigured'; connected: boolean; mode: string; url: string | null; ping?: { auth: string; rest: string; latencyMs: number } }> {
   const url = resolveSupabaseUrl();
   const key = resolveSupabaseKey();
   if (!url || !key) {
@@ -52,14 +52,37 @@ function supabaseStatus(): { status: 'ready' | 'standby' | 'unconfigured'; conne
   if (isPlaceholder) {
     return { status: 'standby', connected: false, mode: 'Placeholder URL tespit edildi — canli baglanti kurulmadi; gercek Supabase URL + anahtar bekleniyor', url };
   }
-  // Gerçek SELECT 1 ping burada yapılamıyorsa "ready/ayarli" raporlanır; ilk gerçek sorguda doğrulanır.
-  return { status: 'ready', connected: true, mode: 'URL + anahtar tanimli — dinamik gecis hazir (parcels/staff_tasks/pos_transactions)', url };
+
+  // GERÇEK PİNG — iki kademeli doğrulama (2.5s timeout, asla requesti bloklama)
+  const base = url.replace(/\/$/, '');
+  const started = Date.now();
+  const ping = { auth: 'skip', rest: 'skip', latencyMs: 0 };
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 2500);
+    const [authRes, restRes] = await Promise.all([
+      fetch(`${base}/auth/v1/health`, { signal: ctrl.signal }),
+      fetch(`${base}/rest/v1/`, { headers: { apikey: key, Authorization: `Bearer ${key}` }, signal: ctrl.signal }),
+    ]);
+    clearTimeout(t);
+    ping.auth = authRes.ok ? 'ok' : `http_${authRes.status}`;
+    ping.rest = restRes.ok ? 'ok' : `http_${restRes.status}`;
+    ping.latencyMs = Date.now() - started;
+
+    if (ping.auth === 'ok' && ping.rest === 'ok') {
+      return { status: 'ready', connected: true, mode: 'GERCEK PING BASARILI — auth + REST canli (parcels/staff_tasks/pos_transactions kullanima hazir)', url, ping };
+    }
+    return { status: 'standby', connected: false, mode: `Ping kismi: auth=${ping.auth} rest=${ping.rest} — baglanti/anahhtar dogrulanamadi`, url, ping };
+  } catch {
+    ping.latencyMs = Date.now() - started;
+    return { status: 'standby', connected: false, mode: `Ping basarisiz (${ping.latencyMs}ms) — Supabase'e ulasilamiyor; mock fallback devrede`, url, ping };
+  }
 }
 
 export async function GET() {
   const startedAt = Date.now();
   const plans = aiPlanStatus();
-  const supabase = supabaseStatus();
+  const supabase = await supabaseStatus();
 
   // Fonksiyon yanıt süresi — Vercel fonksiyonunun canlı olduğunun kanıtı
   const latencyMs = Date.now() - startedAt;
