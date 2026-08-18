@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 import CourtConditionerPanel from './CourtConditionerPanel';
 import CsmTacticalPanel from './CsmTacticalPanel';
+import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -63,6 +64,9 @@ export default function SportVisionX() {
 
       {/* 🧠 CSM Taktik Problem Çözücü + Frenleme Biyomekaniği + Taktik Drill Suiti */}
       <CsmTacticalPanel />
+
+      {/* 🩹 Rehab & Taktik Kartlar — PEACE·LOVE • 20s Huddle • Çizgi • Kaleci • Speed Transition */}
+      <SportsRehabHuddlePanel />
     </div>
   );
 }

@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'peace-love-huddle',
+    title: 'PEACE & LOVE Rehab + CSM 20s Huddle + Çizgi/Kaleci Biyomekaniği',
+    icon: '🩹',
+    keywords: ['peace', 'love', 'rehab', 'rehabilitasyon', 'huddle', '20s', 'oyuncu toplantısı', 'sideline', 'çizgi tuzağı', 'kaleci', 'turnike', 'layup', 'speed transition'],
+    content:
+      'lib/sports/injuryRehabEngine.ts — PEACE (Protect/Elevate/Avoid NSAIDs/Compress/Educate Gün 1-3) + LOVE (Load/Optimism/Vascularisation/Exercise Gün 4+) 14 günlük gün gün plan, 5 sakatlık tipi, Progressive Loading (%0→%100) + antrenmana dönüş sinyali. lib/sports/csmHuddleEngine.ts — 20s player-only toplantı sayacı + 5 hata filtresi (Spacing/Coverage/Timing/Communication/Decision) ağırlıklı teşhis + tek tıkla başlat (Event Bus görevi). lib/sports/courtSpatialBiometrics.ts — Sideline Trap: Danger 0-1ft / Risk 1-2ft / Safe 2+ft risk skalası; kaleci açı kapatma + bacak blok; 2-adım turnike basışı (Outside→Inside→Vertical Takeoff) puanlama. lib/sports/soccerConditioningRoute.ts — 30x20m Jog→Cruise→%90 Sprint→Recovery 4 turlu hız geçiş rotası. components/SportsRehabHuddlePanel.tsx — SportVisionX görünümünde 4 bölümlü antrenör kartları.',
+  },
+
+  {
     id: 'csm-tactical-suite',
     title: 'CSM Taktik Motoru + Frenleme Biyomekaniği + Taktik Drill Suiti',
     icon: '🧠',
