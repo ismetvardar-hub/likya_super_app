@@ -9,6 +9,8 @@ import ShootingBalanceCard from './ShootingBalanceCard';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import CatchPadReactionCard from './CatchPadReactionCard';
 import ExtremeSLiveTelemetryDashboard from './ExtremeSLiveTelemetryDashboard';
+import ExtremeSLivePerformanceHub from './ExtremeSLivePerformanceHub';
+import ExtremeSPostSessionReport from './ExtremeSPostSessionReport';
 import { initMockBands, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
 import { startCourtSession, recordTelemetry, matchPlayerToBeacon, fatigueRisk, averageReaction, armbandCoachingBridgeStatus, type TelemetrySample } from '../lib/sports/armbandCoachingBridge';
 import { generateStepTelemetry, computeContactMetrics, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
@@ -25,7 +27,7 @@ import { SPORT_LIST, initMultiSportMatch, scoreEvent, callMultiViolation, multiS
 // 5. Metabolik Bar Köprüsü
 // ============================================================================
 
-type XTab = 'ghost' | 'acoustic' | 'clip' | 'thermal' | 'metabolic' | 'armband';
+type XTab = 'ghost' | 'acoustic' | 'clip' | 'thermal' | 'metabolic' | 'armband' | 'performance';
 
 const TABS: { id: XTab; icon: string; label: string }[] = [
   { id: 'ghost', icon: '🩻', label: 'Ghost Avatar' },
@@ -34,6 +36,7 @@ const TABS: { id: XTab; icon: string; label: string }[] = [
   { id: 'thermal', icon: '🧯', label: 'Termal Radar' },
   { id: 'metabolic', icon: '🥗', label: 'Metabolik Bar' },
   { id: 'armband', icon: '⌚', label: 'Pazu Bandı' },
+  { id: 'performance', icon: '🏆', label: 'Performans' },
 ];
 
 export default function SportVisionX() {
@@ -75,6 +78,12 @@ export default function SportVisionX() {
         <>
           <ExtremeSLiveTelemetryDashboard />
           <ArmbandTelemetryModule />
+        </>
+      )}
+      {tab === 'performance' && (
+        <>
+          <ExtremeSLivePerformanceHub />
+          <ExtremeSPostSessionReport />
         </>
       )}
 

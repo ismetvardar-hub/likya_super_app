@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'performance-hub',
+    title: 'SportVisionX Live Performance Hub + Ölçüm & Gelişim Raporu',
+    icon: '🏆',
+    keywords: ['live hub', 'performans', 'kinetik', 'patlayıcılık', 'sıçrama', 'ivmelenme', 'koordinasyon', 'kol hızı', 'yorgunluk', 'sakatlık riski', 'ölçüm raporu', 'post session', 'trend', 'tarihsel kıyas', 'ai tavsiye', 'trimp', 'hrr', 'bildirim'],
+    content:
+      'lib/sports/livePerformanceHub.ts — 6 bölgeli canlı ekran motoru: sporcu/maç bilgisi + canlı süre (00:42:15), Kinetik & Patlayıcılık (hız/top hızı/ivmelenme/sıçrama+uçuş), Biyomekanik & Tabanlık (ön/topuk ısı görseli), Fizyolojik & İç Yük (nabız+zon, ort nabız, enerji/pil, HRV), Anlık Kıyas & Sapma (GCT <200ms ✅, RSI Elit ⭐), Koordinasyon & Kol (kol hızı, raket açısı, vuruş/servis/forehand), Canlı Yorgunluk (sakatlık riski 🟢, performans düşüşü, GCT uzaması). lib/sports/postSessionReport.ts — 4 bölümlü maç sonu rapor: Performans Özeti & Trendler (%94 Elit + geçen hafta kıyası), Spor Bilimi Analizi (sakatlık riski + yorgunluk yönetimi), Gelişim Alanları & AI Tavsiye, Tarihsel Kıyaslama (3 metrik deltaPct trend) + telefon bildirim metni. UI: components/ExtremeSLivePerformanceHub.tsx (🔴 LIVE rozet + 6 bölge grid + süre sayacı) + ExtremeSPostSessionReport.tsx (4 kart + 📲 bildir butonu). SportVisionX yeni 🏆 Performans sekmesi (hub + rapor birlikte). Smoke: scripts/performanceHubSmokeTest.mts (14/14).',
+  },
+
+  {
     id: 'sports-science',
     title: 'Spor Bilimi & Kinematik Analitik Motoru — 3 Eksen Elit Performans Takibi',
     icon: '🧬',
