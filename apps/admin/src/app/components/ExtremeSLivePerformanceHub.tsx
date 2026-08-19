@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { generateLiveHubSnapshot, livePerformanceHubStatus, type LivePerformanceHubSnapshot } from '../lib/sports/livePerformanceHub';
+import { requestHeartRateConnection, requestInsoleConnection, requestMiBandConnection, webBluetoothSupported, webBluetoothBridgeStatus } from '../lib/hardware/webBluetoothBridge';
 
 // ============================================================================
 // 🏆 SPORTVISIONX LIVE PERFORMANCE HUB — 6 bölgeli canlı ekran
@@ -12,6 +13,9 @@ import { generateLiveHubSnapshot, livePerformanceHubStatus, type LivePerformance
 export default function ExtremeSLivePerformanceHub() {
   const [snap, setSnap] = useState<LivePerformanceHubSnapshot>(() => generateLiveHubSnapshot(1));
   const [live, setLive] = useState(true);
+  const [bleOpen, setBleOpen] = useState(false);
+  const [bleMsg, setBleMsg] = useState('');
+  const [bleConnected, setBleConnected] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!live) return;
@@ -25,6 +29,43 @@ export default function ExtremeSLivePerformanceHub() {
   const co = snap.coordination;
   const fa = snap.fatigue;
 
+  const connectSensor = async (kind: 'HEART_RATE' | 'INSOLE' | 'MI_BAND') => {
+    setBleOpen(false);
+    if (!webBluetoothSupported()) {
+      setBleMsg('⚠️ Bu tarayıcı Web Bluetooth desteklemiyor — Chrome/Edge + https/localhost gerekli');
+      return;
+    }
+    try {
+      if (kind === 'HEART_RATE') {
+        const st = await requestHeartRateConnection((bpm) => {
+          setSnap((prev) => ({
+            ...prev,
+            physiology: {
+              ...prev.physiology,
+              heartRate: bpm,
+              avgHeartRate: Math.round((prev.physiology.avgHeartRate + bpm) / 2),
+              heartZone: bpm >= 160 ? 'Zon 4' : bpm >= 140 ? 'Zon 3' : 'Zon 2',
+            },
+          }));
+        });
+        setBleConnected((x) => ({ ...x, HEART_RATE: true }));
+        setBleMsg(st.message ?? '❤️ Kalp Kemeri bağlandı');
+      } else if (kind === 'INSOLE') {
+        const st = await requestInsoleConnection(undefined, (d) => {
+          setSnap((prev) => ({ ...prev, insole: { forefootPct: d.forefootPct, heelPct: d.heelPct } }));
+        });
+        setBleConnected((x) => ({ ...x, INSOLE: true }));
+        setBleMsg(st.message ?? '👟 Tabanlık bağlandı');
+      } else {
+        const st = await requestMiBandConnection(() => {});
+        setBleConnected((x) => ({ ...x, MI_BAND: true }));
+        setBleMsg(st.message ?? '⌚ Mi Band bağlandı');
+      }
+    } catch (e) {
+      setBleMsg(`⚠️ ${(e as Error).message ?? 'Bağlantı iptal edildi'}`);
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'linear-gradient(160deg,#0f172a,#1e1b4b)', border: '1px solid rgba(56,189,248,0.3)', borderRadius: '20px', padding: '16px', color: '#f8fafc' }}>
       {/* HEADER */}
@@ -33,8 +74,30 @@ export default function ExtremeSLivePerformanceHub() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ fontSize: '10px', fontWeight: 800, color: live ? '#f87171' : '#64748b' }}>{live ? '🔴 LIVE' : '⏸️ DURAKLATILDI'}</span>
           <button onClick={() => setLive((v) => !v)} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>{live ? '⏸️' : '▶️'}</button>
+          <button onClick={() => setBleOpen((v) => !v)} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.08)', color: '#4ade80', cursor: 'pointer' }}>📡 Sensörleri / Bluetooth Bağla</button>
         </div>
       </div>
+      {/* BLE CİHAZ SEÇİCİ */}
+      {bleOpen && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '10px', borderRadius: '12px', background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.35)' }}>
+          <div style={{ fontSize: '9.5px', fontWeight: 800, color: '#4ade80' }}>📡 Bağlanacak sensörü seçin — tarayıcı cihaz seçicisi açılacak</div>
+          <div style={{ fontSize: '8.5px', color: '#64748b' }}>{webBluetoothBridgeStatus()}</div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => connectSensor('HEART_RATE')} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '9px', border: '1px solid rgba(248,113,113,0.4)', background: 'rgba(248,113,113,0.08)', color: '#f87171', cursor: 'pointer' }}>❤️ Kalp Kemeri (0x180D)</button>
+            <button onClick={() => connectSensor('INSOLE')} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '9px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>👟 ESP32 Tabanlık</button>
+            <button onClick={() => connectSensor('MI_BAND')} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '9px', border: '1px solid rgba(167,139,250,0.4)', background: 'rgba(167,139,250,0.08)', color: '#c4b5fd', cursor: 'pointer' }}>⌚ Mi Band / IMU</button>
+          </div>
+          {bleMsg && <div style={{ fontSize: '9px', fontWeight: 700, color: bleMsg.startsWith('⚠️') ? '#fb7185' : '#4ade80' }}>{bleMsg}</div>}
+        </div>
+      )}
+      {/* BAĞLI SENSÖR ROZETLERİ */}
+      {Object.keys(bleConnected).length > 0 && (
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          {bleConnected.HEART_RATE && <span style={{ fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', color: '#f87171', background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.4)' }}>❤️ HRM Bağlı — canlı</span>}
+          {bleConnected.INSOLE && <span style={{ fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', color: '#38bdf8', background: 'rgba(56,189,248,0.12)', border: '1px solid rgba(56,189,248,0.4)' }}>👟 Tabanlık Bağlı — canlı</span>}
+          {bleConnected.MI_BAND && <span style={{ fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', color: '#c4b5fd', background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.4)' }}>⌚ MiBand Bağlı — canlı</span>}
+        </div>
+      )}
       {/* SPORCU BİLGİSİ */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '10px 14px' }}>
         <span style={{ fontSize: '12px', fontWeight: 800, color: '#fff' }}>🧑‍🚀 Sporcu: {snap.athlete.name}</span>
