@@ -9,7 +9,8 @@ export type DazeEventType =
   | 'ORDER_PLACED'
   | 'KITCHEN_TIMER_TICK'
   | 'STAFF_TASK_DISPATCHED'
-  | 'DAZE_REMINDER_TRIGGERED';
+  | 'DAZE_REMINDER_TRIGGERED'
+  | 'FIRE_EMERGENCY_TRIGGERED';
 
 export interface DazeEvent {
   type: DazeEventType;
@@ -26,6 +27,7 @@ let listeners: Record<DazeEventType, Listener[]> = {
   KITCHEN_TIMER_TICK: [],
   STAFF_TASK_DISPATCHED: [],
   DAZE_REMINDER_TRIGGERED: [],
+  FIRE_EMERGENCY_TRIGGERED: [],
 };
 let history: DazeEvent[] = [];
 
@@ -68,6 +70,9 @@ export const staffTaskDispatched = (taskId: string, staff: string, pay: number, 
 
 export const dazeReminderTriggered = (orderId: string, overdueMin: number, thermalGuard: boolean) =>
   emit('DAZE_REMINDER_TRIGGERED', { orderId, overdueMin, thermalGuard: overdueMin > 2 ? true : thermalGuard, source: 'daze-reminder' });
+
+export const fireEmergencyTriggered = (zone: string, confidence: number, bbox: { x1: number; y1: number; x2: number; y2: number }) =>
+  emit('FIRE_EMERGENCY_TRIGGERED', { zone, confidence, bbox, source: 'sentinel-vision', severity: 'critical' });
 
 // ── DURUM PANOSU (UI için) ──
 export interface DazeHubState {

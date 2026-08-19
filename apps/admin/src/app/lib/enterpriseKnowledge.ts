@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'fire-detection-evacuation',
+    title: 'Erken Yangın/Alev Tespit Motoru + Otomatik Tahliye Protokolü',
+    icon: '🔥',
+    keywords: ['yangın', 'alev', 'fire', 'flame', 'yolo', 'openviewer', 'tahliye', 'evacuation', 'emergency', 'kapı', 'EMERGENCY_OPEN', 'tatbikat', 'fire drill'],
+    content:
+      'lib/security/fireDetectionEngine.ts — OpenViewer/YOLO tabanlı alev tespiti: detectFire(frameData) → bbox + confidence (≥0.65) + konum (Mutfak/Glamping/Otopark/Kort/Depo); doğrulamada FIRE_EMERGENCY_TRIGGERED olayı Daze Hub Event Bus hattına fırlatılır (yeni event tipi + fireEmergencyTriggered emitter eklendi). simulateFireFrame (none/smoke/blaze) + lastFireEvent. lib/security/emergencyEvacuationOrchestrator.ts — tek transaction tahliye: anprGateAccessBridge.emergencyUnlockAllGates (4 kapı EMERGENCY_OPEN), staffTaskDispatched (yangın söndürme/tahliye görevi), notificationEngine (CEO + güvenlik şefi kritik alarm). SentinelVisionGrid içine 🔥 SANAL YANGIN TATBİKATI butonu + alev bbox görseli + tahliye adım kartı eklendi (monitor view).',
+  },
+
+  {
     id: 'n8n-orchestrator',
     title: 'Otonom n8n Orchestrator — Workflow Üretici + 9 Adımlı Ajan Döngüsü',
     icon: '⚡',

@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { buildCameraMatrix, createPpeCheck, sentinelVisionEngineStatus, type MultiCamStreamMatrix, type PPESafetyCompliance, type CamState, type CamChannel } from '../lib/security/sentinelVisionEngine';
 import { diagnoseEquipment, equipmentDiagnosticEngineStatus, type EquipmentDiagnosis } from '../lib/ops/equipmentDiagnosticEngine';
+import { detectFire, simulateFireFrame, fireDetectionEngineStatus, type FireDetection, type FireZone } from '../lib/security/fireDetectionEngine';
+import { orchestrateFireEvacuation, emergencyEvacuationStatus, type EvacuationResult } from '../lib/security/emergencyEvacuationOrchestrator';
 
 // ============================================================================
 // 👁️ SENTINEL VISION GRID — Sanal Kamera Matrisi + İSG Denetim Izgarası
-// + Görsel/Telemetri hibrit ekipman teşhisi (acil bakım görevi tetikler).
+// + Görsel/Telemetri hibrit ekipman teşhisi + 🔥 Alev/Yangın tespit + tatbikat.
 // DazeSentinelHud (monitor view) ile birlikte render edilir. Plan Z güvenli.
 // ============================================================================
 
@@ -18,6 +20,9 @@ export default function SentinelVisionGrid() {
     createPpeCheck({ workerId: 'W-03', helmetDetected: true, vestDetected: true }),
   ]);
   const [diagnosis, setDiagnosis] = useState<EquipmentDiagnosis | null>(null);
+  const [fire, setFire] = useState<FireDetection | null>(null);
+  const [evacuation, setEvacuation] = useState<EvacuationResult | null>(null);
+  const [drillBusy, setDrillBusy] = useState(false);
 
   const simulateAlerts = () => {
     setPpe((prev) => [createPpeCheck({ workerId: 'W-04', helmetDetected: Math.random() > 0.4, vestDetected: Math.random() > 0.3 }), ...prev].slice(0, 4));
@@ -30,6 +35,21 @@ export default function SentinelVisionGrid() {
     setDiagnosis(diagnoseEquipment('EQ-07', 'Jeneratör B', { vibrationMmS: 8.6, rpm: 1450, tempC: 72 }, { wearScore: 0.82, crackScore: 0.1 }));
   };
 
+  const runFireDrill = async () => {
+    setDrillBusy(true);
+    const zone: FireZone = (['Mutfak', 'Glamping', 'Otopark', 'Kort', 'Depo'] as FireZone[])[Math.floor(Math.random() * 5)];
+    const frame = simulateFireFrame(zone, 'blaze');
+    const detection = detectFire(frame, 0.65);
+    setFire(detection);
+    if (detection.verified) {
+      const evc = await orchestrateFireEvacuation(detection);
+      setEvacuation(evc);
+    } else {
+      setEvacuation(null);
+    }
+    setDrillBusy(false);
+  };
+
   const overallColor = matrix.overall === 'NOMINAL' ? '#4ade80' : matrix.overall === 'DEGRADED' ? '#fbbf24' : '#f87171';
 
   return (
@@ -37,11 +57,12 @@ export default function SentinelVisionGrid() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
         <div>
           <div style={{ fontSize: '13px', fontWeight: 900, color: '#38bdf8', letterSpacing: '1px' }}>👁️ SENTINEL VISION — SANAL KAMERA GRID</div>
-          <div style={{ fontSize: '9px', color: '#475569', marginTop: '2px' }}>{sentinelVisionEngineStatus()} • {equipmentDiagnosticEngineStatus()}</div>
+          <div style={{ fontSize: '9px', color: '#475569', marginTop: '2px' }}>{sentinelVisionEngineStatus()} • {equipmentDiagnosticEngineStatus()} • {fireDetectionEngineStatus()}</div>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <span style={{ fontSize: '10px', fontWeight: 900, color: overallColor }}>MATRİS: {matrix.overall}</span>
           <button onClick={simulateAlerts} style={{ fontSize: '10px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.5)', cursor: 'pointer', background: 'rgba(56,189,248,0.1)', color: '#38bdf8', fontFamily: 'inherit' }}>🎥 TARAMA</button>
+          <button onClick={() => void runFireDrill()} disabled={drillBusy} style={{ fontSize: '10px', fontWeight: 900, padding: '7px 12px', borderRadius: '10px', border: '1px solid rgba(239,68,68,0.6)', cursor: drillBusy ? 'wait' : 'pointer', background: 'rgba(239,68,68,0.15)', color: '#f87171', fontFamily: 'inherit' }}>🔥 SANAL YANGIN TATBİKATI</button>
         </div>
       </div>
 
@@ -85,6 +106,31 @@ export default function SentinelVisionGrid() {
           <br />
           {diagnosis.details.map((d) => <span key={d}>• {d}<br /></span>)}
           {diagnosis.maintenanceTaskId && <span style={{ color: '#fbbf24' }}>🧰 Görev: {diagnosis.maintenanceTaskId}</span>}
+        </div>
+      )}
+
+      {/* 🔥 ALEV/YANGIN TESPİT + TAHLİYE */}
+      {fire && (
+        <div style={{ background: fire.verified ? 'rgba(239,68,68,0.12)' : 'rgba(251,191,36,0.08)', border: `1px solid ${fire.verified ? 'rgba(239,68,68,0.5)' : 'rgba(251,191,36,0.4)'}`, borderRadius: '12px', padding: '10px', fontSize: '10px', color: '#e2e8f0', lineHeight: 1.6 }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ width: 90, height: 64, borderRadius: '8px', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.15)', position: 'relative', overflow: 'hidden' }}>
+              {/* Alev bbox görseli */}
+              <div style={{ position: 'absolute', left: `${fire.bbox.x1 * 0.4}%`, top: `${fire.bbox.y1 * 0.4}%`, width: '38%', height: '52%', border: fire.verified ? '2px solid #ef4444' : '2px solid #fbbf24', borderRadius: '4px', boxShadow: fire.verified ? '0 0 12px rgba(239,68,68,0.7)' : 'none' }}>
+                <span style={{ position: 'absolute', top: -12, left: 0, fontSize: '7px', color: '#f87171', fontWeight: 800 }}>FIRE {Math.round(fire.confidence * 100)}%</span>
+              </div>
+            </div>
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <b style={{ color: fire.verified ? '#f87171' : '#fbbf24' }}>🔥 {fire.verified ? 'YANGIN DOĞRULANDI' : 'SİNYAL (eşik altı)'} — {fire.zone}</b> • kamera {fire.cameraId}<br />
+              Güven: <b>{fire.confidence.toFixed(2)}</b> (eşik ≥0.65) • bbox [{fire.bbox.x1},{fire.bbox.y1},{fire.bbox.x2},{fire.bbox.y2}] • frame #{fire.frameIndex}
+              <br />
+              {fire.verified && evacuation && (
+                <>
+                  <span style={{ color: '#fbbf24' }}>🚨 {evacuation.evacuationId} — {emergencyEvacuationStatus()}</span><br />
+                  {evacuation.steps.map((s) => <span key={s.step}>• {s.step}: {s.detail}<br /></span>)}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

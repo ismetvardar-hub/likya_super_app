@@ -56,3 +56,9 @@ export function triggerGateAccess(req: GateEntryRequest): GateEntryResult {
 export function anprGateAccessBridgeStatus(): string {
   return 'ANPR Köprüsü [rezervasyon kodu • plaka tanıma • IoT bariyer sinyali • yerel fallback]';
 }
+
+/** 🔥 ACİL DURUM: tüm bariyer ve turnikeleri EMERGENCY_OPEN konumuna getir. */
+export function emergencyUnlockAllGates(gates: string[] = ['GATE-PARK', 'GATE-COURT', 'GATE-GLAMPING', 'GATE-ENTRANCE']): { ok: boolean; openedGates: string[]; signals: string[] } {
+  const signals = gates.map((g) => `MQTT:BARRIER:${g}:EMERGENCY_OPEN:${Date.now()}`);
+  return { ok: true, openedGates: gates, signals };
+}
