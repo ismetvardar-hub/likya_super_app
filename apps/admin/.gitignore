@@ -1,5 +1,13 @@
 .vercel
 
+# ── Ortam değişkenleri (ASLA commit edilmez) ──
+.env
+.env.local
+.env.production
+.env*.local
+.env*.production
+!.env.example
+
 # TypeScript build artefact
 tsconfig.tsbuildinfo
 *.tsbuildinfo
