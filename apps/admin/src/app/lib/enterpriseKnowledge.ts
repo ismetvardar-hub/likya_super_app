@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-ams',
+    title: 'Bütünleşik Spor & Akademi Yönetim Motoru — Otonom Karne + Servis Radarı + ACWR',
+    icon: '📊',
+    keywords: ['karnesi', 'gelişim karnesi', 'otonom', 'acwr', 'catapult', 'yük', 'efor', 'servis', 'radar', 'gps', 'eta', 'turnike', 'güvenlik', 'yoklama', 'red flag', 'sakatlık', 'shuttle', 'spor akademik'],
+    content:
+      'lib/sports/autonomousReportCard.ts — SportVisionX telemetrisinden (vuruş hızı/isabet/CatchPad ms/yorgunluk) otomatik branş bazlı gelişim karnesi: 5 yıldız, ACWR (akut:kronik yük oranı, >1.5 kırmızı bayrak), Catapult AU haftalık yük indeksi + 4 haftalık trend. redFlagScan (sakatlık risk radarı), buildAttendanceList (BLE band ile otomatik toplu yoklama). lib/ops/facilityShuttleRadar.ts — servis GPS rota simülasyonu (6 durak, ETA), recordGateEntry → "Efe 14:02 itibarıyla Pazu Bandı ile Ana Turnike üzerinden Giriş Yaptı" güvenlik bildirimi (smartArmbandEngine entegre), olay günlüğü. UI: ExtremeSCustomerPortal "Canlı Gelişim Karnem" (yıldız + telemetri grid + Catapult efor barı) + "Kulüp İçi Radar & Servis" (servis konumu/ETA + turnike geçiş geçmişi); DazeCrewView "Antrenör Paneli" (tek tık yoklama + red flag). Smoke test: scripts/sportsAmsSmokeTest.mts (10/10).',
+  },
+
+  {
     id: 'armband-sportvision',
     title: 'Akıllı Pazu Bandı (NFC/BLE) + SportVisionX Biyometrik Koçluk Köprüsü',
     icon: '⌚',

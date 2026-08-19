@@ -7,6 +7,8 @@ import { requestChildPurchase, approvePurchase, parentalApprovalEngineStatus, ty
 import { maskCard } from '../lib/security/kvkkMaskingEngine';
 import { initMockBands, assignBandToMember, reportLost, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
 import { buildDailyPerformance, recordTelemetry, recordCoaching, matchPlayerToBeacon, startCourtSession, averageReaction, type TelemetrySample, type CoachingRecord, type DailyPerformance } from '../lib/sports/armbandCoachingBridge';
+import { buildAutonomousReportCard, buildWeekTrend, autonomousReportCardStatus, type AthleteReportCard, type WeekTrendPoint } from '../lib/sports/autonomousReportCard';
+import { getShuttleStatus, advanceShuttle, recordGateEntry, getSecurityLog, facilityShuttleRadarStatus, type ShuttleStatus, type SecurityEvent } from '../lib/ops/facilityShuttleRadar';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -35,6 +37,10 @@ export default function ExtremeSCustomerPortal() {
   const [accessMsg, setAccessMsg] = useState('');
   const [posMsg, setPosMsg] = useState('');
   const [coach, setCoach] = useState<CoachingRecord | null>(null);
+  const [card, setCard] = useState<AthleteReportCard>(() => buildAutonomousReportCard('Efe'));
+  const [trend, setTrend] = useState<WeekTrendPoint[]>(() => buildWeekTrend('Efe'));
+  const [shuttle, setShuttle] = useState<ShuttleStatus>(() => getShuttleStatus());
+  const [secLog, setSecLog] = useState<SecurityEvent[]>(() => getSecurityLog());
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -171,6 +177,76 @@ export default function ExtremeSCustomerPortal() {
             📡 Canlı: {averageReaction().avgMs} ms reaksiyon ort. • %{averageReaction().hitRatePct} CatchPad isabet • en iyi {averageReaction().bestMs} ms
           </div>
         )}
+      </div>
+
+      {/* CANLI GELİŞİM KARNEM — OTONOM */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>📊 Canlı Gelişim Karnem — {card.branch} <span style={{ fontSize: '9px', color: '#64748b', fontWeight: 500 }}>SportVisionX telemetrisinden otomatik</span></div>
+          <span style={{ fontSize: '11px', fontWeight: 900, color: '#f59e0b' }}>{'⭐'.repeat(card.stars)}{'☆'.repeat(5 - card.stars)}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px', marginTop: '10px' }}>
+          {[
+            ['🎯 İsabet', `%${card.telemetry.accuracyPct}`, '#4f46e5'],
+            ['⚡ Vuruş Hızı', `${card.telemetry.swingSpeedKmh} km/h`, '#7c3aed'],
+            ['⏱️ Reaksiyon', `${card.telemetry.catchPadMs} ms`, '#0891b2'],
+            ['🫀 Yorgunluk', `%${card.telemetry.fatiguePct}`, card.telemetry.fatiguePct > 80 ? '#dc2626' : '#059669'],
+            ['🛡️ ACWR', `${card.acwr}`, card.acwr > 1.4 ? '#dc2626' : '#059669'],
+            ['📈 Haftalık Yük', `${card.weeklyLoad} AU`, '#9333ea'],
+          ].map(([k, v, c]) => (
+            <div key={k as string} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px', textAlign: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>{k}</div>
+              <div style={{ fontSize: '15px', fontWeight: 900, color: c as string }}>{v}</div>
+            </div>
+          ))}
+        </div>
+        {/* Catapult tarzı 4 haftalık efor barı */}
+        <div style={{ marginTop: '12px' }}>
+          <div style={{ fontSize: '9px', color: '#64748b', marginBottom: '4px' }}>Catapult tarzı haftalık efor (AU)</div>
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'flex-end', height: '44px' }}>
+            {trend.map((t) => (
+              <div key={t.week} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                <div style={{ fontSize: '8px', fontWeight: 700, color: t.acwr > 1.4 ? '#dc2626' : '#64748b' }}>{t.load}</div>
+                <div style={{ width: '100%', height: `${Math.min(100, (t.load / 3500) * 100)}%`, minHeight: '10px', borderRadius: '6px 6px 2px 2px', background: t.acwr > 1.4 ? 'linear-gradient(180deg,#ef4444,#fca5a5)' : 'linear-gradient(180deg,#4f46e5,#a78bfa)' }} />
+                <div style={{ fontSize: '8px', color: '#94a3b8' }}>{t.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ fontSize: '10px', fontWeight: 600, color: card.acwr > 1.3 ? '#b45309' : '#059669', background: card.acwr > 1.3 ? '#fffbeb' : '#f0fdf4', border: '1px solid currentColor', borderRadius: '10px', padding: '8px 12px', marginTop: '10px' }}>🧠 {card.coachNote}</div>
+      </div>
+
+      {/* KULÜP İÇİ RADAR & SERVİS */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🚌 Kulüp İçi Radar & Servis</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#0369a1', background: '#e0f2fe', padding: '4px 10px', borderRadius: '999px' }}>{autonomousReportCardStatus().split('•')[0]} • {facilityShuttleRadarStatus()}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 12px' }}>
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🚐 SRV-07 — {shuttle.nextStop.name}</div>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>📍 {shuttle.currentPoint.lat}, {shuttle.currentPoint.lng} • {shuttle.driver} • {shuttle.passengers}/{shuttle.capacity} yolcu</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '18px', fontWeight: 900, color: '#0284c7' }}>{shuttle.etaMinutes} dk</div>
+              <div style={{ fontSize: '8px', color: '#64748b' }}>tahmini varış</div>
+            </div>
+            <button onClick={() => { setShuttle(advanceShuttle(18)); }} style={lightBtn}>📡 Konumu Güncelle</button>
+          </div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => { const e = recordGateEntry('Efe', 'NFC-8A3F21', 'Ana Turnike'); setSecLog(getSecurityLog()); setBandMsg(e.message); }} style={lightBtn}>🛡️ Efe Giriş Kaydet</button>
+            <button onClick={() => { const e = recordGateEntry('Deniz', 'NFC-44D9B0', 'Spor Kompleksi'); setSecLog(getSecurityLog()); setBandMsg(e.message); }} style={lightBtn}>🛡️ Deniz Giriş Kaydet</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            {secLog.slice(0, 4).map((e) => (
+              <div key={e.id} style={{ fontSize: '9.5px', color: '#334155', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '7px 10px' }}>
+                <span style={{ fontWeight: 800, color: '#4f46e5' }}>{e.time}</span> • {e.message}
+              </div>
+            ))}
+            {secLog.length === 0 && <div style={{ fontSize: '9.5px', color: '#94a3b8' }}>Henüz güvenlik olayı yok — turnike geçişleri burada listelenir.</div>}
+          </div>
+        </div>
       </div>
 
       {/* 10x REFERANS */}
