@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sentinel-vision-hybrid',
+    title: 'Sentinel Computer Vision HUD + Hibrit Ekipman Teşhisi + Şut Denge',
+    icon: '👁️',
+    keywords: ['sentinel', 'yolov11', 'yüz tanıma', 'face gate', 'isg', 'kask', 'yelek', 'ekipman', 'teşhis', 'belt wear', 'titreşim', 'şut', 'denge', 'landing', 'iniş'],
+    content:
+      'lib/security/sentinelVisionEngine.ts — YOLOv11/AI Box veri modelleri: FaceGateAccess (yüz eşleşme ≥0.82 → geçiş), HumanIntrusionAlert (bbox + conf 0.94), PPESafetyCompliance (kask/yelek → Compliant/Violation + violationType), MultiCamStreamMatrix (4 kanal: STREAMING/NOISE/OFFLINE + NOMINAL/DEGRADED/CRITICAL). lib/ops/equipmentDiagnosticEngine.ts — görsel (wear/crack) + telemetri (titreşim/temp/RPM) hibrit teşhis: BELT_WEAR → OVERHEATING (78°C) → VIBRATION_ANOMALY (7.1mm/s) önceliği + acil bakım görevi (dazeHubEventBus) + kritik tesis PWA bildirimi. lib/sports/shootingBaseBiomechanics.ts — ayak genişliği (omuz 0.8-1.3 ideal), diz valgusu (>10° inward cave), stacked posture (≤5cm kayma), sessiz iniş skoru (dB→0-100) + baseScore + reçete. UI: SentinelVisionGrid (DazeSentinelHud içinde sanal kamera + İSG ızgarası + TARAMA), ShootingBalanceCard (SportVisionX denge & iniş skoru).',
+  },
+
+  {
     id: 'daze-market-maker',
     title: 'Daze Market Maker + Neural Shell Telemetry HUD',
     icon: '📈',

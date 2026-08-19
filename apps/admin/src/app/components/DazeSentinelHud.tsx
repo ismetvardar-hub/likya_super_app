@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { diagnose, autoRemediate, holmesStatus, type RcaResult } from '../lib/ops/holmesDiagnosticEngine';
 import { runStrixAudit, strixStatus } from '../lib/security/strixSecurityAudit';
+import SentinelVisionGrid from './SentinelVisionGrid';
 
 // ============================================================================
 // 📊 DAZE SENTINEL HUD — AI Olay İnceleme + Tek Tıkla Auto-Remediate
@@ -114,6 +115,9 @@ export default function DazeSentinelHud() {
           </div>
         ))}
       </div>
+
+      {/* 👁️ Bilgisayarlı Görü / İSG Denetim Izgarası (Sentinel Vision) */}
+      <SentinelVisionGrid />
     </div>
   );
 }

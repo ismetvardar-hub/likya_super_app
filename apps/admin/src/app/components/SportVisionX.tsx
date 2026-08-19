@@ -5,6 +5,7 @@ import { Send } from 'lucide-react';
 import CourtConditionerPanel from './CourtConditionerPanel';
 import CsmTacticalPanel from './CsmTacticalPanel';
 import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
+import ShootingBalanceCard from './ShootingBalanceCard';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -67,6 +68,9 @@ export default function SportVisionX() {
 
       {/* 🩹 Rehab & Taktik Kartlar — PEACE·LOVE • 20s Huddle • Çizgi • Kaleci • Speed Transition */}
       <SportsRehabHuddlePanel />
+
+      {/* 🏀 Şut Denge Temeli — Base & Landing Balance */}
+      <ShootingBalanceCard />
     </div>
   );
 }
