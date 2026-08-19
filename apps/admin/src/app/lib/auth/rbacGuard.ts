@@ -5,7 +5,7 @@
 // Saf fonksiyonlar; Plan Z güvenli — anahtar/oturum yoksa reddeder, çökmez.
 // ============================================================================
 
-export type RbacRole = 'ceo' | 'manager' | 'staff' | 'customer' | 'public';
+export type RbacRole = 'ceo' | 'manager' | 'coach' | 'staff' | 'parent' | 'athlete' | 'customer' | 'public';
 
 export interface RbacToken {
   sub: string;
@@ -21,7 +21,7 @@ export interface RbacDecision {
   token: RbacToken | null;
 }
 
-const ROLE_HIERARCHY: Record<RbacRole, number> = { ceo: 4, manager: 3, staff: 2, customer: 1, public: 0 };
+const ROLE_HIERARCHY: Record<RbacRole, number> = { ceo: 6, manager: 5, coach: 4, staff: 3, parent: 2, athlete: 1, customer: 1, public: 0 };
 
 /** JWT payload çözümle (doğrulama anahtarı olmadan içerik; imza kontrolü sunucuda). */
 export function decodeJwtPayload(token: string): Record<string, unknown> | null {
@@ -46,7 +46,7 @@ export function resolveRbacToken(authHeader?: string): RbacToken | null {
     ? String((payload.app_metadata as Record<string, unknown>).role ?? '')
     : '';
   const rawRole = String(payload.role ?? supabaseRole ?? 'customer');
-  const role: RbacRole = (['ceo', 'manager', 'staff', 'customer'] as RbacRole[]).includes(rawRole as RbacRole) ? rawRole as RbacRole : 'customer';
+  const role: RbacRole = (['ceo', 'manager', 'coach', 'staff', 'parent', 'athlete', 'customer'] as RbacRole[]).includes(rawRole as RbacRole) ? rawRole as RbacRole : 'customer';
 
   return { sub: String(payload.sub), role, email: payload.email ? String(payload.email) : undefined, tenantId: payload.tenant_id ? String(payload.tenant_id) : undefined, exp: typeof payload.exp === 'number' ? payload.exp : undefined };
 }
@@ -68,5 +68,5 @@ export function authorize(authHeader: string | undefined, required: RbacRole): R
 }
 
 export function rbacGuardStatus(): string {
-  return 'RBAC Guard [JWT decode • Supabase+Logto hibrit • rol hiyerarşisi ceo>manager>staff>customer]';
+  return 'RBAC Guard [JWT decode • Supabase+Logto hibrit • rol hiyerarşisi ceo>manager>coach>staff>parent>athlete/customer>public]';
 }
