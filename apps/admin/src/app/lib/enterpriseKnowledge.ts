@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'telemetry-dashboard',
+    title: 'ExtremeS Canlı Biyometrik Telemetri & Kıyas Kontrol Paneli',
+    icon: '🖥️',
+    keywords: ['telemetri', 'biyometrik', 'kıyas', 'nabız', 'hrm', 'kol kinematiği', 'miband', 'fsr', 'tabanlık', 'basınç haritası', 'gct', 'zemin temas', 'savrulma', 'loading rate', 'darbe dayanımı', 'yorgunluk', 'zaman grafiği', 'canlı yayın'],
+    content:
+      'lib/sports/liveTelemetryEngine.ts — Canlı biyometrik kıyas motoru: HRM nabız (zon/hedef <160bpm), MiBand kol kinematiği (savrulma ≥110km/h hedefi), FSR tabanlık (GCT <200ms, ön ayak %65+), darbe yükleme oranı (<2.5kN/s güvenli). buildComparisonRows profesyonel referans değerlerle anlık sapma analizi (Optimal/Yüksek/-kmh/Doğru Form/Güvenli + anlam), darbe dayanımı %91 ve yorgunluk riski indeksi, buildTimeSeries nabız+GCT zaman serisi. Mock-first deterministik canlı simülasyon (donanım geldiğinde navigator.bluetooth ile bu şemaya akar). UI: components/ExtremeSLiveTelemetryDashboard.tsx — 4 bölgeli tek ekran: (1) Canlı Sensör Verileri (❤️ nabız+HRV, ⚡ kol kinetiği, 👟 GCT), (2) Ayakkabı Basınç Haritası (ön/topuk ısı görseli), (3) Anlık Kıyas & Sapma tablosu + darbe/yorgunluk kartları, (4) Nabız (kırmızı) + GCT (mavi) SVG zaman grafiği; ● CANLI YAYIN rozeti + durdur/devam. SportVisionX ⌚ Pazu Bandı sekmesinin en üstüne entegre. Smoke: scripts/telemetrySmokeTest.mts (5/5).',
+  },
+
+  {
     id: 'sports-referee-multisport',
     title: 'Evrensel Çok Branşlı AI Canlı Hakem — Tenis, Padel, Futbol, Basketbol, Voleybol',
     icon: '🏛️',

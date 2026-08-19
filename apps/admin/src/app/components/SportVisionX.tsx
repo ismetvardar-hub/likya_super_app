@@ -8,6 +8,7 @@ import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
 import ShootingBalanceCard from './ShootingBalanceCard';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import CatchPadReactionCard from './CatchPadReactionCard';
+import ExtremeSLiveTelemetryDashboard from './ExtremeSLiveTelemetryDashboard';
 import { initMockBands, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
 import { startCourtSession, recordTelemetry, matchPlayerToBeacon, fatigueRisk, averageReaction, armbandCoachingBridgeStatus, type TelemetrySample } from '../lib/sports/armbandCoachingBridge';
 import { generateStepTelemetry, computeContactMetrics, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
@@ -70,7 +71,12 @@ export default function SportVisionX() {
       {tab === 'clip' && <ClipFactoryModule />}
       {tab === 'thermal' && <ThermalRadarModule />}
       {tab === 'metabolic' && <MetabolicBridgeModule />}
-      {tab === 'armband' && <ArmbandTelemetryModule />}
+      {tab === 'armband' && (
+        <>
+          <ExtremeSLiveTelemetryDashboard />
+          <ArmbandTelemetryModule />
+        </>
+      )}
 
       {/* 📋 Drill Kütüphanesi — tüm sekmelerde erişilebilir (17s + U8-U16 matris) */}
       <CourtConditionerPanel />
