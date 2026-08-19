@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'armband-sportvision',
+    title: 'Akıllı Pazu Bandı (NFC/BLE) + SportVisionX Biyometrik Koçluk Köprüsü',
+    icon: '⌚',
+    keywords: ['pazu bandı', 'armband', 'nfc', 'rfid', 'ble beacon', 'depozito', '500', 'turnike', 'kantin', 'pos', 'veli onayı', 'sportvision', 'koçluk', 'telemetri', 'yoklama', 'catchpad', 'yorgunluk'],
+    content:
+      'lib/hardware/smartArmbandEngine.ts — ArmbandDevice şeması (nfcTagId + bleUuid + assignedUserId + ownerFamilyId + status ACTIVE/RETURNED/LOST + depositAmount 500₺). assignBandToMember (depozito kaydı), processReturn (₺500 iade), reportLost (anında kilitle + irat), onTapAccess (kapı/turnike NFC), posSwipeCanteen (kantin POS: çocuk >150₺ harcamada parentalApprovalEngine tetikler). lib/sports/armbandCoachingBridge.ts — matchPlayerToBeacon (kamera BBox ↔ BLE eşleşmesi, kimlik karışıklığı sıfır), startCourtSession (kort girişinde otomatik yoklama + seans), recordTelemetry (kol ivmesi/salınım/şut/yorgunluk eşiği/CatchPad ms), recordCoaching (antrenör sahada aktif süre + sporcu başına ilgilenme), buildDailyPerformance (günün karnesi: şut/isabet/kalori/antrenör notu). Mock-first: donanım yoksa deterministik simülasyon. ExtremeSCustomerPortal — "Akıllı Pazu Bantlarım" kartı (kilitle/iade/yeni bant + turnike + POS testleri) + "Günün Antrenman Performansı" (otomatik karne + koç modu). SportVisionX — yeni ⌚ Pazu Bandı sekmesi: canlı telemetri grid, BBox↔BLE eşleştirici, resepsiyon "Teslim Al & İade Et" butonu, yorgunluk radarı. Smoke test: scripts/armbandSmokeTest.mts (12/12).',
+  },
+
+  {
     id: 'extremes-superapp',
     title: 'ExtremeS Global Spor Süper-Uygulaması — Pass/Stay/Market/Maç',
     icon: '🚀',

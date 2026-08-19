@@ -5,6 +5,8 @@ import { priceFamily, referralTier, generateReferralCode, whatsappInviteText, wh
 import { createLessonCredit, vaultBalance, reserveMakeup, transferCredit, lessonCreditVaultStatus, type CreditVault, type LessonCredit } from '../lib/sports/lessonCreditVault';
 import { requestChildPurchase, approvePurchase, parentalApprovalEngineStatus, type PurchaseRequest } from '../lib/finance/parentalApprovalEngine';
 import { maskCard } from '../lib/security/kvkkMaskingEngine';
+import { initMockBands, assignBandToMember, reportLost, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
+import { buildDailyPerformance, recordTelemetry, recordCoaching, matchPlayerToBeacon, startCourtSession, averageReaction, type TelemetrySample, type CoachingRecord, type DailyPerformance } from '../lib/sports/armbandCoachingBridge';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -26,6 +28,13 @@ export default function ExtremeSCustomerPortal() {
   });
   const [approval, setApproval] = useState<{ state: string; message: string } | null>(null);
   const [referrals, setReferrals] = useState(3);
+  const [bands, setBands] = useState<ArmbandDevice[]>(() => initMockBands());
+  const [perf, setPerf] = useState<DailyPerformance>(() => buildDailyPerformance('Efe'));
+  const [telemetry, setTelemetry] = useState<TelemetrySample[]>([]);
+  const [bandMsg, setBandMsg] = useState('');
+  const [accessMsg, setAccessMsg] = useState('');
+  const [posMsg, setPosMsg] = useState('');
+  const [coach, setCoach] = useState<CoachingRecord | null>(null);
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -88,6 +97,80 @@ export default function ExtremeSCustomerPortal() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* AKILLI PAZU BANDI KARTI */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🏷️ Akıllı Pazu Bantlarım <span style={{ fontWeight: 500, color: '#64748b', fontSize: '9px' }}>NFC/RFID + BLE Beacon</span></div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#4f46e5', background: '#eef2ff', padding: '4px 10px', borderRadius: '999px' }}>{smartArmbandEngineStatus()}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
+          {bands.map((b) => (
+            <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px 12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '22px' }}>⌚</span>
+                <div>
+                  <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>{b.id} — {b.assignedUserId} <span style={{ fontSize: '9px', color: '#64748b' }}>{b.nfcTagId} · {b.bleUuid}</span></div>
+                  <div style={{ fontSize: '9px', color: b.status === 'ACTIVE' ? '#059669' : b.status === 'RETURNED' ? '#64748b' : '#dc2626' }}>
+                    {b.status === 'ACTIVE' ? '🟢 Aktif' : b.status === 'RETURNED' ? '⚪ İade edildi' : '🔴 Kayıp/Kilitli'} • Depozito ₺{b.depositAmount} {b.status === 'ACTIVE' ? '(iade edilebilir)' : b.status === 'LOST' ? '(irat edildi)' : '(iade edildi)'}
+                  </div>
+                </div>
+              </div>
+              {b.status === 'ACTIVE' && (
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button onClick={() => { const r = reportLost(b.id); setBands(initMockBands()); setBandMsg(`🚨 ${b.id} kilitlendi — erişim iptal, ₺${r.forfeitedTl} irat`); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid #fecaca', background: '#fef2f2', color: '#dc2626', cursor: 'pointer' }}>🔒 Kaybettim / Kilitle</button>
+                  <button onClick={() => { const r = processReturn(b.id); setBands(initMockBands()); setBandMsg(r.ok ? `✅ ${r.message}` : `⚠️ ${r.message}`); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid #bbf7d0', background: '#f0fdf4', color: '#059669', cursor: 'pointer' }}>↩️ İade Et</button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button onClick={() => { const { band } = assignBandToMember('Efe', 'FAM-1'); setBands(initMockBands()); setBandMsg(`🆕 ${band.id} atandı (${band.bleUuid}) — 500 ₺ depozito kaydedildi`); }} style={lightBtn}>➕ Yeni Bant Talep Et</button>
+          <button onClick={() => { setAccessMsg(onTapAccess('NFC-8A3F21').reason); }} style={lightBtn}>🚪 Kapı NFC Testi</button>
+          <button onClick={() => { const r = posSwipeCanteen('BND-001', 190, 'Menü 2 + İçecek'); setPosMsg(r.parentalNotice ? `🛡️ ${r.state} — Ebeveyn onayı beklemede! ${r.message.slice(0, 40)}` : `💳 ${r.message}`); }} style={lightBtn}>🛒 POS ₺190 (Çocuk)</button>
+        </div>
+        <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+          {bandMsg && <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#4f46e5', background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '10px', padding: '6px 10px' }}>{bandMsg}</span>}
+          {accessMsg && <span style={{ fontSize: '9.5px', fontWeight: 700, color: accessMsg.includes('✅') ? '#059669' : '#dc2626', background: accessMsg.includes('✅') ? '#f0fdf4' : '#fef2f2', border: '1px solid currentColor', borderRadius: '10px', padding: '6px 10px' }}>{accessMsg}</span>}
+          {posMsg && <span style={{ fontSize: '9.5px', fontWeight: 700, color: posMsg.includes('onayı beklemede') ? '#b45309' : '#059669', background: posMsg.includes('onayı beklemede') ? '#fffbeb' : '#f0fdf4', border: '1px solid currentColor', borderRadius: '10px', padding: '6px 10px' }}>{posMsg}</span>}
+        </div>
+      </div>
+
+      {/* GÜNÜN ANTRENMAN PERFORMANSI KARTI */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🏃 Günün Antrenman Performansı — Efe</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#7c3aed', background: '#f5f3ff', padding: '4px 10px', borderRadius: '999px' }}>SportVisionX + Pazu Bandı Otomatik Karne</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px', marginTop: '10px' }}>
+          {[
+            ['🎾 Şut', `${perf.shots}`],
+            ['🎯 İsabet', `%${perf.accuracyPct}`],
+            ['🔥 Kalori', `${perf.calories} kcal`],
+            ['⚡ Ort. Salınım', `${perf.avgSwingKmh} km/h`],
+            ['🫀 Yorgunluk', `%${perf.maxFatiguePct}`],
+            ['⏱️ CatchPad', `${perf.avgCatchPadMs} ms`],
+          ].map(([k, v]) => (
+            <div key={k} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '10px', textAlign: 'center' }}>
+              <div style={{ fontSize: '9px', color: '#64748b' }}>{k}</div>
+              <div style={{ fontSize: '16px', fontWeight: 900, color: '#0f172a' }}>{v}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: '10px', fontWeight: 600, color: perf.maxFatiguePct > 80 ? '#b45309' : '#059669', background: perf.maxFatiguePct > 80 ? '#fffbeb' : '#f0fdf4', border: '1px solid currentColor', borderRadius: '10px', padding: '8px 12px', marginTop: '10px' }}>🧑‍🏫 Antrenör notu: {perf.coachNote}</div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+          <button onClick={() => { const s = startCourtSession('Efe', 'BLE-7C91-E2', 'Padel Kort A'); setBandMsg(`🏁 Seans başladı (${s.court}) — yoklama yazıldı`); }} style={lightBtn}>🏁 Korta Gir (Yoklama)</button>
+          <button onClick={() => { const t = recordTelemetry('Efe', 24 + telemetry.length); setTelemetry((p) => [...p, t]); const p = buildDailyPerformance('Efe'); setPerf(p); }} style={lightBtn}>📡 Telemetri Al ({telemetry.length + 25}. şut)</button>
+          <button onClick={() => { const c = recordCoaching('CO-1', 'Padel Kort A', 45, 4); setCoach(c); setBandMsg(`🧑🏫 Koçluk kaydı: 45 dk sahada → sporcu başına ${c.attentionPerPlayerMin} dk ilgilenme`); }} style={lightBtn}>🧑🏫 Koç Modu (45 dk)</button>
+          {coach && <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#059669', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '6px 10px' }}>Antrenör: {coach.activeMinutes} dk aktif • {coach.attentionPerPlayerMin} dk/sporcu</span>}
+        </div>
+        {telemetry.length > 0 && (
+          <div style={{ marginTop: '10px', fontSize: '9px', color: '#64748b' }}>
+            📡 Canlı: {averageReaction().avgMs} ms reaksiyon ort. • %{averageReaction().hitRatePct} CatchPad isabet • en iyi {averageReaction().bestMs} ms
+          </div>
+        )}
       </div>
 
       {/* 10x REFERANS */}

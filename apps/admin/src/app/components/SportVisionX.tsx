@@ -8,6 +8,8 @@ import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
 import ShootingBalanceCard from './ShootingBalanceCard';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import CatchPadReactionCard from './CatchPadReactionCard';
+import { initMockBands, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
+import { startCourtSession, recordTelemetry, matchPlayerToBeacon, fatigueRisk, averageReaction, armbandCoachingBridgeStatus, type TelemetrySample } from '../lib/sports/armbandCoachingBridge';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -16,7 +18,7 @@ import CatchPadReactionCard from './CatchPadReactionCard';
 // 5. Metabolik Bar Köprüsü
 // ============================================================================
 
-type XTab = 'ghost' | 'acoustic' | 'clip' | 'thermal' | 'metabolic';
+type XTab = 'ghost' | 'acoustic' | 'clip' | 'thermal' | 'metabolic' | 'armband';
 
 const TABS: { id: XTab; icon: string; label: string }[] = [
   { id: 'ghost', icon: '🩻', label: 'Ghost Avatar' },
@@ -24,6 +26,7 @@ const TABS: { id: XTab; icon: string; label: string }[] = [
   { id: 'clip', icon: '🎬', label: 'Klip Fabrikası' },
   { id: 'thermal', icon: '🧯', label: 'Termal Radar' },
   { id: 'metabolic', icon: '🥗', label: 'Metabolik Bar' },
+  { id: 'armband', icon: '⌚', label: 'Pazu Bandı' },
 ];
 
 export default function SportVisionX() {
@@ -61,6 +64,7 @@ export default function SportVisionX() {
       {tab === 'clip' && <ClipFactoryModule />}
       {tab === 'thermal' && <ThermalRadarModule />}
       {tab === 'metabolic' && <MetabolicBridgeModule />}
+      {tab === 'armband' && <ArmbandTelemetryModule />}
 
       {/* 📋 Drill Kütüphanesi — tüm sekmelerde erişilebilir (17s + U8-U16 matris) */}
       <CourtConditionerPanel />
@@ -417,4 +421,83 @@ function MetabolicBridgeModule() {
     </div>
   );
 }
+
+// ============================================================================
+// ⌚ PAZU BANDI — CANLI TELEMETRİ + RESEPSİYON DEPOZİTO İADE
+// SportVisionX x Smart Armband köprüsü (mock-first: donanım yoksa simülasyon)
+// ============================================================================
+function ArmbandTelemetryModule() {
+  const [bands] = React.useState<ArmbandDevice[]>(() => initMockBands());
+  const [telemetry, setTelemetry] = React.useState<TelemetrySample[]>([]);
+  const [matchMsg, setMatchMsg] = React.useState('');
+  const [accessMsg, setAccessMsg] = React.useState('');
+  const [refundMsg, setRefundMsg] = React.useState('');
+  const [sessionMsg, setSessionMsg] = React.useState('');
+  const risk = fatigueRisk();
+
+  const latest = telemetry.length ? telemetry[telemetry.length - 1] : null;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', padding: '16px', borderRadius: '18px', background: 'linear-gradient(160deg, rgba(139,92,246,0.06), rgba(0,242,254,0.04))', border: '1px solid rgba(139,92,246,0.25)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff' }}>⌚ Canlı Pazu Bandı Telemetrisi</div>
+        <span style={{ fontSize: '9px', fontWeight: 700, color: '#c4b5fd', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.35)', padding: '4px 10px', borderRadius: '999px' }}>{armbandCoachingBridgeStatus()}</span>
+      </div>
+
+      {/* Atanan bantlar + resepsiyon iade */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {bands.map((b) => (
+          <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap', padding: '10px 12px', borderRadius: '12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>{b.id} — {b.assignedUserId}</div>
+              <div style={{ fontSize: '9px', color: '#94a3b8' }}>{b.nfcTagId} · {b.bleUuid} • depozito ₺{b.depositAmount} • {b.status}</div>
+            </div>
+            {b.status === 'ACTIVE' && (
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <button onClick={() => { const s = startCourtSession(b.assignedUserId, b.bleUuid, 'Padel Kort A'); setSessionMsg(`🏁 ${b.assignedUserId} kortta — seans + yoklama yazıldı (${s.court})`); }} style={cyBtn}>🏁 Seans Başlat</button>
+                <button onClick={() => { setAccessMsg(onTapAccess(b.nfcTagId).reason); }} style={cyBtn}>🚪 Turnike Testi</button>
+                <button onClick={() => { const r = processReturn(b.id); setRefundMsg(r.ok ? `✅ ${r.message}` : `⚠️ ${r.message}`); }} style={{ ...cyBtn, color: '#4ade80', borderColor: 'rgba(74,222,128,0.4)' }}>💳 Teslim Al & İade Et</button>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+
+      {/* Canlı telemetri okumaları */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px' }}>
+        {[
+          ['📡 Kol İvmesi', latest ? `${latest.armAccelGs} G` : '—', '#00f2fe'],
+          ['🏓 Salınım Hızı', latest ? `${latest.swingSpeedKmh} km/h` : '—', '#a78bfa'],
+          ['🎾 Şut', latest ? `${latest.shots}` : '—', '#f472b6'],
+          ['🫀 Yorgunluk', risk.currentPct ? `%${Math.round(risk.currentPct)}` : '—', risk.riskActive ? '#fb7185' : '#4ade80'],
+        ].map(([k, v, c]) => (
+          <div key={k as string} style={{ padding: '12px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ fontSize: '9px', color: '#94a3b8' }}>{k}</div>
+            <div style={{ fontSize: '18px', fontWeight: 900, color: c as string }}>{v}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Kamera BBox ↔ BLE eşleşme + CatchPad + yorgunluk uyarısı */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <button onClick={() => { const m = matchPlayerToBeacon('TRK-004', 'BLE-7C91-E2', bands); setMatchMsg(m.matched ? `🎯 Kamera TRK-004 ↔ ${m.playerId} eşleşti (güven %${m.confidencePct})` : '⚠️ BLE eşleşmesi yok — bant aktif değil'); }} style={cyBtn}>🔍 BBox ↔ BLE Eşleştir</button>
+        <button onClick={() => { const t = recordTelemetry('Efe', 24 + telemetry.length); setTelemetry((p) => [...p, t]); }} style={cyBtn}>📈 Telemetri Örneği</button>
+        <button onClick={() => { const r = posSwipeCanteen('BND-001', 190, 'Menü 2'); setAccessMsg(r.parentalNotice ? `🛡️ POS: ${r.state} — ebeveyn onayı` : `💳 POS: ${r.message}`); }} style={cyBtn}>🛒 POS ₺190</button>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        {matchMsg && <span style={{ fontSize: '10px', fontWeight: 700, color: matchMsg.includes('🎯') ? '#4ade80' : '#fb7185' }}>{matchMsg}</span>}
+        {sessionMsg && <span style={{ fontSize: '10px', fontWeight: 700, color: '#00f2fe' }}>{sessionMsg}</span>}
+        {accessMsg && <span style={{ fontSize: '10px', fontWeight: 700, color: accessMsg.includes('✅') || accessMsg.includes('💳') ? '#4ade80' : accessMsg.includes('🛡️') ? '#fbbf24' : '#fb7185' }}>{accessMsg}</span>}
+        {refundMsg && <span style={{ fontSize: '10px', fontWeight: 700, color: refundMsg.includes('✅') ? '#4ade80' : '#fb7185' }}>{refundMsg}</span>}
+      </div>
+      <div style={{ fontSize: '9px', color: '#475569' }}>
+        ⏱️ CatchPad ort: {averageReaction().avgMs} ms • isabet %{averageReaction().hitRatePct} • {risk.riskActive ? '⚠️ YORGUNLUK EŞİĞİ AŞILDI — mola önerilir' : '💚 Yorgunluk normal'} • {smartArmbandEngineStatus()}
+      </div>
+    </div>
+  );
+}
+
+const cyBtn: React.CSSProperties = { fontSize: '9.5px', fontWeight: 800, padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(0,242,254,0.4)', background: 'rgba(0,242,254,0.08)', color: '#00f2fe', cursor: 'pointer' };
+
 
