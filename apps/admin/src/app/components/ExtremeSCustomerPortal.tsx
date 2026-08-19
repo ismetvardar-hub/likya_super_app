@@ -11,6 +11,9 @@ import { buildAutonomousReportCard, buildWeekTrend, autonomousReportCardStatus, 
 import { getShuttleStatus, advanceShuttle, recordGateEntry, getSecurityLog, facilityShuttleRadarStatus, type ShuttleStatus, type SecurityEvent } from '../lib/ops/facilityShuttleRadar';
 import { generateStepTelemetry, computeContactMetrics, classifyGait, gaitLabel, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
 import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObservation } from '../lib/sports/multimodalFusionBridge';
+import { mockTournamentPlayers, generateSingleElimBracket, recordBracketScore, buildLeaderboard, eloChange, tournamentEngineStatus, type BracketMatch, type TournamentPlayer } from '../lib/sports/tournamentEngine';
+import { initOpenMatches, findOpenMatches, joinOpenMatch, missingAnnouncement, openMatchEngineStatus, type OpenMatch } from '../lib/sports/openMatchEngine';
+import { MARKET_ITEMS, DAZE_ITEMS, placeCourtDelivery, tickDelivery, markDelivered, getDeliveryOrders, courtDeliveryEngineStatus, type DeliveryOrder, type DeliveryItem } from '../lib/ops/courtDeliveryEngine';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -46,6 +49,11 @@ export default function ExtremeSCustomerPortal() {
   const [insole, setInsole] = useState<InsoleTelemetry>(() => generateStepTelemetry('R', 1.0, 1.02, 3));
   const [insoleMsg, setInsoleMsg] = useState('');
   const [fusion, setFusion] = useState<FusionSnapshot | null>(null);
+  const [bracket, setBracket] = useState<BracketMatch[]>(() => generateSingleElimBracket(mockTournamentPlayers()));
+  const [players] = useState<TournamentPlayer[]>(() => mockTournamentPlayers());
+  const [openMatches, setOpenMatches] = useState<OpenMatch[]>(() => initOpenMatches());
+  const [deliveries, setDeliveries] = useState<DeliveryOrder[]>(() => getDeliveryOrders());
+  const [tourMsg, setTourMsg] = useState('');
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -337,6 +345,107 @@ export default function ExtremeSCustomerPortal() {
         </div>
         <div style={{ fontSize: '9px', color: '#64748b', marginTop: '4px' }}>8 davete kadar ücretsiz VIP üyelik ilerlemesi: %{progress} ({Math.max(0, 8 - referrals)} kaldı)</div>
       </div>
+      {/* AKTİF TURNUVALAR & CANLI SKOR TABLOSU */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🏆 Aktif Turnuvalar & Canlı Skor Tablosu</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#be185d', background: '#fdf2f8', padding: '4px 10px', borderRadius: '999px' }}>{tournamentEngineStatus()}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ fontSize: '9px', fontWeight: 800, color: '#64748b' }}>🎯 Tek Eleme Braketi (SportVisionX skorbord otomatik)</div>
+            {bracket.filter((m) => m.round === 1).map((m) => (
+              <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px', padding: '8px 10px', borderRadius: '10px', background: m.status === 'DONE' ? '#f0fdf4' : '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div style={{ fontSize: '9.5px', fontWeight: 700, color: '#0f172a' }}>
+                  {m.playerA} vs {m.playerB}
+                  {m.scoreA !== undefined && <span style={{ color: '#059669' }}> • {m.scoreA}-{m.scoreB} ({m.winnerId} kazandı)</span>}
+                </div>
+                {m.status === 'LIVE' && (
+                  <button onClick={() => { const r = recordBracketScore(bracket, m.id, 6, 4); setBracket(r.bracket); setTourMsg(`🎾 ${r.advanced} üst tura geçti (skorbord okundu)`); }} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 10px', borderRadius: '8px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#be185d,#ec4899)', color: '#fff' }}>6-4 Okut</button>
+                )}
+              </div>
+            ))}
+            {bracket.filter((m) => m.round > 1).map((m) => (
+              <div key={m.id} style={{ fontSize: '9px', fontWeight: 700, color: m.winnerId ? '#059669' : '#64748b', background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '10px', padding: '7px 10px' }}>
+                {m.round === 2 ? '🏅 Yarı Final: ' : '👑 Final: '}{m.playerA}{m.playerB ? ` vs ${m.playerB}` : m.winnerId ? ` — kazanan ${m.winnerId}` : ' — bekleniyor'}
+              </div>
+            ))}
+            <button onClick={() => { setBracket(generateSingleElimBracket(players, Math.floor(Math.random() * 10))); setTourMsg('🔀 Kura çekildi — yeni eşleşmeler oluşturuldu (CEO/Resepsiyon)'); }} style={lightBtn}>🔀 Kura Çek (Resepsiyon)</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ fontSize: '9px', fontWeight: 800, color: '#64748b' }}>📊 Canlı Kulüp Sıralaması (ELO)</div>
+            {buildLeaderboard(players).slice(0, 5).map((p, i) => (
+              <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5px', padding: '7px 10px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <span style={{ fontWeight: 700, color: '#0f172a' }}>{i + 1}. {p.name} <span style={{ color: '#94a3b8', fontWeight: 400 }}>(L{p.level})</span></span>
+                <span style={{ fontWeight: 900, color: '#be185d' }}>{p.elo}</span>
+              </div>
+            ))}
+            <button onClick={() => { const e = eloChange(players[0], players[1]); setTourMsg(`⚡ ${players[0].name} ELO ${players[0].elo}→${e.winner.elo} (+${e.delta})`); }} style={lightBtn}>⚡ ELO Güncelle</button>
+          </div>
+        </div>
+        {tourMsg && <div style={{ fontSize: '9.5px', fontWeight: 700, color: '#be185d', background: '#fdf2f8', border: '1px solid #fbcfe8', borderRadius: '10px', padding: '7px 10px', marginTop: '10px' }}>{tourMsg}</div>}
+      </div>
+
+      {/* AÇIK MAÇLAR — HEMEN KATIL */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🎾 Açık Maçlar (Hemen Katıl)</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#0369a1', background: '#e0f2fe', padding: '4px 10px', borderRadius: '999px' }}>{openMatchEngineStatus()}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
+          {openMatches.filter((m) => m.status === 'OPEN').map((m) => (
+            <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap', padding: '9px 12px', borderRadius: '10px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <div>
+                <div style={{ fontSize: '10.5px', fontWeight: 800, color: '#0f172a' }}>{m.sport === 'Padel' ? '🏓' : '🎾'} {m.court} <span style={{ fontSize: '9px', color: '#64748b', fontWeight: 500 }}>L{m.levelMin}-{m.levelMax}</span></div>
+                <div style={{ fontSize: '9px', color: m.joined.length >= m.totalSlots - 1 ? '#dc2626' : '#059669', fontWeight: 700 }}>
+                  {missingAnnouncement(m).replace('🔔 ', '')} • {m.joined.map((p) => p.name).join(', ')}
+                </div>
+              </div>
+              <button onClick={() => { const r = joinOpenMatch(m.id, 'Efe', 3.2); setOpenMatches(initOpenMatches()); setTourMsg(r.ok ? `✅ ${r.message}` : `⚠️ ${r.message}`); }} style={{ fontSize: '9.5px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#0284c7,#38bdf8)', color: '#fff' }}>⚡ Hemen Katıl</button>
+            </div>
+          ))}
+          {openMatches.filter((m) => m.status === 'FULL').map((m) => (
+            <div key={m.id} style={{ fontSize: '9px', fontWeight: 700, color: '#64748b', background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '10px', padding: '7px 10px' }}>🔒 {m.court} DOLU ({m.joined.length}/{m.totalSlots}) — {m.joined.map((p) => p.name).join(', ')}</div>
+          ))}
+        </div>
+        <button onClick={() => { setOpenMatches(initOpenMatches()); setTourMsg(`🎾 ${findOpenMatches(3.2).length} açık maç seviyenize uygun`); }} style={{ ...lightBtn, marginTop: '10px' }}>🔍 Seviye Filtresi (3.2) Uygula</button>
+      </div>
+
+      {/* KORTA HIZLI SİPARİŞ + TAKİP */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🛒 Korta Hızlı Sipariş <span style={{ fontSize: '9px', color: '#64748b', fontWeight: 500 }}>Likya Market × Daze Chef — 120s hazırlık</span></div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#b45309', background: '#fffbeb', padding: '4px 10px', borderRadius: '999px' }}>{courtDeliveryEngineStatus()}</span>
+        </div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+          {[...MARKET_ITEMS, ...DAZE_ITEMS].map((item) => (
+            <button key={item.id} onClick={() => { const o = placeCourtDelivery(item, 'Padel Kort A', 1); setDeliveries(getDeliveryOrders()); setTourMsg(`🛒 ${o.item} → ${o.destination} ₺${o.priceTl} (${o.id}) — kurye: ${o.courier}`); }} style={{ fontSize: '9px', fontWeight: 800, padding: '8px 12px', borderRadius: '10px', border: item.category === 'MARKET' ? '1px solid #a7f3d0' : '1px solid #fde68a', background: item.category === 'MARKET' ? '#ecfdf5' : '#fffbeb', color: item.category === 'MARKET' ? '#047857' : '#b45309', cursor: 'pointer' }}>
+              {item.emoji} {item.name} ₺{item.priceTl}
+            </button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px', alignItems: 'center' }}>
+          <button onClick={() => { const o = placeCourtDelivery(DAZE_ITEMS[1], 'Glamping 3', 1); setDeliveries(getDeliveryOrders()); setTourMsg(`🛒 ${o.item} → ${o.destination} ₺${o.priceTl} (${o.id})`); }} style={lightBtn}>🥗 Glamping 3'e Sipariş</button>
+          <button onClick={() => { const o = placeCourtDelivery(MARKET_ITEMS[2], 'Tenis Kort 2', 1); setDeliveries(getDeliveryOrders()); setTourMsg(`🧊 ${o.item} → Tenis Kort 2 (${o.id})`); }} style={lightBtn}>🧊 Tenis Kort 2'ye</button>
+        </div>
+        {/* Teslimat takip çubuğu — CEO/Resepsiyon */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
+          {deliveries.slice(0, 4).map((o) => (
+            <div key={o.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap', padding: '8px 12px', borderRadius: '10px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '9.5px', fontWeight: 700, color: '#0f172a' }}>{o.id} • {o.item} → {o.destination} <span style={{ color: '#94a3b8', fontWeight: 400 }}>({o.courier})</span></div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ fontSize: '9px', fontWeight: 900, color: o.status === 'OUT_FOR_DELIVERY' ? '#0284c7' : o.status === 'DELIVERED' ? '#059669' : '#b45309' }}>
+                  {o.status === 'PREPARING' ? `⏱️ ${o.countdownLeft}s` : o.status === 'OUT_FOR_DELIVERY' ? `🚚 Kuryede → ${o.destination}` : '✅ Teslim'}
+                </div>
+                <button onClick={() => { const t = tickDelivery(o.id, 30); setDeliveries(getDeliveryOrders()); if (t?.status === 'OUT_FOR_DELIVERY') setTourMsg(`🚚 ${o.courier} korta yönlendirildi → ${o.destination}`); }} style={{ fontSize: '8.5px', fontWeight: 800, padding: '5px 9px', borderRadius: '8px', border: '1px solid #c7d2fe', background: '#eef2ff', color: '#4f46e5', cursor: 'pointer' }}>+30s</button>
+                {o.status !== 'DELIVERED' && <button onClick={() => { markDelivered(o.id); setDeliveries(getDeliveryOrders()); setTourMsg(`✅ ${o.id} teslim edildi`); }} style={{ fontSize: '8.5px', fontWeight: 800, padding: '5px 9px', borderRadius: '8px', border: '1px solid #bbf7d0', background: '#f0fdf4', color: '#059669', cursor: 'pointer' }}>✓ Teslim</button>}
+              </div>
+            </div>
+          ))}
+          {deliveries.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Henüz sipariş yok — bir ürüne dokunarak korta teslimat başlatın.</div>}
+        </div>
+      </div>
+
       <div style={{ fontSize: '9px', color: '#94a3b8', textAlign: 'center' }}>{familyMembershipEngineStatus()}</div>
     </div>
   );

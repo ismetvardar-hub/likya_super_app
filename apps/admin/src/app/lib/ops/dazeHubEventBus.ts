@@ -10,7 +10,9 @@ export type DazeEventType =
   | 'KITCHEN_TIMER_TICK'
   | 'STAFF_TASK_DISPATCHED'
   | 'DAZE_REMINDER_TRIGGERED'
-  | 'FIRE_EMERGENCY_TRIGGERED';
+  | 'FIRE_EMERGENCY_TRIGGERED'
+  | 'COURT_DELIVERY_PLACED'
+  | 'DELIVERY_DISPATCHED';
 
 export interface DazeEvent {
   type: DazeEventType;
@@ -28,6 +30,8 @@ let listeners: Record<DazeEventType, Listener[]> = {
   STAFF_TASK_DISPATCHED: [],
   DAZE_REMINDER_TRIGGERED: [],
   FIRE_EMERGENCY_TRIGGERED: [],
+  COURT_DELIVERY_PLACED: [],
+  DELIVERY_DISPATCHED: [],
 };
 let history: DazeEvent[] = [];
 

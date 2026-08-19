@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-tournaments',
+    title: 'Canlı Turnuva Braketleri + Açık Maç Eşleştirme Radarı + Korta Teslimat Hattı',
+    icon: '🏆',
+    keywords: ['turnuva', 'braket', 'tek eleme', 'round robin', 'grup', 'elo', 'leaderboard', 'açık maç', 'matchmaking', 'padel', 'tenis', 'eksik oyuncu', 'kort', 'teslimat', 'kurye', 'daze chef', 'likya market', 'glamping', 'sipariş', '120s'],
+    content:
+      'lib/sports/tournamentEngine.ts — Tek Eleme (8→7 maç) + Round Robin grup braket üretici; recordBracketScore SportVisionX skorbord entegrasyonu (skor girince üst tura otomatik); ELO rating + canlı kulüp leaderboard. lib/sports/openMatchEngine.ts — 4 kişilik Padel / 2 kişilik Tenis açık maç havuzu + seviye filtresi (2.5-3.5); "Eksik N Oyuncu Aranıyor" anlık bildirimi + tek tıkla katılım + dolu kontrolü. lib/ops/courtDeliveryEngine.ts — Likya Market (top/raket/grip/soğuk havlu) ve Daze Chef (içecek/protein bowl) "Kort No/Glamping No belirterek" sipariş akışı; 120s hazırlık geri sayımı (Event Bus: ORDER_PLACED → Daze Crew personel görevi + COURT_DELIVERY_PLACED/DELIVERY_DISPATCHED yeni olaylar) + kurye yönlendirme. UI: ExtremeSCustomerPortal — "Aktif Turnuvalar & Canlı Skor" (braket + 6-4 Okut + ELO tablosu + 🔀 kura çek), "Açık Maçlar Hemen Katıl" vitrini, "Korta Hızlı Sipariş" (ürün chips + Glamping/Tenis hedefleri + 120s takip çubuğu + CEO/Resepsiyon teslimat ekranı). Smoke: scripts/tournamentSmokeTest.mts (12/12).',
+  },
+
+  {
     id: 'sports-insole',
     title: 'ExtremeS Akıllı AI Tabanlık — 6 Nokta FSR + 400Hz IMU Gait Analitiği ve 3\'lü Füzyon',
     icon: '🦶',
