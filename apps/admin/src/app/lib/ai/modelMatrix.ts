@@ -337,6 +337,15 @@ function buildResearchPlans(): MatrixPlan[] {
   const openaiKey = process.env.OPENAI_API_KEY || '';
   const anthropicKey = process.env.ANTHROPIC_API_KEY || '';
   const openrouterKey = process.env.OPENROUTER_API_KEY || '';
+  const cerebrasKey = process.env.CEREBRAS_API_KEY || '';
+
+  // 🟢 Cerebras — sağlık testinden geçti (VALID), hızlı çıkarım (OpenAI uyumlu)
+  if (cerebrasKey) {
+    plans.push({
+      letter: 'C', name: 'Cerebras Llama 3.3', badge: '[⚡ Plan C: Cerebras]',
+      run: (p) => callOpenAICompatible('https://api.cerebras.ai/v1', cerebrasKey, 'llama-3.3-70b', CHAT_SYSTEM_PROMPT, p),
+    });
+  }
 
   if (geminiKey) {
     plans.push({
