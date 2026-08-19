@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'jsx-write-guard',
+    title: 'JSX Yazım Koruması (logo/CEO execute) — string-aware parantez dengesi',
+    icon: '🛡️',
+    keywords: ['logo', 'jsx', 'yazma koruması', 'parantez dengesi', 'syntax', 'execute', 'kısmi yazım', 'guard', 'rollback'],
+    content:
+      'lib/ops/jsxWriteGuard.ts — CEO execute LLM yazim korumasi: syntaxAwareBalance (string/template literal icindeki { } ( ) [ ] karakterlerini saymaz — false-positive onlenir) + moduleIntegrityCheck (import/export + bilesen tanimi yoksa RED; mevcut dosyada modul yapisi varken yenide yoksa RED; %40/%50 kesinti esigi RED). api/v1/ceo/execute/route.ts bu korumayi kullanir: LLM "logo degistir" komutunda dosyanin tamami yerine yalnizca JSX blogu uretirse veya parantez dengesini bozarsa yazma ASLA diske ulasmaz; post-yazim tsc dogrulamasi + auto-rollback devrededir. Test: jsxGuard.test.mts (node --experimental-strip-types, 6/6 PASS).',
+  },
+
+  {
     id: 'peace-love-huddle',
     title: 'PEACE & LOVE Rehab + CSM 20s Huddle + Çizgi/Kaleci Biyomekaniği',
     icon: '🩹',

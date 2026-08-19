@@ -4,6 +4,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import ts from 'typescript';
+import { syntaxAwareBalance, moduleIntegrityCheck } from '../../../../lib/ops/jsxWriteGuard';
 import {
   getEnterpriseMemorySummary,
   searchVault,
@@ -354,8 +355,10 @@ function validateGeneratedCode(filePath: string, content: string, existingConten
     // --- 🧮 PARANTEZ DENGESİ KORUMASI (kısmi JSX/parça bloğu) ---
     // LLM "logo değiştir" tarzı komutlarda dosyanın tamamı yerine yalnızca
     // değişen JSX parçasını döndürebilir; bu parça yazılırsa süslü/parantez
-    // dengesi bozulur. Bu kapı existingContent'ten BAĞIMSIZ çalışır.
-    const balance = balancedSyntax(content);
+    // dengesi bozulur. STRING-AWARE sürüm: string/template içindeki { } ( ) [ ]
+    // karakterlerini saymaz (geçerli dosyaları yanlış reddetmez). Bu kapı
+    // existingContent'ten BAĞIMSIZ çalışır.
+    const balance = syntaxAwareBalance(content);
     if (!balance.ok) {
       return {
         ok: false,
@@ -363,54 +366,14 @@ function validateGeneratedCode(filePath: string, content: string, existingConten
       };
     }
 
-    // --- 🧩 MODÜL BÜTÜNLÜĞÜ KORUMASI (existingContent'ten bağımsız) ---
-    // React/TS bileşeni hedefleniyorsa üretilen içerik temel modül yapısı
-    // (import/export + bileşen tanımı) içermelidir; aksi hâlde LLM yalnızca
-    // bir JSX bloğu döndürmüştür. Vercel sandbox'ta existingContent boş
-    // olsa bile bu kapı çalışır.
-    const hasModuleStructure = /(^|\n)\s*(import|export)\s/.test(content) || /export default/.test(content);
-    const hasComponentDef = /(function|const|class)\s+\w+|React\./.test(content);
-    if (!hasModuleStructure || !hasComponentDef) {
-      return {
-        ok: false,
-        error:
-          'Modül bütünlüğü bozuk: üretilen içerikte import/export + bileşen tanımı yok — LLM dosyanın tamamı yerine yalnızca JSX bloğu üretti. Yazma iptal edildi.',
-      };
-    }
-
-    // --- 🧩 MODÜL BÜTÜNLÜĞÜ KORUMASI (LLM parça/JSX bloğu yazarsa) ---
+    // --- 🧩 MODÜL BÜTÜNLÜĞÜ + KESİNTİ KORUMASI ---
     // Patron vakası: logoya düzenleme isteyince LLM, dosyanın tamamı yerine
-    // yalnızca JSX bloğu üretti. Küçük dosyalarda (>8k) kesinti guardı devreye
-    // girmiyordu; modül yapısı (import/export) kaybı bu açığı kapatır.
-    if (existingContent && existingContent.trim().length > 0) {
-      const existingHasModule = /(^|\n)\s*(import|export)\s/.test(existingContent);
-      const newHasModule = /(^|\n)\s*(import|export)\s/.test(content);
-      if (existingHasModule && !newHasModule) {
-        return {
-          ok: false,
-          error:
-            'Modül bütünlüğü bozuldu: mevcut dosyada import/export yapısı var ama yeni içerikte hiç yok — LLM dosyanın tamamı yerine yalnızca JSX bloğu üretti. Yazma iptal edildi.',
-        };
-      }
-    }
-
-    // --- 📏 KESİNTİ (truncation) KORUMASI ---
-    // a) Küçük dosya (≥300 karakter): %40'ın altına inerse parçalı yazım riski.
-    // b) Büyük dosya (>8k): %50'nin altına inerse LLM dosyayı kesmiştir.
-    const existingLen = existingContent ? existingContent.trim().length : 0;
-    if (existingContent && existingLen >= 300 && content.length < existingLen * 0.4) {
-      const pct = Math.round((content.length / existingLen) * 100);
-      return {
-        ok: false,
-        error: `Çıktı orijinalin %${pct}'i (${existingLen}→${content.length} karakter) — LLM dosyayı kesti ya da parçalı yazdı. Yazma iptal edildi.`,
-      };
-    }
-    if (existingContent && existingLen > 8000 && content.length < existingLen * 0.5) {
-      const pct = Math.round((content.length / existingLen) * 100);
-      return {
-        ok: false,
-        error: `Çıktı orijinalin %${pct}'i (${existingLen}→${content.length} karakter) — LLM dosyayı kesti. Yazma iptal edildi.`,
-      };
+    // yalnızca JSX bloğu üretti. Bu kapı: import/export + bileşen tanımı yoksa,
+    // mevcut dosyada modül yapısı varken yenide yoksa ya da içerik %40/%50
+    // eşiğinin altına indiyse yazmayı REDDEder (jsxWriteGuard lib — test edilebilir).
+    const integrity = moduleIntegrityCheck(content, existingContent ?? '');
+    if (!integrity.ok) {
+      return { ok: false, error: integrity.error };
     }
   }
 
