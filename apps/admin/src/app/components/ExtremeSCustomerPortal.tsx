@@ -18,6 +18,7 @@ import { captureHighlight, getClips, viralClipEngineStatus, type HighlightClip }
 import { addFitXp, buildLeaderboards, generateDazeCoupon, leagueProgress, fitGamingStatus, type GamerProfile } from '../lib/sports/fitGamingEngine';
 import { runOrthopedicTest, orthopedicPrescription, orthopedicGaitStatus, type OrthopedicReport } from '../lib/sports/orthopedicGaitAnalysis';
 import { scanChildLocation, clearGeofenceAlert, getGeofenceAlerts, geofencingStatus, type GeofenceAlert } from '../lib/security/geofencingProtection';
+import { pointScored, callViolation, resolveChallenge, scoreLabel, speakAnnouncement, getUmpireDecisions, aiUmpireStatus, type UmpireScore, type Announcement, type UmpireDecision } from '../lib/sports/aiLiveUmpireEngine';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -64,6 +65,10 @@ export default function ExtremeSCustomerPortal() {
   const [geoAlerts, setGeoAlerts] = useState<GeofenceAlert[]>(() => getGeofenceAlerts());
   const [childSafe, setChildSafe] = useState(true);
   const [coupon, setCoupon] = useState<string>('');
+  const [umpScore, setUmpScore] = useState<UmpireScore>({ pointsA: 0, pointsB: 0, gamesA: 0, gamesB: 0, setsA: 0, setsB: 0, tieBreak: false, completed: false });
+  const [umpAnon, setUmpAnon] = useState<Announcement | null>(null);
+  const [umpFlow, setUmpFlow] = useState<{ id: string; text: string; at: string }[]>([]);
+  const [umpDecisions, setUmpDecisions] = useState<UmpireDecision[]>(() => getUmpireDecisions());
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -549,6 +554,51 @@ export default function ExtremeSCustomerPortal() {
               </div>
             ))}
             {geoAlerts.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Aktif alarm yok — tüm güvenli bölgeler normal.</div>}
+          </div>
+        </div>
+      </div>
+
+      {/* CANLI KORT MAÇ TAKİBİ — AI HAKEM */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>⚖️ Canlı Kort Maç Takibi — Padel Kort A <span style={{ fontSize: '9px', color: '#64748b', fontWeight: 500 }}>İzleyici/Veli görünümü • AI Hakem canlı</span></div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#4f46e5', background: '#eef2ff', padding: '4px 10px', borderRadius: '999px' }}>{aiUmpireStatus()}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', marginTop: '10px' }}>
+          {/* Canlı skorbord */}
+          <div style={{ background: '#0f172a', borderRadius: '14px', padding: '14px', textAlign: 'center' }}>
+            <div style={{ fontSize: '8.5px', color: '#64748b', marginBottom: '8px' }}>CANLI SKOR • AI HAKEM</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>Efe</div>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: '#00f2fe' }}>{scoreLabel(umpScore).points.split(' - ')[0]}</div>
+              </div>
+              <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 800 }}>
+                {scoreLabel(umpScore).games}
+                <div style={{ fontSize: '8px' }}>Oyun {umpScore.gamesA}-{umpScore.gamesB}</div>
+                <div style={{ fontSize: '8px' }}>Set {umpScore.setsA}-{umpScore.setsB}</div>
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>Mert</div>
+                <div style={{ fontSize: '24px', fontWeight: 900, color: '#f472b6' }}>{scoreLabel(umpScore).points.split(' - ')[1]?.replace(' (TB)', '') ?? '0'}</div>
+              </div>
+            </div>
+            {umpAnon && <div style={{ marginTop: '8px', fontSize: '10.5px', fontWeight: 900, color: umpAnon.highlight === 'violation' ? '#fb7185' : '#fbbf24', background: 'rgba(255,255,255,0.07)', borderRadius: '10px', padding: '8px 10px' }}>🔊 {umpAnon.text}</div>}
+          </div>
+          {/* Puan akışı + hakem kararları */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              <button onClick={() => { const r = pointScored(umpScore, 'A', 'Efe', 'Mert'); setUmpScore(r.score); setUmpAnon(r.announcement); setUmpFlow((f) => [{ id: String(Date.now()), text: `${r.announcement.text} — Efe puanı`, at: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) }, ...f].slice(0, 6)); }} style={lightBtn}>🎾 Efe Sayı</button>
+              <button onClick={() => { const r = pointScored(umpScore, 'B', 'Efe', 'Mert'); setUmpScore(r.score); setUmpAnon(r.announcement); setUmpFlow((f) => [{ id: String(Date.now()), text: `${r.announcement.text} — Mert puanı`, at: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) }, ...f].slice(0, 6)); }} style={lightBtn}>🎾 Mert Sayı</button>
+              <button onClick={() => { const a = callViolation('OUT'); setUmpAnon(a); setUmpFlow((f) => [{ id: String(Date.now()), text: `🚩 ${a.text}`, at: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) }, ...f].slice(0, 6)); }} style={{ fontSize: '9.5px', fontWeight: 800, padding: '8px 12px', borderRadius: '10px', border: '1px solid #fecaca', background: '#fef2f2', color: '#dc2626', cursor: 'pointer' }}>🚩 OUT Kararı</button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '110px', overflowY: 'auto' }}>
+              {umpFlow.map((f) => <div key={f.id} style={{ fontSize: '9px', color: '#334155', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 8px' }}><span style={{ fontWeight: 800, color: '#4f46e5' }}>{f.at}</span> • {f.text}</div>)}
+              {umpFlow.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Sayı akışı burada görünür — maç canlı takip edin.</div>}
+            </div>
+            {umpDecisions.length > 0 && (
+              <div style={{ fontSize: '8.5px', color: '#64748b' }}>⚖️ AI Hakem: son {umpDecisions.length} karar — itirazlar VAR ile teyit edilir ({getUmpireDecisions()[0]?.announcement.text.slice(0, 30)})</div>
+            )}
           </div>
         </div>
       </div>

@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-umpire',
+    title: 'Tam Otonom Canlı Saha Hakemi (AI Live Umpire) — Skor, Sesli Anons, VAR Challenge',
+    icon: '⚖️',
+    keywords: ['hakem', 'umpire', 'referee', 'canlı skor', 'skorbord', 'sesli anons', 'out', 'fault', 'çift sekme', 'double bounce', 'net touch', 'foot fault', 'ayak ihlali', 'deuce', 'advantage', 'tie-break', 'itiraz', 'challenge', 'var', '15 love'],
+    content:
+      'lib/sports/aiLiveUmpireEngine.ts — Tam otonom canlı saha hakemi: Tenis/Padel puanlama (0-15-30-40, Deuce, Advantage, Game, Set, Tie-break, maç sonu 2 set). Kural ihlal dedektörü: OUT/FAULT, DOUBLE_BOUNCE (çift sekme), NET_TOUCH (file teması), FOOT_FAULT (ayak çizgi ihlali — tabanlık basınç + kamera füzyonu). Otonom sesli anons katmanı: Web Speech API (speakAnnouncement, "Out!", "15 - Love", "Deuce", "Oyun, Set, Maç") — ses yoksa görsel skorbord simülasyonu. İtiraz & VAR Challenge: resolveChallenge kenar payı <8mm ise karar değişir (IN), 3D pozisyon teyidi + karar günlüğü. UI: SportVisionX "Canlı AI Hakem Paneli" (anlık puan tablosu Efe/Mert, 🔊 anons bandı, OUT/Çift Sekme/Ayak İhlali/Challenge butonları, son karar logu); ExtremeSCustomerPortal "Canlı Kort Maç Takibi" (izleyici/veli canlı skorbord + sayı sayı puan akışı + hakem kararı bildirimi). Smoke: scripts/umpireSmokeTest.mts (13/13).',
+  },
+
+  {
     id: 'sports-innovation',
     title: '6 Devrimsel Modül — Reels, Fit-Gaming, VAR Light, IoT Enerji, Ortopedi, Geofencing',
     icon: '🚀',

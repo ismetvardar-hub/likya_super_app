@@ -14,6 +14,7 @@ import { generateStepTelemetry, computeContactMetrics, insoleRiskRadar, smartIns
 import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObservation } from '../lib/sports/multimodalFusionBridge';
 import { reviewLineDecision, simulateBallDrop, getVarLightDecisions, varLightStatus, type VarLightDecision } from '../lib/sports/varLightEngine';
 import { courtEntryOn, courtIdleTick, courtExitOff, getCourtEnergyStatus, courtEnergyStatus, type CourtEnergyStatus } from '../lib/ops/courtEnergyAutomation';
+import { pointScored, callViolation, resolveChallenge, scoreLabel, speakAnnouncement, getUmpireDecisions, aiUmpireStatus, type UmpireScore, type Announcement, type UmpireDecision } from '../lib/sports/aiLiveUmpireEngine';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -441,6 +442,9 @@ function ArmbandTelemetryModule() {
   const [fusion, setFusion] = React.useState<FusionSnapshot | null>(null);
   const [varDecisions, setVarDecisions] = React.useState<VarLightDecision[]>(() => getVarLightDecisions());
   const [courtEnergy, setCourtEnergy] = React.useState<CourtEnergyStatus>(() => getCourtEnergyStatus('Padel Kort A'));
+  const [umpScore, setUmpScore] = React.useState<UmpireScore>({ pointsA: 0, pointsB: 0, gamesA: 0, gamesB: 0, setsA: 0, setsB: 0, tieBreak: false, completed: false });
+  const [umpAnon, setUmpAnon] = React.useState<Announcement | null>(null);
+  const [umpDecisions, setUmpDecisions] = React.useState<UmpireDecision[]>(() => getUmpireDecisions());
   const risk = fatigueRisk();
 
   const latest = telemetry.length ? telemetry[telemetry.length - 1] : null;
@@ -581,6 +585,54 @@ function ArmbandTelemetryModule() {
             <button onClick={() => { setCourtEnergy(courtIdleTick('Padel Kort A', 121)); }} style={cyBtn}>🌙 2dk Boşluk (Tasarruf)</button>
             <button onClick={() => { setCourtEnergy(courtExitOff('Padel Kort A')); }} style={{ ...cyBtn, color: '#fb7185', borderColor: 'rgba(251,113,133,0.4)' }}>🔌 Kapat</button>
           </div>
+        </div>
+      </div>
+
+      {/* ⚖️ CANLI AI HAKEM PANELİ */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', padding: '14px', borderRadius: '16px', background: 'linear-gradient(160deg, rgba(99,102,241,0.08), rgba(34,211,238,0.05))', border: '1px solid rgba(99,102,241,0.35)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ fontSize: '13px', fontWeight: 800, color: '#fff' }}>⚖️ Canlı AI Hakem — Padel Kort A</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#c4b5fd', background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.4)', padding: '4px 10px', borderRadius: '999px' }}>{aiUmpireStatus()}</span>
+        </div>
+        {/* Anlık puan tablosu */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '10px', alignItems: 'center', textAlign: 'center' }}>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>Efe</div>
+            <div style={{ fontSize: '26px', fontWeight: 900, color: '#00f2fe' }}>{scoreLabel(umpScore).points.split(' - ')[0]}</div>
+            <div style={{ fontSize: '9px', color: '#94a3b8' }}>Oyun {umpScore.gamesA} • Set {umpScore.setsA}</div>
+          </div>
+          <div style={{ fontSize: '10px', color: '#64748b', fontWeight: 800 }}>
+            {scoreLabel(umpScore).games}
+            <div style={{ fontSize: '8px', fontWeight: 400 }}>{scoreLabel(umpScore).points.includes('TB') ? 'Tie-break' : 'Set skoru'}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>Mert</div>
+            <div style={{ fontSize: '26px', fontWeight: 900, color: '#f472b6' }}>{scoreLabel(umpScore).points.split(' - ')[1]?.replace(' (TB)', '') ?? '0'}</div>
+            <div style={{ fontSize: '9px', color: '#94a3b8' }}>Oyun {umpScore.gamesB} • Set {umpScore.setsB}</div>
+          </div>
+        </div>
+        {/* Son anons */}
+        {umpAnon && (
+          <div style={{ fontSize: '11px', fontWeight: 900, color: umpAnon.highlight === 'violation' ? '#fb7185' : umpAnon.highlight === 'match' ? '#fbbf24' : '#00f2fe', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '10px', padding: '9px 12px', textAlign: 'center' }}>
+            🔊 {umpAnon.text}
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+          <button onClick={() => { const r = pointScored(umpScore, 'A', 'Efe', 'Mert'); setUmpScore(r.score); setUmpAnon(r.announcement); speakAnnouncement(r.announcement); }} style={{ ...cyBtn, color: '#00f2fe' }}>🎾 Efe Puan</button>
+          <button onClick={() => { const r = pointScored(umpScore, 'B', 'Efe', 'Mert'); setUmpScore(r.score); setUmpAnon(r.announcement); speakAnnouncement(r.announcement); }} style={{ ...cyBtn, color: '#f472b6' }}>🎾 Mert Puan</button>
+          <button onClick={() => { const a = callViolation('OUT'); setUmpAnon(a); speakAnnouncement(a); }} style={{ ...cyBtn, color: '#fb7185', borderColor: 'rgba(251,113,133,0.4)' }}>🚩 OUT</button>
+          <button onClick={() => { const a = callViolation('DOUBLE_BOUNCE'); setUmpAnon(a); speakAnnouncement(a); }} style={{ ...cyBtn, color: '#fb7185', borderColor: 'rgba(251,113,133,0.4)' }}>🔄 Çift Sekme</button>
+          <button onClick={() => { const a = callViolation('FOOT_FAULT'); setUmpAnon(a); speakAnnouncement(a); }} style={{ ...cyBtn, color: '#fb7185', borderColor: 'rgba(251,113,133,0.4)' }}>🦶 Ayak İhlali</button>
+          <button onClick={() => { const c = resolveChallenge('OUT', 4); setUmpDecisions(getUmpireDecisions()); setUmpAnon(c.announcement); speakAnnouncement(c.announcement); }} style={{ ...cyBtn, color: '#fbbf24', borderColor: 'rgba(251,191,36,0.4)' }}>📺 İtiraz / Challenge</button>
+        </div>
+        {/* Son karar logu */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '90px', overflowY: 'auto' }}>
+          {umpDecisions.slice(0, 4).map((d) => (
+            <div key={d.id} style={{ fontSize: '9px', color: d.overturned ? '#fbbf24' : '#94a3b8', background: 'rgba(255,255,255,0.03)', borderRadius: '6px', padding: '5px 8px' }}>
+              {d.id} • {d.announcement.text.slice(0, 44)} • {d.calledAt}
+            </div>
+          ))}
+          {umpDecisions.length === 0 && <div style={{ fontSize: '9px', color: '#475569' }}>Karar logu boş — ihlal/i̇tiraz kaydı burada birikir.</div>}
         </div>
       </div>
     </div>
