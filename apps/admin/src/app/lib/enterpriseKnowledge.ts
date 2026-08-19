@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'n8n-orchestrator',
+    title: 'Otonom n8n Orchestrator — Workflow Üretici + 9 Adımlı Ajan Döngüsü',
+    icon: '⚡',
+    keywords: ['n8n', 'workflow', 'orchestrator', 'fire', 'yangın', 'conveyor', 'konveyör', 'reminder', 'master styling', 'agentic loop', '9 adım', 'plan act verify', 'webhook'],
+    content:
+      'lib/ops/n8nAutonomousGenerator.ts — n8n Workflow JSON derleyicisi (Trigger→IF→Action): FireEmergencyWorkflow (Görsel 76: yangın→PWA+itfaiye+kapı kilidi), QualityControlConveyorWorkflow (Görsel 77: sayım→damga→stok düşüm), DazeReminderPeriodicWorkflow (Cron */2: gecikme→WhatsApp Cloud), MasterStylingFilterNode (centilmen/naif/esprili üslup). Deterministik node id + validateN8nWorkflow bütünlük kontrolü. lib/ops/n8nApiClient.ts — REST istemci: createWorkflow/activateWorkflow/triggerWebhook; API anahtarı yoksa yerel mock kuyruk (localStorage) + başarı simülasyonu. lib/agents/agenticLoopEngine.ts — 9 adım: Understand→Plan→Retrieve→Reason→Act→Observe→Loop→Verify→Final (workflow fırlat). components/N8nOrchestratorCard.tsx — monitor görünümünde tek tıkla akış üret + n8n platformuna fırlat (MOCK/CANLI rozeti).',
+  },
+
+  {
     id: 'global-100-scale',
     title: '100 Aşamalık Küresel Master Genişleme & Sertleştirme Planı (10 Blok)',
     icon: '🌍',
