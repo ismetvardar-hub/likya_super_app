@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'master-20-roadmap',
+    title: '20 Aşamalı Master İcra Yol Haritası (Prodüksiyon Olgunluğu)',
+    icon: '🏗️',
+    keywords: ['master', 'roadmap', '20 asama', 'rls', 'rbac', 'kvkk', 'offline sync', '3ds', 'e-fis', 'tbyb', 'komisyon', 'recipe', 'webhook', 'kiosk', 'pose', 'pasaport', 'anpr', 'i18n', 'kampüs'],
+    content:
+      '20 Aşama: 1) RLS migration (rls_tenant_isolation.sql — is_ceo/is_staff + 33 tabloda ceo_bypass). 2) lib/auth/rbacGuard.ts (JWT decode + rol hiyerarşisi). 3) lib/security/kvkkMaskingEngine.ts (telefon/TC/pasaport/kart/IBAN maskeleme + şifreleme). 4) health route pooler telemetri. 5) lib/db/offlineSyncRecovery.ts (kuyruk + otomatik re-sync). 6) paymentGatewayAdapter 3D-Secure (forceThreeDS). 7) lib/finance/digitalReceiptGenerator.ts (LKY fiş + QR + KDV). 8) lib/marketplace/tbybLifecycleEngine.ts (7 gün → iade/satış). 9) lib/finance/commissionDistributionEngine.ts (eğitmen/personel/ortak payları). 10) lib/ops/recipeEngineeringEngine.ts (gramaj düşümü + upcycling). 11) lib/ops/dazeReminderWebhook.ts (WhatsApp/Cloud köprüsü). 12) lib/ops/dazeGiftLoyaltyEngine.ts (ikram QR kupon). 13) DazeVisionKioskView.tsx (dokunmatik self-servis + QR ödeme). 14) lib/sports/livePoseExtractionBridge.ts (33 landmark + sıçrama). 15) lib/sports/athletePassportReport.ts (SVG sparkline + tek sayfa). 16) lib/sports/liveGameTacticsEngine.ts (nabız/mesafe/yorgunluk → değişiklik). 17) lib/security/anprGateAccessBridge.ts (plaka/kod → IoT bariyer). 18) mobil senkron test (mobileSyncBridge.test.mts). 19) lib/i18n/campusI18nEngine.ts (TR/EN/DE/RU + çoklu kampüs). 20) nihai CI/CD.',
+  },
+
+  {
     id: 'sentinel-vision-hybrid',
     title: 'Sentinel Computer Vision HUD + Hibrit Ekipman Teşhisi + Şut Denge',
     icon: '👁️',

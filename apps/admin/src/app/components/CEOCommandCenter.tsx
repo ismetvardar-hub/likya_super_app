@@ -18,6 +18,7 @@ import LikyaMarketplace from './LikyaMarketplace';
 import MarketplaceGallery from './MarketplaceGallery';
 import MarketplacePaymentTerminal from './MarketplacePaymentTerminal';
 import DazeNeuralMarketHud from './DazeNeuralMarketHud';
+import DazeVisionKioskView from './DazeVisionKioskView';
 import DazeChef from './DazeChef';
 import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
@@ -1346,6 +1347,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 <>
                   <MarketplaceGallery />
                   <MarketplacePaymentTerminal />
+                  <DazeVisionKioskView />
                   <LikyaMarketplace />
                 </>
               )}

@@ -16,6 +16,7 @@ export interface PaymentRequest {
   itemId?: string;
   customer: { name: string; email: string; phone?: string };
   installment?: number; // iyzico taksit (2-12)
+  forceThreeDS?: boolean; // 3D-Secure zorunluluğu (varsayılan: kart çekimlerinde true)
 }
 
 export interface PaymentResult {
@@ -24,6 +25,7 @@ export interface PaymentResult {
   gateway: PaymentGateway;
   reference: string;
   checkoutUrl: string | null;
+  threeDSecure: boolean; // 3D-Secure akışı etkin mi
   message: string;
 }
 
@@ -47,14 +49,16 @@ function sandboxPayment(req: PaymentRequest): PaymentResult {
     gateway: 'sandbox',
     reference,
     checkoutUrl: null,
+    threeDSecure: req.forceThreeDS ?? true,
     message: `🟡 Sandbox Test Modu — ${req.item} (${req.amount.toFixed(2)} TL) siparişi simüle edildi. Referans: ${reference}. Gerçek ödeme için IYZICO/STRIPE anahtarları gerekli.`,
   };
 }
 
 // ── ORKESTRATÖR ─────────────────────────────────────────────────────────────
 export async function startPayment(req: PaymentRequest): Promise<PaymentResult> {
+  // Geçersiz tutar → hata
   if (!req.amount || req.amount <= 0) {
-    return { ok: false, mode: 'sandbox', gateway: 'sandbox', reference: '', checkoutUrl: null, message: 'Geçersiz tutar' };
+    return { ok: false, mode: 'sandbox', gateway: 'sandbox', reference: '', checkoutUrl: null, threeDSecure: req.forceThreeDS ?? true, message: 'Geçersiz tutar' };
   }
 
   // Gerçek geçit: sunucu-only proxy'ye dene (secret'lar orada)
@@ -66,8 +70,7 @@ export async function startPayment(req: PaymentRequest): Promise<PaymentResult> 
     });
     if (res.ok) {
       const data = (await res.json()) as PaymentResult;
-      if (data.ok) return data;
-      // Sunucu sandbox döndürdü (secret yok) → client tarafı da sandbox üretebilir
+      if (data.ok) return { ...data, threeDSecure: data.threeDSecure ?? req.forceThreeDS ?? true };
     }
   } catch { /* proxy yok/hatalı → sandbox */ }
 

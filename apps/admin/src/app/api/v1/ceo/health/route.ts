@@ -42,7 +42,7 @@ function resolveSupabaseKey(): string {
   return process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 }
 
-async function supabaseStatus(): Promise<{ status: 'ready' | 'standby' | 'unconfigured'; connected: boolean; mode: string; url: string | null; ping?: { auth: string; rest: string; latencyMs: number } }> {
+async function supabaseStatus(): Promise<{ status: 'ready' | 'standby' | 'unconfigured'; connected: boolean; mode: string; url: string | null; ping?: { auth: string; rest: string; latencyMs: number; pooler: boolean } }> {
   const url = resolveSupabaseUrl();
   const key = resolveSupabaseKey();
   if (!url || !key) {
@@ -56,7 +56,7 @@ async function supabaseStatus(): Promise<{ status: 'ready' | 'standby' | 'unconf
   // GERÇEK PİNG — iki kademeli doğrulama (2.5s timeout, asla requesti bloklama)
   const base = url.replace(/\/$/, '');
   const started = Date.now();
-  const ping = { auth: 'skip', rest: 'skip', latencyMs: 0 };
+  const ping = { auth: 'skip', rest: 'skip', latencyMs: 0, pooler: false };
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 2500);
@@ -68,6 +68,8 @@ async function supabaseStatus(): Promise<{ status: 'ready' | 'standby' | 'unconf
     ping.auth = authRes.ok ? 'ok' : `http_${authRes.status}`;
     ping.rest = restRes.ok ? 'ok' : `http_${restRes.status}`;
     ping.latencyMs = Date.now() - started;
+    // Supabase Pooler tespiti (Postgres bağlantı havuzu kullanımda mı)
+    ping.pooler = url.toLowerCase().includes('pooler') || url.toLowerCase().includes('supavisor');
 
     if (ping.auth === 'ok' && ping.rest === 'ok') {
       return { status: 'ready', connected: true, mode: 'GERCEK PING BASARILI — auth + REST canli (parcels/staff_tasks/pos_transactions kullanima hazir)', url, ping };
