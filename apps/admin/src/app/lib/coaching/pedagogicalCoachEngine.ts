@@ -61,6 +61,49 @@ export function prescribeMentalReçete(pattern: AnxietyPattern, studentName = 'S
   return { id: `PR-${Date.now().toString(36)}-${pattern.slice(0, 3)}`, pattern, ...base };
 }
 
+// ── 1b) ÖFKE / "BANA KARIŞMAYIN" DİRENCİ — 3 ADIMLI PROTOKOL ────────────────
+export interface AngerProtocolStep { order: number; phase: 'Sakinleşme' | 'Konuşma' | 'Çözüm'; script: string }
+
+export const ANGER_PROTOCOL_3: AngerProtocolStep[] = [
+  { order: 1, phase: 'Sakinleşme', script: 'Önce nefes: 4-7-8 ritmi (4s al, 7s tut, 8s ver) — beden gerilimi düşsün.' },
+  { order: 2, phase: 'Konuşma', script: '"Bana karışmayın" demek yerine: "Kendi kararımı vermek istiyorum" — sınırı saygıyla ifade et.' },
+  { order: 3, phase: 'Çözüm', script: 'Birlikte bir çözüm: 2 seçenek sun, sporcu kendininkini eklesin — ortak karar.' },
+];
+
+export function angerProtocol(): { steps: AngerProtocolStep[]; note: string } {
+  return { steps: ANGER_PROTOCOL_3, note: 'Direnç = bağımsızlık ihtiyacı; kontrol yerine iş birliği kur.' };
+}
+
+// ── 1c) OKULA/KORTA DÖNÜŞ — 5 UYUM ENGELİ MATRİSİ ───────────────────────────
+export type AdjustmentBarrier = 'uyku' | 'kaygi' | 'motivasyon' | 'sosyal' | 'rutin';
+
+export interface AdjustmentMatrix {
+  score: number;            // 0-100 (100 = yüksek uyum riski)
+  barriers: { type: AdjustmentBarrier; level: number; advice: string }[];
+}
+
+const BARRIER_ADVICE: Record<AdjustmentBarrier, string> = {
+  uyku: 'Uyku düzeni: sabit yatış-kalkış + ekran sınırı (yatmadan 1s önce)',
+  kaygi: 'Kaygı: sabah 5 dk nefes + "bugün tek hedef" kuralı',
+  motivasyon: 'Motivasyon: 10 dk ilk adım rutini — başlangıç en zor adımdır',
+  sosyal: 'Sosyal: antrenman öncesi takım arkadaşıyla kısa sohbet — aidiyet güçlendir',
+  rutin: 'Rutin: sabit çanta hazırlama + korta 15 dk erken gelme alışkanlığı',
+};
+
+export function assessAdjustmentBarriers(levels: Record<AdjustmentBarrier, number>): AdjustmentMatrix {
+  const barriers = (Object.keys(BARRIER_ADVICE) as AdjustmentBarrier[])
+    .filter((b) => (levels[b] ?? 0) > 0)
+    .map((b) => ({ type: b, level: Math.min(10, levels[b] ?? 0), advice: BARRIER_ADVICE[b] }))
+    .sort((a, b) => b.level - a.level);
+  const score = Math.min(100, barriers.reduce((acc, b) => acc + b.level * 2, 0));
+  return { score, barriers };
+}
+
+export function pedagogicalCoachEngineStatus(): string {
+  return 'Pedagojik Koç [3 reçete • 8 adım kriz • 3 adım öfke • 5 uyum engeli • 7 sınır matrisi]';
+}
+
+
 // ── 2) 8 ADIMLI KRİZ YATIŞTIRMA PROTOKOLÜ ───────────────────────────────────
 export interface CrisisStep {
   order: number;
@@ -118,9 +161,5 @@ export function assessBoundaryAssertiveness(patterns: BoundaryBehavior[]): Bound
       ? activePatterns.map((p) => BOUNDARY_MATRIX[p].advice)
       : ['Sınırların güçlü — kendini koruyor ve saygıyla ifade ediyorsun.'],
   };
-}
-
-export function pedagogicalCoachEngineStatus(): string {
-  return 'Pedagojik Koç [3 reçete • 8 adım kriz protokolü • 7 davranış sınır matrisi]';
 }
 

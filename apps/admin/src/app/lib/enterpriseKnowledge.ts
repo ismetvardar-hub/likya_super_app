@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'advanced-100-master',
+    title: '100 Aşamalık İleri Teknik İcra — 8 Yeni Motor + Kurumsal Hub',
+    icon: '🏗️',
+    keywords: ['footfall', 'kişi sayım', 'doluluk', 'öfke', 'uyum engeli', 'gamification', 'pomodoro', 'aidat', 'yoklama', 'back-office', '200 sistem', 'sesli komut', 'voiceprint', 'mutfak qc', 'load lift roll hold'],
+    content:
+      'İleri 100 aşama — 8 yeni motor: lib/security/footfallCounterEngine.ts (LineZone IN/OUT + net doluluk + %85 → market maker talep sinyali), pedagogicalCoachEngine eklentileri (3 adım öfke protokolü + 5 uyum engeli matrisi), lib/coaching/curiosityGamificationEngine.ts (25/5 Pomodoro + 10dk ilk adım + %1 zihniyet + seviye/puan + 2dk mola + haftalık skor + mental indeks), lib/sports/membershipDuesEngine.ts (aidat tahakkuk + kardeş/burs indirimi + QR yoklama + katılım % + uyarı rozeti + otomatik çekim + bilanço), lib/ops/backOffice200Engine.ts (20 iş alanı health + 5li huni + onay kuyruğu + lead/sales/HR/inventory/support/data), lib/ai/voiceCommandEngine.ts (4 sesli intent + paralel ajan kuyruğu + ses→mutfak stok + duygu skoru + voiceprint + lockdown), lib/ops/kitchenQualitySimulator.ts (konveyör sayım + QC damga + hatalı tabak uyarısı), lib/sports/shootingReleaseAnalytics.ts (Load→Lift→Roll→Hold puanlama). components/AdvancedEnterpriseModules.tsx — monitor görünümünde kurumsal hub.',
+  },
+
+  {
     id: 'builtin-template-store',
     title: '5 Ücretsiz Yerleşik Otomasyon Şablon Mağazası + Tek Tıkla Deploy',
     icon: '📦',
