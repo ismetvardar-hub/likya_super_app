@@ -10,6 +10,8 @@ import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import CatchPadReactionCard from './CatchPadReactionCard';
 import { initMockBands, processReturn, onTapAccess, posSwipeCanteen, smartArmbandEngineStatus, type ArmbandDevice } from '../lib/hardware/smartArmbandEngine';
 import { startCourtSession, recordTelemetry, matchPlayerToBeacon, fatigueRisk, averageReaction, armbandCoachingBridgeStatus, type TelemetrySample } from '../lib/sports/armbandCoachingBridge';
+import { generateStepTelemetry, computeContactMetrics, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
+import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObservation } from '../lib/sports/multimodalFusionBridge';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -433,6 +435,8 @@ function ArmbandTelemetryModule() {
   const [accessMsg, setAccessMsg] = React.useState('');
   const [refundMsg, setRefundMsg] = React.useState('');
   const [sessionMsg, setSessionMsg] = React.useState('');
+  const [insole, setInsole] = React.useState<InsoleTelemetry>(() => generateStepTelemetry('R', 1.0, 1.02, 3));
+  const [fusion, setFusion] = React.useState<FusionSnapshot | null>(null);
   const risk = fatigueRisk();
 
   const latest = telemetry.length ? telemetry[telemetry.length - 1] : null;
@@ -493,6 +497,41 @@ function ArmbandTelemetryModule() {
       </div>
       <div style={{ fontSize: '9px', color: '#475569' }}>
         ⏱️ CatchPad ort: {averageReaction().avgMs} ms • isabet %{averageReaction().hitRatePct} • {risk.riskActive ? '⚠️ YORGUNLUK EŞİĞİ AŞILDI — mola önerilir' : '💚 Yorgunluk normal'} • {smartArmbandEngineStatus()}
+      </div>
+
+      {/* 🦶 AKILLI TABANLIK — canlı adım asimetrisi + yorgunluk zonu */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', borderRadius: '12px', background: 'rgba(34,211,238,0.05)', border: '1px solid rgba(34,211,238,0.25)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>🦶 Canlı Adım Asimetrisi & Yorgunluk Zonu</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: fusion ? (fusion.fatigueZone === 'GREEN' ? '#4ade80' : fusion.fatigueZone === 'YELLOW' ? '#fbbf24' : '#fb7185') : '#94a3b8', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: '999px' }}>
+            {fusion ? `ZON ${fusion.fatigueZone}` : 'Beklemede'} • {smartInsoleEngineStatus()}
+          </span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '8px' }}>
+          {[
+            ['Asimetri', `%${insole.stepAsymmetry}`, insole.stepAsymmetry > 10 ? '#fb7185' : '#4ade80'],
+            ['GCT', `${insole.gctMs} ms`, insole.gctMs > 220 ? '#fb7185' : '#00f2fe'],
+            ['RSI', `${insole.rsi}`, '#a78bfa'],
+            ['Loading Rate', `${insole.loadingRate} kN/s`, insole.loadingRate > 150 ? '#fb7185' : '#38bdf8'],
+          ].map(([k, v, c]) => (
+            <div key={k as string} style={{ padding: '10px', borderRadius: '10px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ fontSize: '8px', color: '#94a3b8' }}>{k}</div>
+              <div style={{ fontSize: '15px', fontWeight: 900, color: c as string }}>{v}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button onClick={() => { const t = generateStepTelemetry('R', 1.0, 1.02, 3 + Math.floor(Math.random() * 5)); setInsole(t); }} style={cyBtn}>👟 Adım Yakala</button>
+          <button onClick={() => { const cam: CameraObservation = { trackingId: 'TRK-004', court: 'Padel Kort A', speedMps: 4.2, displacementM: 120 }; setFusion(fuseSensorStream('Efe', cam, 'BLE-7C91-E2', bands, insole)); }} style={cyBtn}>🔗 3'lü Füzyon</button>
+          {insoleRiskRadar(insole).filter((a) => a.severity !== 'INFO').map((a) => (
+            <span key={a.code} style={{ fontSize: '9px', fontWeight: 700, color: a.severity === 'CRITICAL' ? '#fb7185' : '#fbbf24' }}>🚩 {a.code}</span>
+          ))}
+        </div>
+        {fusion && (
+          <div style={{ fontSize: '9.5px', fontWeight: 600, color: fusion.fatigueZone === 'GREEN' ? '#4ade80' : fusion.fatigueZone === 'YELLOW' ? '#fbbf24' : '#fb7185' }}>
+            {coachGuidance(fusion.fatigueZone, fusion.alerts)}
+          </div>
+        )}
       </div>
     </div>
   );

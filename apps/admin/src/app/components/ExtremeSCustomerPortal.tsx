@@ -9,6 +9,8 @@ import { initMockBands, assignBandToMember, reportLost, processReturn, onTapAcce
 import { buildDailyPerformance, recordTelemetry, recordCoaching, matchPlayerToBeacon, startCourtSession, averageReaction, type TelemetrySample, type CoachingRecord, type DailyPerformance } from '../lib/sports/armbandCoachingBridge';
 import { buildAutonomousReportCard, buildWeekTrend, autonomousReportCardStatus, type AthleteReportCard, type WeekTrendPoint } from '../lib/sports/autonomousReportCard';
 import { getShuttleStatus, advanceShuttle, recordGateEntry, getSecurityLog, facilityShuttleRadarStatus, type ShuttleStatus, type SecurityEvent } from '../lib/ops/facilityShuttleRadar';
+import { generateStepTelemetry, computeContactMetrics, classifyGait, gaitLabel, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
+import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObservation } from '../lib/sports/multimodalFusionBridge';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -41,6 +43,9 @@ export default function ExtremeSCustomerPortal() {
   const [trend, setTrend] = useState<WeekTrendPoint[]>(() => buildWeekTrend('Efe'));
   const [shuttle, setShuttle] = useState<ShuttleStatus>(() => getShuttleStatus());
   const [secLog, setSecLog] = useState<SecurityEvent[]>(() => getSecurityLog());
+  const [insole, setInsole] = useState<InsoleTelemetry>(() => generateStepTelemetry('R', 1.0, 1.02, 3));
+  const [insoleMsg, setInsoleMsg] = useState('');
+  const [fusion, setFusion] = useState<FusionSnapshot | null>(null);
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -249,7 +254,75 @@ export default function ExtremeSCustomerPortal() {
         </div>
       </div>
 
+      {/* AKILLI TABANLIK & BARIŞ ANALİZİ */}
+      <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🦶 Akıllı Tabanlık & Basış Analizi <span style={{ fontSize: '9px', color: '#64748b', fontWeight: 500 }}>Plantiga sınıfı • 6 nokta FSR + 200Hz IMU</span></div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#0d9488', background: '#f0fdfa', padding: '4px 10px', borderRadius: '999px' }}>{smartInsoleEngineStatus()}</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px', marginTop: '10px' }}>
+          {/* Basınç ısı haritası — ayak şekli */}
+          <div style={{ background: '#0f172a', borderRadius: '14px', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ fontSize: '9px', color: '#94a3b8', marginBottom: '6px' }}>Basınç Isı Haritası (kPa)</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%' }}>
+              {[
+                ['👣 Parmaklar', insole.pressure.toes, '#f472b6'],
+                ['1. Metatars', insole.pressure.met1, '#a78bfa'],
+                ['5. Metatars', insole.pressure.met5, '#818cf8'],
+                ['Taban Kavisi', insole.pressure.midfoot, '#38bdf8'],
+                ['Topuk', insole.pressure.heel, '#f87171'],
+              ].map(([label, val, base]) => {
+                const pct = Math.min(1, (val as number) / 100);
+                const a = Math.round(40 + pct * 60).toString(16).padStart(2, '0');
+                const bg = `linear-gradient(90deg, ${base as string}${a}, ${base as string}88)`;
+                return (
+                  <div key={label as string} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '9px', color: '#e2e8f0', padding: '6px 8px', borderRadius: '8px', background: bg, border: '1px solid rgba(255,255,255,0.12)' }}>
+                    <span>{label}</span><span style={{ fontWeight: 800 }}>{val} kPa</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {/* Analitik özet */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {[
+                ['Zemin Teması', `${insole.gctMs} ms`, computeContactMetrics(insole.gctMs, insole.flightMs).band, insole.gctMs > 220 ? '#dc2626' : '#059669'],
+                ['RSI', `${insole.rsi}`, 'Reaktif Güç', '#7c3aed'],
+                ['Basış Tipi', gaitLabel(insole.gaitType), `${insole.pronationAngle}°`, insole.gaitType === 'NEUTRAL' ? '#059669' : '#d97706'],
+                ['Simetri', `%${100 - insole.stepAsymmetry}`, `${insole.stepAsymmetry > 10 ? '⚠️ asimetrik' : 'denge sağlam'}`, insole.stepAsymmetry > 10 ? '#dc2626' : '#059669'],
+              ].map(([k, v, s, c]) => (
+                <div key={k as string} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '9px', color: '#64748b' }}>{k}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 900, color: c as string }}>{v}</div>
+                  <div style={{ fontSize: '8px', color: '#94a3b8' }}>{s}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: '9px', color: '#475569', lineHeight: '1.5' }}>
+              💬 Sağ ayak içe basma açısı: {insole.pronationAngle}° ({insole.gaitType === 'NEUTRAL' ? 'Normal' : 'Dikkat'}) • Ortalama Zemin Teması: {insole.gctMs} ms ({computeContactMetrics(insole.gctMs, insole.flightMs).band})
+            </div>
+            {insoleRiskRadar(insole).filter((a) => a.severity !== 'INFO').map((a) => (
+              <div key={a.code} style={{ fontSize: '9px', fontWeight: 700, color: a.severity === 'CRITICAL' ? '#dc2626' : '#b45309', background: a.severity === 'CRITICAL' ? '#fef2f2' : '#fffbeb', border: '1px solid currentColor', borderRadius: '8px', padding: '6px 8px' }}>🚩 {a.message}</div>
+            ))}
+            {fusion && (
+              <div style={{ fontSize: '9px', fontWeight: 700, color: fusion.fatigueZone === 'GREEN' ? '#059669' : fusion.fatigueZone === 'YELLOW' ? '#b45309' : '#dc2626', background: fusion.fatigueZone === 'GREEN' ? '#f0fdf4' : fusion.fatigueZone === 'YELLOW' ? '#fffbeb' : '#fef2f2', border: '1px solid currentColor', borderRadius: '8px', padding: '6px 8px' }}>
+                🔗 3'lü Füzyon (Kamera+Pazu+Tabanlık): skor {fusion.fusionScore}/100 • {coachGuidance(fusion.fatigueZone, fusion.alerts).slice(0, 42)}
+              </div>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button onClick={() => { const t = generateStepTelemetry('R', 1.0, 1.02, 3 + Math.floor(Math.random() * 5)); setInsole(t); }} style={lightBtn}>👟 Adım Ölç ({insole.gctMs} ms)</button>
+          <button onClick={() => { const cam: CameraObservation = { trackingId: 'TRK-004', court: 'Padel Kort A', speedMps: 4.2, displacementM: 120 }; const f = fuseSensorStream('Efe', cam, 'BLE-7C91-E2', bands, insole); setFusion(f); setInsoleMsg(f.summary.slice(0, 60)); }} style={lightBtn}>🔗 Füzyon Testi</button>
+          <button onClick={() => setInsoleMsg('🛒 Likya Market: Akıllı Tabanlık ₺340 sepete eklendi — sporcu ayakkabısına özel kalıp')} style={primaryBtn}>🛒 Tabanlık Sipariş Et / Eşleştir</button>
+          {insoleMsg && <span style={{ fontSize: '9.5px', fontWeight: 700, color: '#4f46e5', background: '#eef2ff', border: '1px solid #c7d2fe', borderRadius: '10px', padding: '6px 10px' }}>{insoleMsg}</span>}
+        </div>
+      </div>
+
       {/* 10x REFERANS */}
+
+
       <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
         <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🎁 10x Viral Referans — Davet Et & İndirim Kazan</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginTop: '8px', alignItems: 'center' }}>

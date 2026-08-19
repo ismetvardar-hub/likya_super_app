@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-insole',
+    title: 'ExtremeS Akıllı AI Tabanlık — 6 Nokta FSR + 400Hz IMU Gait Analitiği ve 3\'lü Füzyon',
+    icon: '🦶',
+    keywords: ['tabanlık', 'insole', 'basınç', 'fsr', 'gct', 'zemin temas', 'rsi', 'pronasyon', 'supinasyon', 'gait', 'asimetri', 'loading rate', 'stres kırığı', 'plantiga', 'stryd', 'füzyon', 'multimodal'],
+    content:
+      'lib/sports/smartInsoleEngine.ts — Plantiga/Stryd sınıfı alt ekstremite katmanı: 6 noktalı FSR basınç matrisi (topuk/1.-5. metatars/parmaklar/kavis) + 200Hz IMU telemetrisi (mock-first). GCT (zemin temas süresi, >220ms yorgunluk) + RSI (reaktif kuvvet indeksi) hesaplayıcı; pronasyon/supinasyon sınıflandırıcı (içe/nötr/dışa basma açı tespiti); darbe yükleme oranı (kN/s) ve adım asimetrisi (%>10 → RISK_ALERT) ile stres kırığı erken uyarı radarı. lib/sports/multimodalFusionBridge.ts — 3\'lü füzyon: Tepe Kamerası (mekânsal konum) + Pazu Bandı (BLE kimlik) + Tabanlık (zemin temas) çapraz doğrulaması; fusionScore + yorgunluk zonu (GREEN/YELLOW/RED) + zon ağırlıklı koçluk kararı. UI: ExtremeSCustomerPortal "Akıllı Tabanlık & Basış Analizi" (ısı haritası + GCT/RSI/basış tipi/simetri + "Tabanlık Sipariş Et" Likya Market butonu); SportVisionX ⌚ Pazu Bandı sekmesi "Canlı Adım Asimetrisi & Yorgunluk Zonu" (GCT/RSI/Loading Rate grid + füzyon testi). Smoke: scripts/insoleSmokeTest.mts (12/12).',
+  },
+
+  {
     id: 'sports-ams',
     title: 'Bütünleşik Spor & Akademi Yönetim Motoru — Otonom Karne + Servis Radarı + ACWR',
     icon: '📊',
