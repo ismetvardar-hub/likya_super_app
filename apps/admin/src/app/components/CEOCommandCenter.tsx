@@ -21,6 +21,7 @@ import DazeNeuralMarketHud from './DazeNeuralMarketHud';
 import DazeVisionKioskView from './DazeVisionKioskView';
 import N8nOrchestratorCard from './N8nOrchestratorCard';
 import LifeCoachDashboardCards from './LifeCoachDashboardCards';
+import FamilyFinanceDashboardCards from './FamilyFinanceDashboardCards';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import BuiltinTemplateStoreCard from './BuiltinTemplateStoreCard';
 import AdvancedEnterpriseModules from './AdvancedEnterpriseModules';
@@ -1389,6 +1390,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 <>
                   <HolisticChildDashboard />
                   <LifeCoachDashboardCards />
+                  <FamilyFinanceDashboardCards />
                 </>
               )}
               {activeView === 'scouting' && <ScoutingEcosystem />}

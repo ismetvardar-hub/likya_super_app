@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'club-finance-ecosystem',
+    title: 'Aile Kademeli İndirim + 10x Viral Referans + 365 Gün Ders Kredisi + Ebeveyn Onay',
+    icon: '👨‍👩‍👧‍👦',
+    keywords: ['aile', 'family', 'kademeli indirim', 'referans', 'viral', '10x', 'davet', 'whatsapp', 'ders kredisi', 'telafi', 'credit vault', 'kardeş transfer', 'ebeveyn onay', 'parental', 'mikro limit', 'makro limit', 'mail order', 'otomatik çekim'],
+    content:
+      'lib/finance/familyMembershipEngine.ts — aile kademeli indirim (%0/%15/%25/%30 → 1-4+ birey) + tek ekstre/ortak kart; 10x viral referans (1-3 üye %15, 4-7 üye %25 + 500 TL LikyaPay, 8-10 üye %100 VIP) + çift taraflı teşvik (davet edilen ilk ay %10) + referralCode (VELI_...) + WhatsApp davet linki (likya.app/join?ref). lib/sports/lessonCreditVault.ts — 365 gün yanmayan LessonCredit (katılınmayan ders → kredi), telafi rezervasyonu (grup 1 kredi / özel 3→1), kardeşler arası transfer, otomatik kontenjan dolumu. lib/finance/parentalApprovalEngine.ts — iki kademeli: mikro ≤150 TL otomatik çekim + anlık bildirim; makro >150 TL PENDING_PARENT_APPROVAL + bloke + veli onayında karttan çekim + dijital e-fiş. components/FamilyFinanceDashboardCards.tsx — holistic görünümünde veli paneli (Ailem & Kartım, Ders Kredilerim, Davet Et, Ebeveyn Onay demosu).',
+  },
+
+  {
     id: 'sports-iot-gesture-swarm-b2b',
     title: 'CatchPad IoT + Temassız Jest + Swarm AI + Gropector B2B',
     icon: '🎯',
