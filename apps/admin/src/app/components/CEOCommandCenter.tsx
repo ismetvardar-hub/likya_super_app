@@ -39,12 +39,10 @@ import { loadContext } from '../lib/lifeos/executiveContextEngine';
 import { wrapWithContext } from '../lib/lifeos/contextPromptBuilder';
 import PokeTokenTracker from './PokeTokenTracker';
 import SecurityAppBuilderCard from './SecurityAppBuilderCard';
-import SportsVisionMemoryCard from './SportsVisionMemoryCard';
 import ExtremeSimulatorSecurityCard from './ExtremeSimulatorSecurityCard';
 import FinancePmDashboardCard from './FinancePmDashboardCard';
 import AgentMatrixSafetyCard from './AgentMatrixSafetyCard';
 import McpA2aOpsCard from './McpA2aOpsCard';
-import MultiAgentSportsCard from './MultiAgentSportsCard';
 import DazeSentinelHud from './DazeSentinelHud';
 import ChatwootSupportPanel from './ChatwootSupportPanel';
 import DazeCrewView from './DazeCrewView';
@@ -52,6 +50,10 @@ import DazeVisionOrderTracker from './DazeVisionOrderTracker';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import SportVisionX from './SportVisionX';
+import AthletePerformanceAI from './AthletePerformanceAI';
+import SportVisionDashboard from './SportVisionDashboard';
+import SportsVisionMemoryCard from './SportsVisionMemoryCard';
+import MultiAgentSportsCard from './MultiAgentSportsCard';
 import YouthDevelopmentDashboard from './YouthDevelopmentDashboard';
 import HolisticChildDashboard from './HolisticChildDashboard';
 import ScoutingEcosystem from './ScoutingEcosystem';
@@ -138,7 +140,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     icon: '🎾',
     color: '#34d399',
     moduleIds: [
-      'sportvisionx', 'youthdev', 'holistic', 'scouting',
+      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic', 'scouting',
     ],
   },
   {
@@ -182,7 +184,6 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
 
 const MODULES: ModuleItem[] = [
   // 👑 PATRON & EXTREMES (ExtremeS müşteri portalı — birincil)
-  { id: 'sportvisionx', name: 'Sport Vision X', icon: <Ghost size={16} />, color: '#00f2fe', description: '3D ikiz, ritim kilidi, viral klip, termal radar', category: 'core' },
   { id: 'exec', name: '👑 Patron Panel', icon: <LayoutDashboard size={16} />, color: '#f0abfc', description: '4 sütunlu yalın yönetim', category: 'core' },
   { id: 'extremes', name: '⚡ ExtremeS', icon: <TrendingUp size={16} />, color: '#7c3aed', description: 'Müşteri süper uygulama portalı', category: 'core' },
   // 🎛️ ANA KOMUTA (Executive Core)
@@ -197,6 +198,9 @@ const MODULES: ModuleItem[] = [
   { id: 'gift', name: 'Daze-Gift', icon: <Gift size={16} />, color: '#fbbf24', description: 'İkram sistemi', category: 'daze' },
 
   // 🎾 SPOR, KAMPÜS & DENEYİM
+  { id: 'athlete', name: '🎗️ Sports Vision', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyomekanik AI analiz', category: 'sports' },
+  { id: 'sportvision', name: '🩻 Sport Vision Ajanlar', icon: <Activity size={16} />, color: '#34d399', description: 'Otonom branş ajanları & BESYO akademisi', category: 'sports' },
+  { id: 'sportvisionx', name: '🩻 Sport Vision X', icon: <Ghost size={16} />, color: '#00f2fe', description: 'Ghost Avatar • Pazu Bandı • 🏆 Performans', category: 'sports' },
   { id: 'youthdev', name: 'Gelişim Ligi & Biyometrik', icon: <Ruler size={16} />, color: '#4ade80', description: 'PHV büyüme atağı & genç sporcu akademisi', category: 'sports' },
   { id: 'holistic', name: '360° Çocuk Gelişimi', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Veli anketi, medikal OCR, tribün analizi', category: 'sports' },
   { id: 'scouting', name: 'Scouting & Rekabet', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Kulüp ihracı & küresel rekabet zekası', category: 'sports' },
@@ -1379,6 +1383,14 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   </div>
                 ) : null;
               })()}
+              {activeView === 'athlete' && <AthletePerformanceAI />}
+              {activeView === 'sportvision' && (
+                <>
+                  <SportVisionDashboard />
+                  <SportsVisionMemoryCard />
+                  <MultiAgentSportsCard />
+                </>
+              )}
               {activeView === 'sportvisionx' && <SportVisionX />}
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
               {activeView === 'holistic' && (
