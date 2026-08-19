@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-iot-gesture-swarm-b2b',
+    title: 'CatchPad IoT + Temassız Jest + Swarm AI + Gropector B2B',
+    icon: '🎯',
+    keywords: ['catchpad', 'iot', 'pod', 'reaksiyon', 'tripod', 'hooper pov', 'şut', 'jest', 'gesture', 'temassız', 'swarm', 'sürü', 'token', 'caveman', 'rtk', 'gropector', 'b2b', 'pitch', 'radar'],
+    content:
+      'lib/sports/catchPadReactionEngine.ts — 6\'lı CatchPad pod matrisi (Bluetooth eşleşme, ms reaksiyon, isabet %) + Hooper POV tripod modu (tek kameradan pota/oyuncu açısı → şut sayısı + %). lib/security/gestureControlEngine.ts — MediaPipe Hands şema uyumlu 3 temassız jest: Swipe_Left_Right (ekran geçişi), Pinch_Select (onay), Open_Palm_Stop (duraklat) + touchless_mode bayrağı (mock-first). lib/ai/swarmOrchestratorEngine.ts — MiroFish/BettaFish tarzı sürü koordinatörü (görev → paralel mikro-ajanlar) + RTK/Caveman prompt sıkıştırıcı (%40+ token tasarrufu) + OpenAI uyumlu Base URL yönlendirici. lib/ops/gropectorB2BRadar.ts — Google Maps/Gemini uyumlu harita radarı (web/spor altyapı eksik tespiti + leads skoru) + tek tıkla kişiselleştirilmiş B2B pitch + kampanya. UI: CatchPadReactionCard (SportVisionX), GrowthRadarSwarmCard (monitor görünümü).',
+  },
+
+  {
     id: 'advanced-100-master',
     title: '100 Aşamalık İleri Teknik İcra — 8 Yeni Motor + Kurumsal Hub',
     icon: '🏗️',

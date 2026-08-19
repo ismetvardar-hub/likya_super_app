@@ -7,6 +7,7 @@ import CsmTacticalPanel from './CsmTacticalPanel';
 import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
 import ShootingBalanceCard from './ShootingBalanceCard';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
+import CatchPadReactionCard from './CatchPadReactionCard';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -75,6 +76,9 @@ export default function SportVisionX() {
 
       {/* 📐 Kuşbakışı Oyuncu Grid — Supervision Zone */}
       <SupervisionZoneOverlay />
+
+      {/* 🎯 CatchPad IoT Reaksiyon & Hooper POV Tripod Şut Kartı */}
+      <CatchPadReactionCard />
     </div>
   );
 }

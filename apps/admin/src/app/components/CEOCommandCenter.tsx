@@ -24,6 +24,7 @@ import LifeCoachDashboardCards from './LifeCoachDashboardCards';
 import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import BuiltinTemplateStoreCard from './BuiltinTemplateStoreCard';
 import AdvancedEnterpriseModules from './AdvancedEnterpriseModules';
+import GrowthRadarSwarmCard from './GrowthRadarSwarmCard';
 import DazeChef from './DazeChef';
 import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
@@ -1420,6 +1421,7 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   <N8nOrchestratorCard />
                   <BuiltinTemplateStoreCard />
                   <AdvancedEnterpriseModules />
+                  <GrowthRadarSwarmCard />
                 </>
               )}
               {activeView === 'finance' && (
