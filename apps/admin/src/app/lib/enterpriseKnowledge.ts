@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'global-100-scale',
+    title: '100 Aşamalık Küresel Master Genişleme & Sertleştirme Planı (10 Blok)',
+    icon: '🌍',
+    keywords: ['100 asama', 'global', 'scale', 'white-label', 'fintech', 'fx', 'menu engineering', 'xg', 'pms', 'ota', 'rag', 'ble', 'clv', 'saml', 'sso', 'openapi', 'self-healing', 'v2.0'],
+    content:
+      '10 Stratejik Blok: B1 cloudInfraEngine (tenant şema, pooler, redis cache, cold-start, indeks dedektörü, PITR, timescale, ZDM). B2 enterpriseSecuritySuite (rate limit, passkey/2FA, anahtar rotasyonu, audit, WAF, GDPR silme, AES-GCM, pentest, HMAC, lockdown). B3 fintechSuite (FX TRY/USD/EUR/GBP, LikyaPay, dunning, tip havuzu, hakediş, kripto onay, kupon, POS fiş, fraud skoru, cash-flow). B4 gastronomyIntelligence (menu eng, KDS, tedarikçi PO, cold chain, porsiyon, istasyon, alerjen, QR masa, rota, FIFO). B5 sportsIntelligenceSuite (spin, xG, şut açısı, smaç/blok, HRV, 3D mesh, heatmap, sesli taktik, yatkınlık, fikstür). B6 campusAutomationSuite (OTA iCal, sayaç IoT, termostat, housekeeping, lost&found, erken giriş, otopark/EV, NPS, spa, VIP). B7 autonomousAgentsSuite (LLM fallback, satış botu, voice AI, RAG, vardiya, trend ajan, CEO podcast, empati, scraper, SRE). B8 offlineFirstSuite (BLE, indoor nav, wallet pass, kalori vision, geofence, bileklik, SW cache, kiosk heartbeat, NFC, OLED). B9 executiveIntelligence (holo-dashboard, CLV/churn, KPI/OKR, karbon, benchmark, heatmap, korelasyon, PDF, attribution, amortisman). B10 globalScaleSuite (white-label, CDN edge, multi-region, SAML/SSO, 100K load, OpenAPI, webhook portal, self-healing, E2E, Production v2.0).',
+  },
+
+  {
     id: 'master-20-roadmap',
     title: '20 Aşamalı Master İcra Yol Haritası (Prodüksiyon Olgunluğu)',
     icon: '🏗️',
