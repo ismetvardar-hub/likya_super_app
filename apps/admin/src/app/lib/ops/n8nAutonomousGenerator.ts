@@ -173,6 +173,10 @@ export function n8nAutonomousGeneratorStatus(): string {
   return 'n8n Üretici [9 senaryo: yangın • konveyör • 120s reminder • üslup • DM lead • ses→görev • RAG • CEO digest • churn]';
 }
 
+// ── 📦 ŞABLON KÖPRÜSÜ: 5 yerleşik ücretsiz şablon + tek tıkla deploy ───────
+export { getBuiltinTemplates, getBuiltinTemplate, deployTemplateToN8n, BUILTIN_TEMPLATES, builtinTemplatesStatus } from './dazeBuiltinTemplates';
+export type { BuiltinTemplate } from './dazeBuiltinTemplates';
+
 
 // ============================================================================
 // 🧩 HAZIR YERLEŞİK ŞABLONLAR (Built-in Free Templates) — sıfır maliyet, hazır JSON yok

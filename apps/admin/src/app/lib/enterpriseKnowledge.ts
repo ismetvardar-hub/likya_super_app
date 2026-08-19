@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'builtin-template-store',
+    title: '5 Ücretsiz Yerleşik Otomasyon Şablon Mağazası + Tek Tıkla Deploy',
+    icon: '📦',
+    keywords: ['şablon', 'template', 'mağaza', 'store', 'builtin', 'free', 'deploy', 'tek tıkla', 'social lead', 'voice to task', 'doc rag', 'digest', 'churn'],
+    content:
+      'lib/ops/dazeBuiltinTemplates.ts — 5 yerleşik ücretsiz otomasyon şablonu (dış bağımlılık yok, mock-first): SocialLeadConverter (yorum→DM→CRM), VoiceToTaskOrchestrator (ses→staff_tasks/mutfak eksik), DocRagContractAssistant (tüzük→pgvector→7/24 RAG), DailyExecutiveDigest (23:59 CEO Markdown bülteni), ChurnRecoveryGift (14 gün→Daze-Gift QR+davet). getBuiltinTemplates() katalog + getBuiltinTemplate(id) + deployTemplateToN8n(templateId) → /api/v1/n8n/proxy/workflows üzerinden oluştur + aktifleştir (n8n env yoksa mock-first). n8nAutonomousGenerator.ts köprü re-export uyumu. components/BuiltinTemplateStoreCard.tsx — monitor görünümünde 5 kart + "İş Akışını Otonom Başlat" + CANLI/MOCK rozeti.',
+  },
+
+  {
     id: 'supervision-zones-nvidia',
     title: 'Roboflow Supervision Bölge/Çizgi Sayımı + NVIDIA 10x Direct-Box Çıkarım',
     icon: '📐',
