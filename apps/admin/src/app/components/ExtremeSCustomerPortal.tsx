@@ -19,6 +19,7 @@ import { addFitXp, buildLeaderboards, generateDazeCoupon, leagueProgress, fitGam
 import { runOrthopedicTest, orthopedicPrescription, orthopedicGaitStatus, type OrthopedicReport } from '../lib/sports/orthopedicGaitAnalysis';
 import { scanChildLocation, clearGeofenceAlert, getGeofenceAlerts, geofencingStatus, type GeofenceAlert } from '../lib/security/geofencingProtection';
 import { pointScored, callViolation, resolveChallenge, scoreLabel, speakAnnouncement, getUmpireDecisions, aiUmpireStatus, type UmpireScore, type Announcement, type UmpireDecision } from '../lib/sports/aiLiveUmpireEngine';
+import { SPORT_LIST, initMultiSportMatch, scoreEvent, callMultiViolation, multiSportAnnounce, multiSportRefereeStatus, type SupportedSport, type MultiSportRefereeState, type MultiSportEvent } from '../lib/sports/multiSportRefereeEngine';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -69,6 +70,9 @@ export default function ExtremeSCustomerPortal() {
   const [umpAnon, setUmpAnon] = useState<Announcement | null>(null);
   const [umpFlow, setUmpFlow] = useState<{ id: string; text: string; at: string }[]>([]);
   const [umpDecisions, setUmpDecisions] = useState<UmpireDecision[]>(() => getUmpireDecisions());
+  const [msSport, setMsSport] = useState<SupportedSport>('FOOTBALL');
+  const [msState, setMsState] = useState<MultiSportRefereeState>(() => initMultiSportMatch('FOOTBALL', 'Likya', 'Rakip'));
+  const [msAnon, setMsAnon] = useState<Announcement | null>(null);
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -600,6 +604,44 @@ export default function ExtremeSCustomerPortal() {
               <div style={{ fontSize: '8.5px', color: '#64748b' }}>⚖️ AI Hakem: son {umpDecisions.length} karar — itirazlar VAR ile teyit edilir ({getUmpireDecisions()[0]?.announcement.text.slice(0, 30)})</div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* EVRENSEL AI HAKEM — TEMATİK SKORBORD */}
+      <div style={{ background: 'linear-gradient(160deg,#0f172a,#1e1b4b)', border: '1px solid rgba(168,85,247,0.35)', borderRadius: '16px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>🏛️ Evrensel AI Hakem — Canlı İzleme</div>
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#c4b5fd', background: 'rgba(168,85,247,0.15)', padding: '4px 10px', borderRadius: '999px' }}>{multiSportRefereeStatus(msSport)}</span>
+        </div>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
+          {SPORT_LIST.map((s) => (
+            <button key={s.id} onClick={() => { setMsSport(s.id); setMsState(initMultiSportMatch(s.id, 'Likya', 'Rakip')); setMsAnon(null); }} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', border: msSport === s.id ? '1px solid rgba(168,85,247,0.6)' : '1px solid rgba(255,255,255,0.15)', background: msSport === s.id ? 'rgba(168,85,247,0.2)' : 'rgba(255,255,255,0.04)', color: msSport === s.id ? '#f0abfc' : '#94a3b8' }}>{s.icon} {s.label}</button>
+          ))}
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+          <div style={{ textAlign: 'center', flex: 1 }}>
+            <div style={{ fontSize: '10px', fontWeight: 800, color: '#fff' }}>{msState.homeName}</div>
+            <div style={{ fontSize: '30px', fontWeight: 900, color: msSport === 'FOOTBALL' ? '#4ade80' : msSport === 'BASKETBALL' ? '#fbbf24' : msSport === 'VOLLEYBALL' ? '#4ade80' : '#00f2fe' }}>
+              {msState.football?.homeGoals ?? msState.basketball?.homePts ?? msState.volleyball?.homePts ?? (msState.racket ? scoreLabel(msState.racket).points.split(' - ')[0] : '0')}
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', fontSize: '9px', color: '#64748b', fontWeight: 700 }}>
+            {msState.football ? `${msState.football.minute}' • GLT ${msState.football.glt ?? '—'}` : msState.basketball ? `Periyot ${msState.basketball.period} • ⏱️ ${msState.basketball.shotClock}s` : msState.volleyball ? `Setler ${msState.volleyball.homeSets}-${msState.volleyball.awaySets}` : (msState.racket ? scoreLabel(msState.racket).games : '')}
+          </div>
+          <div style={{ textAlign: 'center', flex: 1 }}>
+            <div style={{ fontSize: '10px', fontWeight: 800, color: '#fff' }}>{msState.awayName}</div>
+            <div style={{ fontSize: '30px', fontWeight: 900, color: '#f472b6' }}>
+              {msState.football?.awayGoals ?? msState.basketball?.awayPts ?? msState.volleyball?.awayPts ?? (msState.racket ? scoreLabel(msState.racket).points.split(' - ')[1]?.replace(' (TB)', '') ?? '0' : '0')}
+            </div>
+          </div>
+        </div>
+        {msAnon && <div style={{ marginTop: '8px', fontSize: '10.5px', fontWeight: 900, color: msAnon.highlight === 'violation' ? '#fb7185' : '#fbbf24', background: 'rgba(255,255,255,0.07)', borderRadius: '10px', padding: '8px 10px', textAlign: 'center' }}>🔊 {msAnon.text}</div>}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '8px' }}>
+          {msSport === 'FOOTBALL' && <button onClick={() => { const x = scoreEvent(msState, 'GOAL_HOME'); setMsState(x.state); setMsAnon(x.announcement); multiSportAnnounce(x.announcement); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 11px', borderRadius: '8px', border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.1)', color: '#4ade80', cursor: 'pointer' }}>⚽ Gol</button>}
+          {msSport === 'BASKETBALL' && <button onClick={() => { const x = scoreEvent(msState, 'THREE_PT_HOME'); setMsState(x.state); setMsAnon(x.announcement); multiSportAnnounce(x.announcement); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 11px', borderRadius: '8px', border: '1px solid rgba(251,191,36,0.4)', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', cursor: 'pointer' }}>🎯 3 Sayı</button>}
+          {msSport === 'VOLLEYBALL' && <button onClick={() => { const x = scoreEvent(msState, 'POINT_HOME'); setMsState(x.state); setMsAnon(x.announcement); multiSportAnnounce(x.announcement); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 11px', borderRadius: '8px', border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.1)', color: '#4ade80', cursor: 'pointer' }}>🏐 Puan</button>}
+          {(msSport === 'TENNIS' || msSport === 'PADEL') && <button onClick={() => { const x = scoreEvent(msState, 'RACKET_HOME'); setMsState(x.state); setMsAnon(x.announcement); multiSportAnnounce(x.announcement); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 11px', borderRadius: '8px', border: '1px solid rgba(0,242,254,0.4)', background: 'rgba(0,242,254,0.1)', color: '#00f2fe', cursor: 'pointer' }}>🎾 Puan</button>}
+          <button onClick={() => { const x = callMultiViolation(msSport, msSport === 'BASKETBALL' ? 'STEPS' : msSport === 'VOLLEYBALL' ? 'DOUBLE_TOUCH' : msSport === 'FOOTBALL' ? 'OFFSIDE' : 'OUT'); setMsAnon(x); multiSportAnnounce(x); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 11px', borderRadius: '8px', border: '1px solid rgba(251,113,133,0.4)', background: 'rgba(251,113,133,0.1)', color: '#fb7185', cursor: 'pointer' }}>🚩 Kural İhlali</button>
         </div>
       </div>
 

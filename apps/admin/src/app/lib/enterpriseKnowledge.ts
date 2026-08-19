@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-referee-multisport',
+    title: 'Evrensel Çok Branşlı AI Canlı Hakem — Tenis, Padel, Futbol, Basketbol, Voleybol',
+    icon: '🏛️',
+    keywords: ['çok branşlı', 'hakem', 'futbol', 'gol çizgisi', 'glt', 'ofsayt', 'basketbol', 'şut saati', '24s', '14s', 'steps', 'bonus faul', 'voleybol', 'set 25', 'çift vuruş', 'double touch', 'file teması', 'tenis', 'padel', 'sport selector'],
+    content:
+      'lib/sports/multiSportRefereeEngine.ts — Evrensel çok branşlı AI canlı hakem sistemi: 5 branş (TENNIS/PADEL/FOOTBALL/BASKETBALL/VOLLEYBALL) tek durum modelinde. Futbol: skor + dakika, GLT gol çizgisi (GOAL/NO_GOAL), yarı-otomatik ofsayt (OFFSIDE), sarı/kırmızı kart. Basketbol: periyot, şut saati (24s/14s), 2P/3P tespiti, hatalı yürüme (STEPS), faul sayacı + 5. faul BONUS. Voleybol: 25 puanlık set akışı, çift vuruş (DOUBLE_TOUCH), file teması (NET_TOUCH). Tenis/Padel: mevcut aiLiveUmpireEngine skor motorunu yeniden kullanır (0-15-30-40, Deuce, Tie-break). Branş seçici (Sport Selector) ile dinamik geçiş + çok dilli sesli anons (Web Speech API, multiSportAnnounce tr/en). UI: SportVisionX "Evrensel AI Hakem" paneli (5 butonlu branş seçici + futbol/basketbol/voleybol/raket tematik skorbordları + hızlı olay/ihlal butonları: GLT/Ofsayt/Kırmızı, 3 Sayı/Steps/Faul, Çift Vuruş/File, OUT/FAULT); ExtremeSCustomerPortal "Evrensel AI Hakem — Canlı İzleme" (tematik skorbord + branşa özel hızlı skor butonu + kural ihlali). Smoke: scripts/multiSportSmokeTest.mts (13/13).',
+  },
+
+  {
     id: 'sports-umpire',
     title: 'Tam Otonom Canlı Saha Hakemi (AI Live Umpire) — Skor, Sesli Anons, VAR Challenge',
     icon: '⚖️',
