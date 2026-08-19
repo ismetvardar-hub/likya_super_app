@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { generateN8nWorkflow, validateN8nWorkflow, n8nAutonomousGeneratorStatus, type N8nScenario } from '../lib/ops/n8nAutonomousGenerator';
-import { n8nEnvReady, n8nApiClientStatus } from '../lib/ops/n8nApiClient';
+import { checkN8nLiveStatus, n8nApiClientStatus } from '../lib/ops/n8nApiClient';
 import { runAgenticLoop, agenticLoopEngineStatus, type AgentLoopResult } from '../lib/agents/agenticLoopEngine';
 
 // ============================================================================
@@ -20,6 +20,14 @@ const SCENARIOS: { id: N8nScenario; icon: string; label: string }[] = [
 export default function N8nOrchestratorCard() {
   const [result, setResult] = useState<AgentLoopResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const [live, setLive] = useState(false);
+
+  // Sunucu proxy üzerinden n8n canlı sağlık durumu (HTTP 200 / env kontrolü)
+  useEffect(() => {
+    let cancelled = false;
+    void checkN8nLiveStatus().then((s) => { if (!cancelled) setLive(s.live); });
+    return () => { cancelled = true; };
+  }, []);
 
   const run = (scenario: N8nScenario) => {
     setBusy(true);
@@ -28,8 +36,6 @@ export default function N8nOrchestratorCard() {
     setResult(r);
     setBusy(false);
   };
-
-  const live = n8nEnvReady();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', background: 'linear-gradient(160deg, rgba(15,23,42,0.92), rgba(13,19,34,0.96))', border: '1px solid rgba(168,85,247,0.35)', borderRadius: '16px', padding: '16px', boxShadow: '0 0 26px rgba(168,85,247,0.1)' }}>
