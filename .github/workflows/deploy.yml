@@ -54,9 +54,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2
         with:
           version: latest
+        # setup-cli geçici kurulum/ağ hatası pipeline'ı kırmasın (resilient).
+        continue-on-error: true
 
       - name: Local SQL Syntax Check (yerel — ağ/secret gerektirmez)
         run: |
