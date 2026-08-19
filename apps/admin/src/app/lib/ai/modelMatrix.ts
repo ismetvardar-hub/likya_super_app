@@ -255,6 +255,26 @@ async function callGemini(systemPrompt: string, prompt: string): Promise<string>
   return text;
 }
 // ----------------------------------------------------------------------------
+// 🎙️ Groq Whisper v3 — ses transkripsiyon katmanı (aktif hat, GROQ_API_KEY ile)
+// ----------------------------------------------------------------------------
+export async function transcribeGroqWhisper(audioBase64: string, opts?: { model?: string }): Promise<{ text: string; model: string }> {
+  const key = process.env.GROQ_API_KEY || '';
+  if (!key) throw new Error('Groq anahtarı yok');
+  const model = opts?.model || process.env.GROQ_WHISPER_MODEL || 'whisper-large-v3';
+  const form = new FormData();
+  form.append('model', model);
+  form.append('file', new Blob([Buffer.from(audioBase64, 'base64')], { type: 'audio/wav' }), 'voice.wav');
+  const res = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}` },
+    body: form,
+  });
+  const data = (await res.json()) as { text?: string; error?: { message?: string } };
+  if (!res.ok) throw new Error(data.error?.message || `Whisper ${res.status}`);
+  if (!data.text) throw new Error('Whisper boş transkripsiyon');
+  return { text: data.text.trim(), model };
+}
+// ----------------------------------------------------------------------------
 // Plan matrisleri
 // ----------------------------------------------------------------------------
 const CODE_SYSTEM_PROMPT =
@@ -286,8 +306,8 @@ function buildCodePlans(): MatrixPlan[] {
   }
   if (groqKey) {
     plans.push({
-      letter: 'B', name: 'Qwen Coder / Groq', badge: '[🧠 Plan B: Qwen/Groq]',
-      run: (p) => callOpenAICompatible('https://api.groq.com/openai/v1', groqKey, 'qwen-2.5-coder-32b', CODE_SYSTEM_PROMPT, p),
+      letter: 'B', name: 'GPT-OSS-120b / Groq', badge: '[🧠 Plan B: Groq GPT-OSS]',
+      run: (p) => callOpenAICompatible('https://api.groq.com/openai/v1', groqKey, 'openai/gpt-oss-120b', CODE_SYSTEM_PROMPT, p),
     });
   }
   if (openaiKey) {
@@ -355,8 +375,8 @@ function buildResearchPlans(): MatrixPlan[] {
   }
   if (groqKey) {
     plans.push({
-      letter: 'B', name: 'Llama-3.3 / Groq', badge: '[🧠 Plan B: Llama/Groq]',
-      run: (p) => callOpenAICompatible('https://api.groq.com/openai/v1', groqKey, 'llama-3.3-70b-versatile', CHAT_SYSTEM_PROMPT, p),
+      letter: 'B', name: 'GPT-OSS-120b / Groq', badge: '[🧠 Plan B: Groq GPT-OSS]',
+      run: (p) => callOpenAICompatible('https://api.groq.com/openai/v1', groqKey, 'openai/gpt-oss-120b', CHAT_SYSTEM_PROMPT, p),
     });
   }
   if (openaiKey) {

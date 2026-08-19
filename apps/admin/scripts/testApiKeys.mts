@@ -56,6 +56,9 @@ function collectKeys(): Masked[] {
       if (name.startsWith('NVIDIA_') && v.includes('Nvapi')) add('NVIDIA', v);
       if (name.startsWith('DEEPSEEK_') && v.length > 20) add('DeepSeek', v);
       if (name.startsWith('GEMINI_') || name.startsWith('GOOGLE_')) add('Gemini', v);
+      if (name.startsWith('GROQ_') && v.startsWith('gsk_')) add('Groq', v);
+      if (name.startsWith('OPENROUTER_')) add('OpenRouter', v);
+      if (name.startsWith('CEREBRAS_')) add('Cerebras', v);
     }
   }
 
