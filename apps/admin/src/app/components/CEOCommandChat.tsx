@@ -5,6 +5,7 @@ import { routeToModel, checkModelHealth, ModelProvider } from './ModelRouter';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
 import { detectOutcomeCommand, executeOutcomeCommand } from '../lib/ops/outcomeExecutor';
 import { startOpenLiveRecording, getVoiceSupport } from '../lib/voice/openLive';
+import { syntaxAwareBalance, moduleIntegrityCheck } from '../lib/ops/jsxWriteGuard';
 
 // ============================================================================
 // LİKYA CEO KOMUT MERKEZİ - ZOEY OS TARZI SESLİ OTONOM AJAN ORKESTRATÖRÜ
@@ -30,6 +31,29 @@ const AJANLAR: AjanTanimi[] = [
   { id: 'pazarlama', ad: 'Pazarlama Ajanı', emoji: '📣', renk: '#ecc94b', yetenekler: ['pazarlama', 'kampanya', 'reklam', 'sosyal medya', 'tanıtım', 'marka'], aciklama: 'Kampanya planlar, sosyal medya içeriği üretir' },
   { id: 'satis', ad: 'Satış Ajanı', emoji: '🛒', renk: '#f27a1a', yetenekler: ['satış', 'sat', 'sipariş', 'ürün', 'komisyon', 'teklif'], aciklama: 'Satış yapar, sipariş alır, komisyon hesaplar' },
 ];
+
+// ============================================================================
+// Cline yazılım talimatı → gerçek AI kod üretimi + JSX WRITE GUARD doğrulaması
+// LLM yalnızca JSX bloğu üretirse (import/export yok) veya parantez dengesi
+// bozuksa yazım REDDEDİLİR — dosya asla bozuk içerikle üzerine yazılmaz.
+// ============================================================================
+const SOFTWARE_SYSTEM_PROMPT =
+  'Sen Likya Kampüsü kod yazma ajanısın. Kullanıcının istediği değişikliği yap. Kurallar: (1) Düzenlenen dosyanın TAMAMINI tek parça üret — asla yalnızca bir JSX bloğu verme. (2) import/export + bileşen tanımı + kapanış parantezleri eksiksiz olmalı. (3) Her <div> için </div>, her { için }, her ( için ) eşleşmeli. (4) Açıklama yazma, sadece kod ver.';
+
+function extractCodeBlock(raw: string): string {
+  const match = raw.match(/```(?:tsx|ts|jsx|js)?\s*\n([\s\S]*?)```/);
+  return match ? match[1].trim() : raw.trim();
+}
+
+function validateAiCodeOutput(raw: string): { code: string; balanceOk: boolean; integrityOk: boolean; warning?: string; codePreview: string } {
+  const code = extractCodeBlock(raw);
+  const balance = syntaxAwareBalance(code);
+  const integrity = moduleIntegrityCheck(code, '');
+  let warning: string | undefined;
+  if (!balance.ok) warning = `⚠️ LLM çıktısı PARANTEZ DENGESİZ (${balance.diff}). Kod dosyaya UYGULANMADI.`;
+  else if (!integrity.ok) warning = `⚠️ LLM dosyanın TAMAMI yerine yalnızca JSX bloğu üretti. Kod dosyaya UYGULANMADI.`;
+  return { code, balanceOk: balance.ok, integrityOk: integrity.ok, warning, codePreview: code.slice(0, 240) };
+}
 
 // ============================================================================
 // CEO KOMUT YANITLARI
@@ -456,15 +480,40 @@ export default function CEOCommandChat() {
     const isBusiness = isBusinessRequest(text);
 
     if (isSoftware) {
-      // Yazılım isteği → Cline'a yönlendir
+      // Yazılım isteği → Cline gerçek AI kod üretir + JSX WRITE GUARD doğrular
       setActiveModel('ollama');
-      setTimeout(() => {
-        const clineMsg = `🧠 Cline (Otonom Kodlayıcı): Yazılım talimatı alındı!\n• Talep: "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n• İlgili dosyalar açıldı ve incelendi\n• Kod üretildi, test edildi ve doğrulandı\n• Yeni özellik sisteme entegre edildi\n• Build başarıyla geçti, sonuç raporlandı ✅`;
+      setMessages((prev) => [...prev, { role: 'ceo', text: '🧠 Cline: Yazılım talimatı alındı — OmniRoute üzerinden kod üretiliyor, JSX guard ile doğrulanacak…', time: now() }]);
+      routeToModel(text, SOFTWARE_SYSTEM_PROMPT).then((result) => {
+        const v = validateAiCodeOutput(result.content);
+        let clineMsg: string;
+        if (v.warning) {
+          clineMsg =
+            `🧠 Cline (Otonom Kodlayıcı): Talimat alındı — "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n\n` +
+            `${v.warning}\n` +
+            `• Sağlayıcı: ${result.provider} (${result.latencyMs}ms)\n\n` +
+            `📋 LLM Önizleme:\n${v.codePreview}...\n\n` +
+            `💡 Çözüm: LLM'den tekrar TAM dosya üretmesini isteyin veya bu chat'e düzeltilmiş dosyayı yapıştırın.`;
+        } else {
+          clineMsg =
+            `🧠 Cline (Otonom Kodlayıcı): Kod üretildi ve JSX WRITE GUARD ile DOĞRULANDI ✅\n` +
+            `• Talep: "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n` +
+            `• ${v.code.length} karakter • parantez dengesi OK • modül bütünlüğü OK (import/export + bileşen tanımı)\n` +
+            `• Sağlayıcı: ${result.provider} (${result.latencyMs}ms)\n\n` +
+            `📋 Kod Önizleme:\n${v.codePreview}...`;
+        }
         setMessages((prev) => [...prev, { role: 'ceo', text: clineMsg, time: now() }]);
         if (source === 'voice') speak(clineMsg);
         setIsProcessing(false);
         processingRef.current = false;
-      }, 1800);
+      }).catch(() => {
+        const clineMsg =
+          `🧠 Cline (Otonom Kodlayıcı): Talimat alındı — "${text.length > 60 ? text.substring(0, 60) + '...' : text}"\n\n` +
+          `⚠️ AI modelleri şu an erişilemiyor (OmniRoute offline). Kod üretilemedi — talimatı Vercel/yerel ortamda tekrar deneyin.`;
+        setMessages((prev) => [...prev, { role: 'ceo', text: clineMsg, time: now() }]);
+        if (source === 'voice') speak(clineMsg);
+        setIsProcessing(false);
+        processingRef.current = false;
+      });
       return;
     }
 
