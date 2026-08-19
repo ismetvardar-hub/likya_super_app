@@ -15,6 +15,11 @@ const SCENARIOS: { id: N8nScenario; icon: string; label: string }[] = [
   { id: 'quality-conveyor', icon: '🏭', label: 'Konveyör Kalite (77)' },
   { id: 'daze-reminder', icon: '⏰', label: 'Daze Reminder 120s' },
   { id: 'master-styling', icon: '🎩', label: 'Master Üslup Filtresi' },
+  { id: 'social-dm-lead', icon: '📱', label: 'Sosyal DM Lead' },
+  { id: 'voice-to-task', icon: '🎤', label: 'Ses → Görev' },
+  { id: 'doc-rag', icon: '📄', label: 'Sözleşme RAG' },
+  { id: 'executive-digest', icon: '📊', label: 'CEO Günlük Digest' },
+  { id: 'churn-recovery', icon: '🧲', label: 'Churn Kurtarma' },
 ];
 
 export default function N8nOrchestratorCard() {

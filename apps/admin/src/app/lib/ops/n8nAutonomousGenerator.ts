@@ -8,7 +8,9 @@
 // Deterministik; Plan Z güvenli; asla throw etmez.
 // ============================================================================
 
-export type N8nScenario = 'fire-emergency' | 'quality-conveyor' | 'daze-reminder' | 'master-styling';
+export type N8nScenario =
+  | 'fire-emergency' | 'quality-conveyor' | 'daze-reminder' | 'master-styling'
+  | 'social-dm-lead' | 'voice-to-task' | 'doc-rag' | 'executive-digest' | 'churn-recovery';
 
 export interface N8nNode {
   parameters: Record<string, unknown>;
@@ -147,6 +149,11 @@ export function generateN8nWorkflow(scenario: N8nScenario): N8nWorkflowJson {
     case 'quality-conveyor': return qualityControlConveyorWorkflow();
     case 'daze-reminder': return dazeReminderPeriodicWorkflow();
     case 'master-styling': return masterStylingFilterNode();
+    case 'social-dm-lead': return socialDmLeadWorkflow();
+    case 'voice-to-task': return voiceToTaskWorkflow();
+    case 'doc-rag': return docRagWorkflow();
+    case 'executive-digest': return dailyExecutiveDigestWorkflow();
+    case 'churn-recovery': return churnRecoveryWorkflow();
   }
 }
 
@@ -163,6 +170,126 @@ export function validateN8nWorkflow(wf: N8nWorkflowJson): { ok: boolean; issues:
 }
 
 export function n8nAutonomousGeneratorStatus(): string {
-  return 'n8n Üretici [4 senaryo: yangın • konveyör • 120s reminder • master üslup]';
+  return 'n8n Üretici [9 senaryo: yangın • konveyör • 120s reminder • üslup • DM lead • ses→görev • RAG • CEO digest • churn]';
+}
+
+
+// ============================================================================
+// 🧩 HAZIR YERLEŞİK ŞABLONLAR (Built-in Free Templates) — sıfır maliyet, hazır JSON yok
+// 1. SocialDMLeadGenerator   : yorum anahtar kelime → DM rezervasyon/indirim → CRM
+// 2. VoiceToTaskConverter    : WhatsApp/Telegram ses → transkript → staff_tasks
+// 3. DocRagAssistant         : PDF/MD → chunk+embed → pgvector → Gemini RAG yanıtı
+// 4. DailyExecutiveDigest    : Cron 23:59 → günlük bilanço → WhatsApp/Telegram raporu
+// 5. ChurnRecovery           : 14 gün gelmeyen üye → risk skoru → Daze-Gift QR → davet
+// ============================================================================
+
+// ── 1) SOSYAL MEDYA OTONOM DÖNÜŞÜM (DM & LEAD GENERATOR) ────────────────────
+export function socialDmLeadWorkflow(): N8nWorkflowJson {
+  const trigger = webhookNode('Instagram Yorum Webhook', 'POST', 'daze/social-comment', 0, 0);
+  const keywordIf = ifNode('Anahtar Kelime Filtresi (KORT/MENÜ/REÇETE)', 'comment', 220, 0);
+  const profile = httpRequestNode('Kullanıcı Profili Çek', 'https://graph.instagram.com/me', 'GET');
+  const dm = httpRequestNode('DM: Kişiselleştirilmiş Rezervasyon/İndirim Linki', 'https://hook.likya.app/dm/send', 'POST', '{"type":"lead"}');
+  const crm = httpRequestNode('CRM Tablosuna Kaydet', 'https://likya-ceo.vercel.app/api/v1/ops/crm', 'POST', '{"action":"upsert_lead"}');
+  const end = noOpNode('Son', 220, 260);
+
+  return {
+    name: 'Social DM Lead Generator (KORT/MENÜ/REÇETE)',
+    nodes: [trigger, keywordIf, profile, dm, crm, end],
+    connections: {
+      ...connect('Instagram Yorum Webhook', 'Anahtar Kelime Filtresi (KORT/MENÜ/REÇETE)'),
+      'Anahtar Kelime Filtresi (KORT/MENÜ/REÇETE)': { main: [[{ node: 'Kullanıcı Profili Çek', type: 'main', index: 0 }], [{ node: 'Son', type: 'main', index: 0 }]] },
+      'Kullanıcı Profili Çek': { main: [[{ node: 'DM: Kişiselleştirilmiş Rezervasyon/İndirim Linki', type: 'main', index: 0 }]] },
+      'DM: Kişiselleştirilmiş Rezervasyon/İndirim Linki': { main: [[{ node: 'CRM Tablosuna Kaydet', type: 'main', index: 0 }]] },
+      'CRM Tablosuna Kaydet': { main: [[{ node: 'Son', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1', saveManualExecutions: true },
+  };
+}
+
+// ── 2) SESLİ NOT → OTONOM GÖREV & AJANDA ────────────────────────────────────
+export function voiceToTaskWorkflow(): N8nWorkflowJson {
+  const trigger = webhookNode('WhatsApp/Telegram Ses Webhook', 'POST', 'daze/voice-note', 0, 0);
+  const transcribe = httpRequestNode('Whisper/Gemini Transkripsiyon', 'https://api.openai.com/v1/audio/transcriptions', 'POST', '{}');
+  const jsonExtract = httpRequestNode('JSON Çıkarımı (Görev/Kişi/Öncelik/Tarih)', 'https://likya-ceo.vercel.app/api/v1/ai/extract-task', 'POST', '{"schema":"task"}');
+  const staffInsert = httpRequestNode('Supabase staff_tasks Yaz', 'https://likya-ceo.vercel.app/api/v1/ops/staff-task', 'POST', '{}');
+  const end = noOpNode('Son', 220, 260);
+
+  return {
+    name: 'Voice to Task Converter (saha görev otonom açılır)',
+    nodes: [trigger, transcribe, jsonExtract, staffInsert, end],
+    connections: {
+      ...connect('WhatsApp/Telegram Ses Webhook', 'Whisper/Gemini Transkripsiyon'),
+      'Whisper/Gemini Transkripsiyon': { main: [[{ node: 'JSON Çıkarımı (Görev/Kişi/Öncelik/Tarih)', type: 'main', index: 0 }]] },
+      'JSON Çıkarımı (Görev/Kişi/Öncelik/Tarih)': { main: [[{ node: 'Supabase staff_tasks Yaz', type: 'main', index: 0 }]] },
+      'Supabase staff_tasks Yaz': { main: [[{ node: 'Son', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1', saveManualExecutions: true },
+  };
+}
+
+
+// ── 3) AKILLI BELGE & SÖZLEŞME SSS AJANI (DOC RAG) ──────────────────────────
+export function docRagWorkflow(): N8nWorkflowJson {
+  const trigger = webhookNode('PDF/MD Upload Webhook', 'POST', 'daze/doc-upload', 0, 0);
+  const chunk = httpRequestNode('Chunking & Embedding', 'https://likya-ceo.vercel.app/api/v1/rag/chunk', 'POST', '{"strategy":"sliding-window"}');
+  const vector = httpRequestNode('pgvector Araması', 'https://likya-ceo.vercel.app/api/v1/rag/search', 'POST', '{"top_k":4}');
+  const rag = httpRequestNode('Gemini RAG Yanıtı (referanslı)', 'https://likya-ceo.vercel.app/api/v1/ai/rag', 'POST', '{"cite_sources":true}');
+  const end = noOpNode('Son', 220, 260);
+
+  return {
+    name: 'Doc RAG Assistant (tüzük/sözleşme/tesis kuralları)',
+    nodes: [trigger, chunk, vector, rag, end],
+    connections: {
+      ...connect('PDF/MD Upload Webhook', 'Chunking & Embedding'),
+      'Chunking & Embedding': { main: [[{ node: 'pgvector Araması', type: 'main', index: 0 }]] },
+      'pgvector Araması': { main: [[{ node: 'Gemini RAG Yanıtı (referanslı)', type: 'main', index: 0 }]] },
+      'Gemini RAG Yanıtı (referanslı)': { main: [[{ node: 'Son', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1', saveManualExecutions: true },
+  };
+}
+
+// ── 4) OTONOM GÜNLÜK KASA & Z-RAPORU BÜLTENİ ─────────────────────────────────
+export function dailyExecutiveDigestWorkflow(): N8nWorkflowJson {
+  const cron = cronNode('Gece 23:59 Cron', '59 23 * * *', 0, 0);
+  const scan = httpRequestNode('Veritabanını Tara (Gelir/Doluluk/İptal/Bakım)', 'https://likya-ceo.vercel.app/api/v1/ops/daily-summary', 'POST', '{}');
+  const summarize = httpRequestNode('LLM Tek Sayfa Markdown Özeti', 'https://likya-ceo.vercel.app/api/v1/ai/digest', 'POST', '{"format":"markdown"}');
+  const send = httpRequestNode('WhatsApp/Telegram CEO Raporu', 'https://hook.likya.app/digest/send', 'POST', '{"channel":"whatsapp"}');
+  const end = noOpNode('Son', 220, 260);
+
+  return {
+    name: 'Daily Executive Digest (gece 23:59 bilanço)',
+    nodes: [cron, scan, summarize, send, end],
+    connections: {
+      ...connect('Gece 23:59 Cron', 'Veritabanını Tara (Gelir/Doluluk/İptal/Bakım)'),
+      'Veritabanını Tara (Gelir/Doluluk/İptal/Bakım)': { main: [[{ node: 'LLM Tek Sayfa Markdown Özeti', type: 'main', index: 0 }]] },
+      'LLM Tek Sayfa Markdown Özeti': { main: [[{ node: 'WhatsApp/Telegram CEO Raporu', type: 'main', index: 0 }]] },
+      'WhatsApp/Telegram CEO Raporu': { main: [[{ node: 'Son', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1', saveManualExecutions: true },
+  };
+}
+
+// ── 5) MÜŞTERİ KAYIP ÖNLEME & TELAFİ (CHURN RECOVERY) ───────────────────────
+export function churnRecoveryWorkflow(): N8nWorkflowJson {
+  const cron = cronNode('Sabah 08:00 Cron', '0 8 * * *', 0, 0);
+  const query = httpRequestNode('14 Gün Gelmeyen/Üyelik Biten Sorgusu', 'https://likya-ceo.vercel.app/api/v1/ops/churn-risk', 'POST', '{}');
+  const riskIf = ifNode('Risk Skoru Eşiği', 'highRisk', 220, 0);
+  const gift = httpRequestNode('Daze-Gift İkram/İndirim QR Üret', 'https://likya-ceo.vercel.app/api/v1/ops/gift', 'POST', '{"trigger":"churn"}');
+  const invite = httpRequestNode('WhatsApp Kişiye Özel Davet', 'https://hook.likya.app/churn/invite', 'POST', '{}');
+  const end = noOpNode('Son', 220, 260);
+
+  return {
+    name: 'Churn Recovery (Daze-Gift QR + davet)',
+    nodes: [cron, query, riskIf, gift, invite, end],
+    connections: {
+      ...connect('Sabah 08:00 Cron', '14 Gün Gelmeyen/Üyelik Biten Sorgusu'),
+      '14 Gün Gelmeyen/Üyelik Biten Sorgusu': { main: [[{ node: 'Risk Skoru Eşiği', type: 'main', index: 0 }]] },
+      'Risk Skoru Eşiği': { main: [[{ node: 'Daze-Gift İkram/İndirim QR Üret', type: 'main', index: 0 }], [{ node: 'Son', type: 'main', index: 0 }]] },
+      'Daze-Gift İkram/İndirim QR Üret': { main: [[{ node: 'WhatsApp Kişiye Özel Davet', type: 'main', index: 0 }]] },
+      'WhatsApp Kişiye Özel Davet': { main: [[{ node: 'Son', type: 'main', index: 0 }]] },
+    },
+    settings: { executionOrder: 'v1', saveManualExecutions: true },
+  };
 }
 
