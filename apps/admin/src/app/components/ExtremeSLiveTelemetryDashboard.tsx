@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { generateLiveSnapshot, buildComparisonRows, buildTimeSeries, dashboardSummary, liveTelemetryStatus, type LiveTelemetrySnapshot, type ComparisonRow, type TimePoint } from '../lib/sports/liveTelemetryEngine';
+import { computeSportsScienceMetrics, buildBenchmarkComparison, fatigueToPerformanceRatio, exportSessionDataset, sportsScienceStatus, type SportsScienceMetrics, type BenchmarkRow, type FatiguePerformancePoint } from '../lib/sports/sportsScienceEngine';
 
 // ============================================================================
 // 🖥️ EXTREMES CANLI BİYOMETRİK TELEMETRİ & KIYAS KONTROL PANELİ
@@ -15,6 +16,8 @@ export default function ExtremeSLiveTelemetryDashboard() {
   const [history, setHistory] = useState<TimePoint[]>([]);
   const [live, setLive] = useState(true);
   const [seq, setSeq] = useState(0);
+  const [sciRows, setSciRows] = useState<SportsScienceMetrics[]>([]);
+  const [exported, setExported] = useState('');
 
   useEffect(() => {
     if (!live) return;
@@ -23,11 +26,16 @@ export default function ExtremeSLiveTelemetryDashboard() {
         const next = generateLiveSnapshot(n + 1);
         setSnap(next);
         setHistory((h) => buildTimeSeries(next, h));
+        setSciRows((r) => [...r, computeSportsScienceMetrics(next, n + 1)].slice(-60));
         return n + 1;
       });
     }, 3000);
     return () => clearInterval(id);
   }, [live]);
+
+  const sci = computeSportsScienceMetrics(snap, seq);
+  const benchmarks = buildBenchmarkComparison(sci);
+  const fpRatio = fatigueToPerformanceRatio(sciRows.map((r): FatiguePerformancePoint => ({ rsi: r.rsi, trimp: r.trimp, timestamp: r.timestamp })));
 
   const rows = buildComparisonRows(snap);
   const summary = dashboardSummary(snap);
@@ -155,6 +163,68 @@ export default function ExtremeSLiveTelemetryDashboard() {
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8.5px', color: '#64748b', marginTop: '4px' }}>
           <span><span style={{ color: '#f87171' }}>── Nabız (bpm)</span> • <span style={{ color: '#38bdf8' }}>- - GCT (ms)</span></span>
           <span>{history.length > 0 ? `Son: ${history[history.length - 1].t}` : 'veri bekleniyor…'}</span>
+        </div>
+      </div>
+
+      {/* BÖLGE 5: SPOR BİLİMİ & ELİT BENCHMARK */}
+      <div style={{ background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(51,65,85,0.8)', borderRadius: '14px', padding: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#94a3b8', fontWeight: 700, letterSpacing: 1 }}>🧬 Spor Bilimi & Kinematik Analitik (3 Eksen)</div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '9px', fontWeight: 800, color: '#c4b5fd', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.4)', padding: '4px 10px', borderRadius: '999px' }}>{sportsScienceStatus()}</span>
+            <button onClick={() => {
+              const exp = exportSessionDataset(sciRows.length ? sciRows : [sci]);
+              setExported(`✓ ${sciRows.length} örnek dışa aktarıldı (CSV ${exp.csv.split('\n').length} satır)`);
+              const blob = new Blob([exp.csv], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `extremes-session-${Date.now()}.csv`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>📥 CSV Dışa Aktar</button>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '8px', marginTop: '10px' }}>
+          {[
+            ['RSI (Reaktif Güç)', `${sci.rsi}`, sci.rsi >= 0.6 ? '#4ade80' : '#fbbf24', 'flight/GCT'],
+            ['Maks Hız', `${sci.vMaxKmh} km/h`, sci.vMaxKmh >= 24 ? '#4ade80' : '#fbbf24', 'Vmax'],
+            ['İvmelenme', `${sci.accelerationMps2} m/s²`, '#38bdf8', '0-5m patlama'],
+            ['Sert Frenleme', `${sci.decelerationCount}`, sci.decelerationCount > 0 ? '#fb7185' : '#4ade80', '> -3.5 m/s²'],
+            ['Sıçrama', `${sci.jumpHeightCm} cm`, '#a78bfa', 'flight²·g/8'],
+            ['TRIMP', `${sci.trimp} AU`, '#fbbf24', 'zon ağırlıklı'],
+            ['HRV rMSSD', `${sci.hrvRmssdMs} ms`, sci.hrvRmssdMs >= 40 ? '#4ade80' : '#fbbf24', 'otonom stres'],
+            ['HRR 60s', `${sci.hrr60Bpm} bpm`, sci.hrr60Bpm >= 30 ? '#4ade80' : '#fbbf24', 'toparlanma'],
+          ].map(([k, v, c, sub]) => (
+            <div key={k as string} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', padding: '9px' }}>
+              <div style={{ fontSize: '8.5px', color: '#94a3b8' }}>{k}</div>
+              <div style={{ fontSize: '17px', fontWeight: 900, color: c as string }}>{v}</div>
+              <div style={{ fontSize: '8px', color: '#64748b' }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+        {/* Elit benchmark yüzdelikleri */}
+        <div style={{ marginTop: '10px' }}>
+          <div style={{ fontSize: '9px', fontWeight: 800, color: '#94a3b8', marginBottom: '6px' }}>🎯 Elit Benchmark Yüzdelik Sıralaması</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {benchmarks.map((b) => (
+              <div key={b.metric} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '9.5px' }}>
+                <span style={{ width: '160px', color: '#e2e8f0', fontWeight: 600 }}>{b.metric}</span>
+                <div style={{ flex: 1, height: '7px', borderRadius: '99px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${b.percentile}%`, borderRadius: '99px', background: b.status === 'ELITE' ? 'linear-gradient(90deg,#4ade80,#22d3ee)' : b.status === 'GOOD' ? 'linear-gradient(90deg,#fbbf24,#f59e0b)' : 'linear-gradient(90deg,#fb7185,#f43f5e)' }} />
+                </div>
+                <span style={{ width: '36px', textAlign: 'right', fontWeight: 800, color: b.status === 'ELITE' ? '#4ade80' : b.status === 'GOOD' ? '#fbbf24' : '#fb7185' }}>%{b.percentile}</span>
+                <span style={{ width: '90px', fontSize: '8px', color: '#64748b' }}>{b.status}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Yorgunluk/performans + export bilgisi */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+          <span style={{ fontSize: '9.5px', fontWeight: 700, color: fpRatio.trend === 'düşüyor' ? '#fb7185' : '#4ade80', background: fpRatio.trend === 'düşüyor' ? 'rgba(251,113,133,0.1)' : 'rgba(74,222,128,0.1)', border: `1px solid ${fpRatio.trend === 'düşüyor' ? 'rgba(251,113,133,0.4)' : 'rgba(74,222,128,0.4)'}`, borderRadius: '10px', padding: '7px 11px' }}>
+            ⚖️ Yorgunluk/Performans: {fpRatio.trend} • {fpRatio.recommendation.slice(0, 44)}
+          </span>
+          {exported && <span style={{ fontSize: '9px', fontWeight: 700, color: '#38bdf8' }}>{exported}</span>}
         </div>
       </div>
     </div>

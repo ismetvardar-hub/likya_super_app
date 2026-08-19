@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-science',
+    title: 'Spor Bilimi & Kinematik Analitik Motoru — 3 Eksen Elit Performans Takibi',
+    icon: '🧬',
+    keywords: ['spor bilimi', 'rsi', 'reaktif güç', 'vmax', 'ivmelenme', 'deselerasyon', 'frenleme', 'cod', 'yön değiştirme', 'sıçrama', 'flight time', 'loading rate', 'dF/dt', 'foot strike', 'propulsion', 'trimp', 'hrv', 'rmssd', 'hrr', 'toparlanma', 'benchmark', 'yüzdelik', 'csv', 'json', 'yorgunluk'],
+    content:
+      'lib/sports/sportsScienceEngine.ts — 3 eksenli spor bilimi motoru: DIŞ YÜK (Vmax, 0-5m patlayıcı ivmelenme, >-3.5 m/s² sert frenleme sayacı, COD çeviklik, uçuş süresi → sıçrama yüksekliği h=gt²/8). NÖROMUSKÜLER (RSI = flight/GCT, dinamik loading rate dF/dt, foot strike indeksi %100 normalize, propulsion fazı). İÇ YÜK (TRIMP zon ağırlıklı Edwards, HRV rMSSD, HRR 60s toparlanma). buildBenchmarkComparison — 8 elit benchmark (RSI 0.6, Vmax 24, accel 4.5, COD 280, jump 45, TRIMP 60, HRV 65, HRR 30) yüzdelik sıralaması + ELITE/GOOD/DEVELOPING. fatigueToPerformanceRatio — RSI düşüşü/TRIMP yükselişi trend analizi. exportSessionDataset — kinematic+physiological+kinetic sütunlu CSV/JSON seans dışa aktarımı. UI: ExtremeSLiveTelemetryDashboard BÖLGE 5 "Spor Bilimi & Kinematik Analitik" — 8 canlı metrik kartı + elit benchmark yüzdelik çubukları + yorgunluk/performans rozeti + 📥 CSV indirme butonu (gerçek dosya). Smoke: scripts/sportsScienceSmokeTest.mts (14/14).',
+  },
+
+  {
     id: 'telemetry-dashboard',
     title: 'ExtremeS Canlı Biyometrik Telemetri & Kıyas Kontrol Paneli',
     icon: '🖥️',
