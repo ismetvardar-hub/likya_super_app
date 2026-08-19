@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'extremes-superapp',
+    title: 'ExtremeS Global Spor Süper-Uygulaması — Pass/Stay/Market/Maç',
+    icon: '🚀',
+    keywords: ['extremes', 'superapp', 'süper uygulama', 'likya pass', 'qr', 'matchmaking', 'maç bulucu', 'seviye', 'streak', 'glamping', 'stay', 'market', 'korta teslimat', 'daze cafe', 'stories'],
+    content:
+      'lib/security/likyaPassEngine.ts — 30 saniyede yenilenen dinamik QR bilet (gate/kort-ışık/locker/facility), token doğrulama + anti-screenshot overlay. lib/sports/matchmakingEngine.ts — Level 1.0-5.0 + XP/tier (Bronz/Gümüş/Altın) + streak; açık padel/tenis maç havuzu (3/4 Katıl) + akıllı eşleşme radarı. lib/ops/extremeHoldingRoutes.ts — Likya Stay (glamping/bungalov/lounge rezerv), Likya Market (raket/top/besin korta teslimat), Daze Mind Cafe (120s sipariş → Event Bus). /extremes page — süper-app shell: üst bar (seri/XP/Likya Pass QR modal), stories şeridi, 4 eylem kartı, 5 tab alt nav (Ana Sayfa/Oyna/QR Pass/Pazar & Stay/Profil).',
+  },
+
+  {
     id: 'nvidia-nim-primary',
     title: 'NVIDIA NIM DGX Cloud — OmniRoute 1. Öncelikli Motor',
     icon: '⚡',

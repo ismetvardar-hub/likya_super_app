@@ -1,6 +1,6 @@
-import ExtremeSMobileApp from '../extremes/page';
+import ExtremeSSuperApp from '../extremes/page';
 
-// /app → ExtremeS bağımsız mobil uygulama (admin paneli çerçevesi yok)
+// /app → ExtremeS bağımsız mobil süper-uygulama (admin paneli çerçevesi yok)
 export default function AppAliasPage() {
-  return <ExtremeSMobileApp />;
+  return <ExtremeSSuperApp />;
 }
