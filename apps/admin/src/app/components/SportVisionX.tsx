@@ -6,6 +6,7 @@ import CourtConditionerPanel from './CourtConditionerPanel';
 import CsmTacticalPanel from './CsmTacticalPanel';
 import SportsRehabHuddlePanel from './SportsRehabHuddlePanel';
 import ShootingBalanceCard from './ShootingBalanceCard';
+import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -71,6 +72,9 @@ export default function SportVisionX() {
 
       {/* 🏀 Şut Denge Temeli — Base & Landing Balance */}
       <ShootingBalanceCard />
+
+      {/* 📐 Kuşbakışı Oyuncu Grid — Supervision Zone */}
+      <SupervisionZoneOverlay />
     </div>
   );
 }

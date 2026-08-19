@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'supervision-zones-nvidia',
+    title: 'Roboflow Supervision Bölge/Çizgi Sayımı + NVIDIA 10x Direct-Box Çıkarım',
+    icon: '📐',
+    keywords: ['roboflow', 'supervision', 'polygon zone', 'line zone', 'heatmap', 'ısı haritası', 'nvidia', 'one-shot', 'direct-box', 'kuşbakışı', 'aerial', 'tensorrt'],
+    content:
+      'lib/security/supervisionZonesEngine.ts — Python supervision uyarlaması: PolygonZone (ray-casting nokta-içi kontrol, aktif sayı + yoğunluk oranı + alan/centroid), LineZone (çizgi kenarı In/Out tespiti + anlık tetikleme kaydı), DetectionsHeatmap (grid tabanlı termal yoğunluk + heatColor skala). lib/security/nvidiaFastInferenceBridge.ts — NVIDIA 10x one-shot Direct-Box: <5ms latency simülasyonu, sporcu/misafir koordinatlarını anında bbox\'a çevirir, aerialPlayerGrid (6x4 kuşbakışı grid), broadcastFastDetections (Event Bus). components/SupervisionZoneOverlay.tsx — Polygon bölge + kamera bbox + LineZone IN/OUT + termal heatmap + kuşbakışı grid; monitor (DazeSentinelHud yanı) + SportVisionX görünümlerine bağlı.',
+  },
+
+  {
     id: 'life-coach-pedagogy',
     title: 'Daze Vision Yaşam Koçu — Pedagojik Reçeteler + Gen-Z Sözlüğü + Akademi',
     icon: '🩺',
