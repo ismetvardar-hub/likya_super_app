@@ -12,6 +12,7 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { routeViaOpenRouter, modelFromPrompt, freeModelFromPrompt } from './openRouterAdapter';
+import { nvidiaNimChat, nvidiaEnvReady } from './nvidiaNimAdapter';
 
 // ----------------------------------------------------------------------------
 // ☁️ BULUT ÇALIŞMA ZAMANI TESPİTİ — Vercel serverless'te yerel Ollama yasak
@@ -264,6 +265,13 @@ const CHAT_SYSTEM_PROMPT =
 
 function buildCodePlans(): MatrixPlan[] {
   const plans: MatrixPlan[] = [];
+  // ⚡ NVIDIA NIM DGX Cloud — 1. ÖNCELİKLİ HAT (anahtar varsa)
+  if (nvidiaEnvReady()) {
+    plans.push({
+      letter: 'N', name: 'NVIDIA NIM (DGX Cloud)', badge: '[⚡ Plan N: NVIDIA NIM]',
+      run: (p) => nvidiaNimChat(p, CODE_SYSTEM_PROMPT),
+    });
+  }
   const deepseekKey = process.env.DEEPSEEK_API_KEY || '';
   const groqKey = process.env.GROQ_API_KEY || '';
   const openaiKey = process.env.OPENAI_API_KEY || '';
@@ -317,6 +325,13 @@ function buildCodePlans(): MatrixPlan[] {
 
 function buildResearchPlans(): MatrixPlan[] {
   const plans: MatrixPlan[] = [];
+  // ⚡ NVIDIA NIM DGX Cloud — 1. ÖNCELİKLİ HAT (anahtar varsa)
+  if (nvidiaEnvReady()) {
+    plans.push({
+      letter: 'N', name: 'NVIDIA NIM (DGX Cloud)', badge: '[⚡ Plan N: NVIDIA NIM]',
+      run: (p) => nvidiaNimChat(p, CHAT_SYSTEM_PROMPT),
+    });
+  }
   const geminiKey = process.env.GEMINI_API_KEY || '';
   const groqKey = process.env.GROQ_API_KEY || '';
   const openaiKey = process.env.OPENAI_API_KEY || '';

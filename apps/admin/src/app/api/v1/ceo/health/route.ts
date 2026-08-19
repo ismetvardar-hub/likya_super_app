@@ -22,6 +22,7 @@ interface PlanStatus {
 function aiPlanStatus(): PlanStatus[] {
   const has = (key: string) => !!process.env[key];
   return [
+    { plan: 'N', name: 'NVIDIA NIM (DGX Cloud)', active: has('NVIDIA_API_KEY'), note: has('NVIDIA_API_KEY') ? '1. hat — canli' : 'anahtar yok' },
     { plan: 'A', name: 'Gemini', active: has('GEMINI_API_KEY'), note: has('GEMINI_API_KEY') ? 'canli' : 'anahtar yok' },
     { plan: 'B', name: 'DeepSeek', active: has('DEEPSEEK_API_KEY'), note: has('DEEPSEEK_API_KEY') ? 'canli' : 'anahtar yok' },
     { plan: 'C', name: 'Groq', active: has('GROQ_API_KEY'), note: has('GROQ_API_KEY') ? 'canli' : 'anahtar yok' },

@@ -5,6 +5,7 @@ import { occupancySnapshot, footfallCounterEngineStatus } from '../lib/security/
 import { fireEmergencyTriggered } from '../lib/ops/dazeHubEventBus';
 import { triggerEmergencyLockdown, enterpriseSecuritySuiteStatus } from '../lib/security/enterpriseSecuritySuite';
 import { emergencyEvacuationStatus } from '../lib/security/emergencyEvacuationOrchestrator';
+import { nvidiaEnvReady, nvidiaNimStatus } from '../lib/ai/nvidiaNimAdapter';
 
 // ============================================================================
 // 👑 SADELEŞTİRİLMİŞ CEO KOMUTA MERKEZİ — Patron için 4 sütunlu yalın panel
@@ -25,6 +26,7 @@ export default function ExecutiveSimplifiedHud() {
           <div style={{ fontSize: '18px', fontWeight: 900, color: '#fff' }}>👑 Patron Paneli</div>
           <div style={{ fontSize: '10px', color: '#64748b' }}>{footfallCounterEngineStatus()} • {enterpriseSecuritySuiteStatus()}</div>
         </div>
+        <span style={{ fontSize: '10px', fontWeight: 800, padding: '4px 12px', borderRadius: '999px', color: nvidiaEnvReady() ? '#4ade80' : '#94a3b8', background: nvidiaEnvReady() ? 'rgba(74,222,128,0.1)' : 'rgba(148,163,184,0.1)', border: `1px solid ${nvidiaEnvReady() ? 'rgba(74,222,128,0.4)' : 'rgba(148,163,184,0.3)'}` }}>⚡ {nvidiaEnvReady() ? 'NVIDIA NIM (DGX Cloud • Aktif)' : 'NVIDIA NIM standby'}</span>
         <span style={{ fontSize: '10px', fontWeight: 800, padding: '4px 12px', borderRadius: '999px', color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.4)' }}>🟢 SİSTEM CANLI</span>
       </div>
 

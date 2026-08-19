@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'nvidia-nim-primary',
+    title: 'NVIDIA NIM DGX Cloud — OmniRoute 1. Öncelikli Motor',
+    icon: '⚡',
+    keywords: ['nvidia', 'nim', 'dgx', 'cloud', 'omni route', '1. hat', 'primary', 'llama 70b', 'nemotron', 'integrate.api.nvidia.com'],
+    content:
+      'lib/ai/nvidiaNimAdapter.ts — OpenAI uyumlu NVIDIA NIM adaptörü: base https://integrate.api.nvidia.com/v1 (server-only), anahtar process.env.NVIDIA_API_KEY, model meta/llama-3.3-70b-instruct (fallback nvidia/nemotron-3-ultra); nvidiaNimChat + testNvidiaNimConnection (canlı bağlantı + latency) + mock-first fallback + nvidiaNimStatus. modelMatrix.ts (OmniRoute): buildCodePlans/buildResearchPlans başına Plan N (⚡ NVIDIA NIM) 1. hat eklendi — anahtar varsa tüm sorgular önce DGX Cloud hattına gider, ulaşılamazsa/kota aşımında otomatik Gemini/DeepSeek/fallbacke düşer. Health /api/v1/ceo/health aiPlanStatus: Plan N NVIDIA (1. hat) gösterir. ExecutiveSimplifiedHud Patron Paneli: ⚡ NVIDIA NIM rozeti (Aktif/standby).',
+  },
+
+  {
     id: 'extremes-brand',
     title: 'ExtremeS Müşteri Portalı + 4 Sütunlu Patron Paneli (Marka Konumlandırma)',
     icon: '⚡',
