@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'extremes-brand',
+    title: 'ExtremeS Müşteri Portalı + 4 Sütunlu Patron Paneli (Marka Konumlandırma)',
+    icon: '⚡',
+    keywords: ['extremes', 'marka', 'brand', 'müşteri portalı', 'super app', 'süper uygulama', 'patron paneli', 'sadeleştirilmiş', '4 sütun', 'daze mind', 'd d yazılım', 'customer portal'],
+    content:
+      'Marka kimliği: Şirket D&D Yazılım Gıda Perakende Ltd. Şti. • Mekan Daze Mind • Beyin Daze Hub • Personel Daze Crew • Mutfak Daze Chef • Müşteri ekranı & mobil süper uygulama EXTREMES. components/ExtremeSCustomerPortal.tsx — modern koyu/açık kart mimarili portal: üst bar (ExtremeS logosu + maskeli token kart + Aile %15-30 rozeti), hızlı kort/padel/özel antrenman rezervasyonu, 365 gün ders kredisi cüzdanı (kullan/özel 3→1/kardeşe devret), ebeveyn onaylı çocuk harcama denetimi (mikro/makro + bloke + onayda e-fiş), 10x referans barı (EXTREMES- kodu + WhatsApp + VIP ilerleme çubuğu). components/ExecutiveSimplifiedHud.tsx — patron için 4 sütunlu yalın panel: Nakit & Finans, Tesis Nabzı (YOLOv11 doluluk), Onay Kuyruğu, Hızlı Aksiyonlar (yangın tatbikatı / gece raporu / acil kilit). CEOCommandCenter varsayılan görünümü "exec", sidebar başına ExtremeS + Patron modülleri.',
+  },
+
+  {
     id: 'club-finance-ecosystem',
     title: 'Aile Kademeli İndirim + 10x Viral Referans + 365 Gün Ders Kredisi + Ebeveyn Onay',
     icon: '👨‍👩‍👧‍👦',

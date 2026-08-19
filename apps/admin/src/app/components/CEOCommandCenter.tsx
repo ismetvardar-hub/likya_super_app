@@ -26,6 +26,8 @@ import SupervisionZoneOverlay from './SupervisionZoneOverlay';
 import BuiltinTemplateStoreCard from './BuiltinTemplateStoreCard';
 import AdvancedEnterpriseModules from './AdvancedEnterpriseModules';
 import GrowthRadarSwarmCard from './GrowthRadarSwarmCard';
+import ExtremeSCustomerPortal from './ExtremeSCustomerPortal';
+import ExecutiveSimplifiedHud from './ExecutiveSimplifiedHud';
 import DazeChef from './DazeChef';
 import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
@@ -181,6 +183,9 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
 ];
 
 const MODULES: ModuleItem[] = [
+  // 👑 PATRON & EXTREMES (ExtremeS müşteri portalı — birincil)
+  { id: 'exec', name: '👑 Patron Panel', icon: <LayoutDashboard size={16} />, color: '#f0abfc', description: '4 sütunlu yalın yönetim', category: 'core' },
+  { id: 'extremes', name: '⚡ ExtremeS', icon: <TrendingUp size={16} />, color: '#7c3aed', description: 'Müşteri süper uygulama portalı', category: 'core' },
   // 🎛️ ANA KOMUTA (Executive Core)
   { id: 'campus', name: 'CEO Kokpiti', icon: <LayoutDashboard size={16} />, color: '#48bb78', description: 'Finansal metrikler + 5 bölge haritası', category: 'core' },
   { id: 'mesh', name: '21 Ajan Mesh', icon: <Network size={16} />, color: '#00f2fe', description: '21 Departmanlı Ajan Ağı + Multi-LLM', category: 'core' },
@@ -563,7 +568,7 @@ function useMediaQuery(query: string): boolean {
 
 export default function CEOCommandCenter() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeView, setActiveView] = useState<string>('chat'); // 'chat' varsayılan
+  const [activeView, setActiveView] = useState<string>('exec'); // 'exec' varsayılan (Patron yalın panel)
   const [threads, setThreads] = useState<ChatThread[]>(loadThreads);
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
 
@@ -1317,6 +1322,8 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   <ExtremeSimulatorSecurityCard />
                 </>
               )}
+              {activeView === 'exec' && <ExecutiveSimplifiedHud />}
+              {activeView === 'extremes' && <ExtremeSCustomerPortal />}
               {activeView === 'iot' && <IoTSensorMap />}
               {activeView === 'ai' && (
                 <>
