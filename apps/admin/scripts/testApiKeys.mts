@@ -70,6 +70,13 @@ async function ping(provider: string, key: string, url: string, headers: Record<
     const res = await fetch(url, { headers: { Authorization: `Bearer ${key}`, ...headers }, signal: AbortSignal.timeout(9000) });
     const latency = Date.now() - started;
     if (res.ok) return { verdict: 'VALID', status: res.status, note: `${latency}ms` };
+    // Gemini çift-fallback: klasik ?key= 401/403 verirse OpenAI uyumlu endpoint'i dene
+    // (project-scoped / yeni nesil AQ. anahtarları destekler)
+    if (provider === 'Gemini' && (res.status === 401 || res.status === 403)) {
+      const alt = await fetch('https://generativelanguage.googleapis.com/v1beta/openai/models', { headers: { Authorization: `Bearer ${key}` }, signal: AbortSignal.timeout(9000) });
+      if (alt.ok) return { verdict: 'VALID', status: alt.status, note: `openai-uyumlu ${Date.now() - started}ms` };
+      return { verdict: 'INVALID', status: res.status, note: `yetki reddedildi (her iki endpoint, ${latency}ms)` };
+    }
     if (res.status === 401 || res.status === 403) return { verdict: 'INVALID', status: res.status, note: `yetki reddedildi (${latency}ms)` };
     if (res.status === 429) return { verdict: 'RATE_LIMITED', status: res.status, note: 'kota aşımı' };
     return { verdict: 'ERROR', status: res.status, note: `HTTP ${res.status}` };

@@ -246,7 +246,7 @@ async function callGemini(systemPrompt: string, prompt: string): Promise<string>
   if (!apiKey) throw new Error('Gemini anahtarı yok');
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-3.6-flash',
     generationConfig: { maxOutputTokens: 4096, temperature: 0.7 },
   });
   const result = await model.generateContent(`${systemPrompt}\n\n${prompt}`);
