@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'sports-innovation',
+    title: '6 Devrimsel Modül — Reels, Fit-Gaming, VAR Light, IoT Enerji, Ortopedi, Geofencing',
+    icon: '🚀',
+    keywords: ['reels', 'viral', 'klip', 'overlay', 'fit gaming', 'xp', 'rozet', 'elit lig', 'bronz', 'gümüş', 'altın', 'var light', 'çizgi hakemi', 'in out', 'kort enerji', 'iot', 'aydınlatma', 'led', 'enerji tasarrufu', 'ortopedi', 'basış', 'düz taban', 'kavis', 'omurga', 'geofencing', 'çocuk koruma', 'güvenli bölge', 'alarm'],
+    content:
+      '6 devrimsel katma değer modülü: (1) lib/sports/viralClipEngine.ts — SportVisionX >85km/s vuruş eşiği tetiklemesi, overlay katmanı (sporcu adı/radar hızı/falso açısı/kulüp watermarkı) + Instagram Story & WhatsApp paylaş linki. (2) lib/sports/fitGamingEngine.ts — CatchPad+efor tabanlı XP, Bronz/Gümüş/Altın/Elit Lig, rozetler, Hız Şampiyonu/Reaksiyon Kralı liderlik + Daze Chef kuponu. (3) lib/sports/varLightEngine.ts — Baseline/Servis çizgisi milimetrik IN/OUT karar motoru + skorbord bildirimi (%92-99 doğruluk). (4) lib/ops/courtEnergyAutomation.ts — Likya Pass/BLE kort girişi → LIGHTS_ON (LED %100, skorbord, 6.4kW), 2dk BLE boşluk → ENERGY_SAVING (%15, 0.3kW). (5) lib/sports/orthopedicGaitAnalysis.ts — 3dk yürüyüş/koşu testi: kavis çökmesi (>8mm düz taban eğilimi), omurga yük dengesi, statik+dinamik basış + Likya Market ortopedik tabanlık reçetesi. (6) lib/security/geofencingProtection.ts — 4 güvenli bölge (Kortlar/Kafe/Park/Havuz), Otopark/Dış Kapı BLE taraması → GEOFENCE_ALERT acil uyarısı + resepsiyon temizleme. UI: ExtremeSCustomerPortal — Reels+Paylaş, Sporcu Seviyem (XP barı/rozet), Fizyoterapi & Basış Raporu, Güvenli Alan Takibi; SportVisionX — VAR Light IN/OUT + Kort Enerji IoT paneli. Smoke: scripts/innovationSmokeTest.mts (21/21).',
+  },
+
+  {
     id: 'sports-tournaments',
     title: 'Canlı Turnuva Braketleri + Açık Maç Eşleştirme Radarı + Korta Teslimat Hattı',
     icon: '🏆',

@@ -12,6 +12,8 @@ import { initMockBands, processReturn, onTapAccess, posSwipeCanteen, smartArmban
 import { startCourtSession, recordTelemetry, matchPlayerToBeacon, fatigueRisk, averageReaction, armbandCoachingBridgeStatus, type TelemetrySample } from '../lib/sports/armbandCoachingBridge';
 import { generateStepTelemetry, computeContactMetrics, insoleRiskRadar, smartInsoleEngineStatus, type InsoleTelemetry } from '../lib/sports/smartInsoleEngine';
 import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObservation } from '../lib/sports/multimodalFusionBridge';
+import { reviewLineDecision, simulateBallDrop, getVarLightDecisions, varLightStatus, type VarLightDecision } from '../lib/sports/varLightEngine';
+import { courtEntryOn, courtIdleTick, courtExitOff, getCourtEnergyStatus, courtEnergyStatus, type CourtEnergyStatus } from '../lib/ops/courtEnergyAutomation';
 
 // ============================================================================
 // 🩻 LİKYA SPORT VISION X — 5 DEVRİMSEL MODÜL
@@ -437,6 +439,8 @@ function ArmbandTelemetryModule() {
   const [sessionMsg, setSessionMsg] = React.useState('');
   const [insole, setInsole] = React.useState<InsoleTelemetry>(() => generateStepTelemetry('R', 1.0, 1.02, 3));
   const [fusion, setFusion] = React.useState<FusionSnapshot | null>(null);
+  const [varDecisions, setVarDecisions] = React.useState<VarLightDecision[]>(() => getVarLightDecisions());
+  const [courtEnergy, setCourtEnergy] = React.useState<CourtEnergyStatus>(() => getCourtEnergyStatus('Padel Kort A'));
   const risk = fatigueRisk();
 
   const latest = telemetry.length ? telemetry[telemetry.length - 1] : null;
@@ -532,6 +536,52 @@ function ArmbandTelemetryModule() {
             {coachGuidance(fusion.fatigueZone, fusion.alerts)}
           </div>
         )}
+      </div>
+
+      {/* ⚖️ VAR LIGHT + 💡 KORT ENERJİ */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px' }}>
+        {/* VAR Light */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', borderRadius: '12px', background: 'rgba(52,211,153,0.05)', border: '1px solid rgba(52,211,153,0.25)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>⚖️ VAR Light — Çizgi Hakemliği</div>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#4ade80' }}>{varLightStatus()}</span>
+          </div>
+          {varDecisions[0] && (
+            <div style={{ fontSize: '10px', fontWeight: 800, color: varDecisions[0].verdict === 'IN' ? '#4ade80' : '#fb7185', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '10px', padding: '8px 10px' }}>
+              {varDecisions[0].message}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => { const d = simulateBallDrop('Baseline', Math.floor(Math.random() * 12)); setVarDecisions(getVarLightDecisions()); }} style={cyBtn}>📺 Pozisyon İncele</button>
+            <button onClick={() => { const d = reviewLineDecision('Servis Çizgisi', 25, -12); setVarDecisions(getVarLightDecisions()); }} style={cyBtn}>📏 Servis IN</button>
+            <button onClick={() => { const d = reviewLineDecision('Baseline', -35, 8); setVarDecisions(getVarLightDecisions()); }} style={cyBtn}>📏 Baseline OUT</button>
+          </div>
+        </div>
+        {/* Kort Enerji */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', borderRadius: '12px', background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.25)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#fff' }}>💡 Kort Enerji & Aydınlatma IoT</div>
+            <span style={{ fontSize: '9.5px', fontWeight: 800, color: courtEnergy.state === 'LIGHTS_ON' ? '#fbbf24' : courtEnergy.state === 'ENERGY_SAVING' ? '#38bdf8' : '#64748b' }}>{courtEnergyStatus('Padel Kort A')}</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+            {[
+              ['Projektör', `%${courtEnergy.floodlightsPct}`, '#fbbf24'],
+              ['Güç', `${courtEnergy.powerKw} kW`, '#38bdf8'],
+              ['Skorbord', courtEnergy.scoreboardOn ? 'AÇIK' : 'Kapalı', courtEnergy.scoreboardOn ? '#4ade80' : '#64748b'],
+              ['Tetikleyici', courtEnergy.triggeredBy.slice(0, 18), '#94a3b8'],
+            ].map(([k, v, c]) => (
+              <div key={k as string} style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: '8px', color: '#94a3b8' }}>{k}</div>
+                <div style={{ fontSize: '12px', fontWeight: 900, color: c as string }}>{v}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => { setCourtEnergy(courtEntryOn('Padel Kort A', 'Efe')); }} style={{ ...cyBtn, color: '#fbbf24', borderColor: 'rgba(251,191,36,0.4)' }}>💡 Kort Gir (LIGHTS_ON)</button>
+            <button onClick={() => { setCourtEnergy(courtIdleTick('Padel Kort A', 121)); }} style={cyBtn}>🌙 2dk Boşluk (Tasarruf)</button>
+            <button onClick={() => { setCourtEnergy(courtExitOff('Padel Kort A')); }} style={{ ...cyBtn, color: '#fb7185', borderColor: 'rgba(251,113,133,0.4)' }}>🔌 Kapat</button>
+          </div>
+        </div>
       </div>
     </div>
   );

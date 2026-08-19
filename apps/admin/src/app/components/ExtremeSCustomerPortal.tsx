@@ -14,6 +14,10 @@ import { fuseSensorStream, coachGuidance, type FusionSnapshot, type CameraObserv
 import { mockTournamentPlayers, generateSingleElimBracket, recordBracketScore, buildLeaderboard, eloChange, tournamentEngineStatus, type BracketMatch, type TournamentPlayer } from '../lib/sports/tournamentEngine';
 import { initOpenMatches, findOpenMatches, joinOpenMatch, missingAnnouncement, openMatchEngineStatus, type OpenMatch } from '../lib/sports/openMatchEngine';
 import { MARKET_ITEMS, DAZE_ITEMS, placeCourtDelivery, tickDelivery, markDelivered, getDeliveryOrders, courtDeliveryEngineStatus, type DeliveryOrder, type DeliveryItem } from '../lib/ops/courtDeliveryEngine';
+import { captureHighlight, getClips, viralClipEngineStatus, type HighlightClip } from '../lib/sports/viralClipEngine';
+import { addFitXp, buildLeaderboards, generateDazeCoupon, leagueProgress, fitGamingStatus, type GamerProfile } from '../lib/sports/fitGamingEngine';
+import { runOrthopedicTest, orthopedicPrescription, orthopedicGaitStatus, type OrthopedicReport } from '../lib/sports/orthopedicGaitAnalysis';
+import { scanChildLocation, clearGeofenceAlert, getGeofenceAlerts, geofencingStatus, type GeofenceAlert } from '../lib/security/geofencingProtection';
 
 // ============================================================================
 // ⚡ EXTREMES — MÜŞTERİ PORTALI (Süper-App) — D&D Yazılım Gıda Perakende Ltd. Şti.
@@ -54,6 +58,12 @@ export default function ExtremeSCustomerPortal() {
   const [openMatches, setOpenMatches] = useState<OpenMatch[]>(() => initOpenMatches());
   const [deliveries, setDeliveries] = useState<DeliveryOrder[]>(() => getDeliveryOrders());
   const [tourMsg, setTourMsg] = useState('');
+  const [clips, setClips] = useState<HighlightClip[]>(() => getClips());
+  const [gamer, setGamer] = useState<GamerProfile>({ athleteId: 'Efe', xp: 250, league: 'Bronz', badges: [], bestReactionMs: 9999, topSpeedKmh: 78 });
+  const [ortho, setOrtho] = useState<OrthopedicReport | null>(null);
+  const [geoAlerts, setGeoAlerts] = useState<GeofenceAlert[]>(() => getGeofenceAlerts());
+  const [childSafe, setChildSafe] = useState(true);
+  const [coupon, setCoupon] = useState<string>('');
 
   const pricing = priceFamily(family);
   const benefit = referralTier(referrals);
@@ -443,6 +453,103 @@ export default function ExtremeSCustomerPortal() {
             </div>
           ))}
           {deliveries.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Henüz sipariş yok — bir ürüne dokunarak korta teslimat başlatın.</div>}
+        </div>
+      </div>
+
+      {/* VİRAL REELS + FIT-GAMING */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+        {/* Reels kartı */}
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🎬 Günün Viral Vuruşu (Reels)</div>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#be185d', background: '#fdf2f8', padding: '4px 10px', borderRadius: '999px' }}>{viralClipEngineStatus()}</span>
+          </div>
+          {clips[0] ? (
+            <div style={{ marginTop: '10px', borderRadius: '14px', overflow: 'hidden', background: 'linear-gradient(135deg,#0f172a,#1e1b4b)', position: 'relative', padding: '14px' }}>
+              <div style={{ fontSize: '9px', fontWeight: 900, color: '#f0abfc' }}>{clips[0].tier} ⚡ {clips[0].overlay.athleteLabel}</div>
+              <div style={{ fontSize: '22px', fontWeight: 900, color: '#fff', marginTop: '8px' }}>⚡ {clips[0].overlay.speedLabel}</div>
+              <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px' }}>{clips[0].overlay.spinLabel} • Ralli {clips[0].rallyLength} vuruş</div>
+              <div style={{ fontSize: '9px', fontWeight: 700, color: '#fbbf24', marginTop: '8px', padding: '6px 8px', borderRadius: '8px', background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)' }}>{clips[0].overlay.watermark}</div>
+              <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
+                <a href={clips[0].shareUrls.instagramStory} target="_blank" rel="noreferrer" style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', textDecoration: 'none', background: 'linear-gradient(135deg,#f97316,#ec4899)', color: '#fff' }}>📸 IG Story</a>
+                <a href={clips[0].shareUrls.whatsapp} target="_blank" rel="noreferrer" style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', textDecoration: 'none', background: 'linear-gradient(135deg,#25d366,#4ade80)', color: '#0d1322' }}>📲 WhatsApp</a>
+              </div>
+            </div>
+          ) : <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '10px' }}>Henüz klip yok — eşiği geçen vuruşta otomatik oluşur.</div>}
+          <button onClick={() => { const c = captureHighlight('Efe', 92 + Math.floor(Math.random() * 9), 4.2, 6 + Math.floor(Math.random() * 5)); setClips(getClips()); setTourMsg(c ? `🎬 ${c.overlay.speedLabel} klip yakalandı (${c.tier})` : 'Vuruş eşiğin altında'); }} style={{ ...lightBtn, marginTop: '10px' }}>🎥 Vuruş Yakala (SportVisionX)</button>
+        </div>
+
+        {/* Fit-Gaming kartı */}
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🎮 Sporcu Seviyem & Rozetlerim</div>
+            <span style={{ fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', color: gamer.league === 'Elit Lig' ? '#f59e0b' : gamer.league === 'Altın' ? '#b45309' : gamer.league === 'Gümüş' ? '#64748b' : '#a16207', background: '#f8fafc', border: '1px solid #e2e8f0' }}>{gamer.league} Lig</span>
+          </div>
+          <div style={{ fontSize: '22px', fontWeight: 900, color: '#7c3aed', marginTop: '8px' }}>{gamer.xp} XP</div>
+          <div style={{ height: '8px', borderRadius: '99px', background: '#e2e8f0', overflow: 'hidden', marginTop: '6px' }}>
+            <div style={{ height: '100%', width: `${leagueProgress(gamer).pct}%`, borderRadius: '99px', background: 'linear-gradient(90deg,#7c3aed,#a78bfa)', transition: 'width .3s' }} />
+          </div>
+          <div style={{ fontSize: '9px', color: '#64748b', marginTop: '4px' }}>Sonraki lig: {leagueProgress(gamer).nextLeague ?? 'Maksimum'} • {fitGamingStatus()}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '8px' }}>
+            {gamer.badges.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Rozet kazanmak için antrenman yap — efor + reaksiyon gerekli.</div>}
+            {gamer.badges.map((b) => <div key={b} style={{ fontSize: '9px', fontWeight: 700, color: '#0f172a', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '6px 8px' }}>{b}</div>)}
+          </div>
+          <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
+            <button onClick={() => { setGamer(addFitXp(gamer, 350 + Math.floor(Math.random() * 40), 70, 92, 78)); }} style={lightBtn}>⚡ XP Kazan (Antrenman)</button>
+            {coupon ? <span style={{ fontSize: '9.5px', fontWeight: 800, color: '#047857', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', padding: '7px 10px' }}>🎟️ Daze Kuponu: {coupon}</span> : <button onClick={() => { const c = generateDazeCoupon('Efe', 'Smoothie'); setCoupon(`${c.code} • ${c.reward} • ${c.validUntil}`); }} style={lightBtn}>🎟️ Daze Kuponu Kazan</button>}
+          </div>
+          {buildLeaderboards([gamer, { athleteId: 'Mert', xp: 1200, league: 'Altın', badges: [], bestReactionMs: 320, topSpeedKmh: 96 }]).speed.length > 0 && (
+            <div style={{ fontSize: '8.5px', color: '#64748b', marginTop: '8px' }}>🏆 Hız Şampiyonu: Mert (96 km/s) • ⚡ Reaksiyon Kralı: Mert (320ms)</div>
+          )}
+        </div>
+      </div>
+
+      {/* FİZYOTERAPİ + GÜVENLİ ALAN */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px' }}>
+        {/* Ortopedi kartı */}
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🏥 Fizyoterapi & Basış Raporum</div>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: '#047857', background: '#ecfdf5', padding: '4px 10px', borderRadius: '999px' }}>{orthopedicGaitStatus()}</span>
+          </div>
+          {ortho ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '10px' }}>
+              {[
+                ['Kavis Çökmesi', `${ortho.archCollapseMm} mm`, ortho.flatFootTendency ? '#dc2626' : '#059669'],
+                ['Düz Taban Eğilimi', ortho.flatFootTendency ? '⚠️ EVET' : 'Hayır', ortho.flatFootTendency ? '#dc2626' : '#059669'],
+                ['Omurga Yük Dengesi', `%${ortho.spineBalancePct}`, '#7c3aed'],
+                ['Dinamik Basış', `${ortho.pronationDynamic}°`, ortho.pronationDynamic > 5 ? '#d97706' : '#059669'],
+              ].map(([k, v, c]) => (
+                <div key={k as string} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', padding: '7px 10px', borderRadius: '8px', background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                  <span style={{ color: '#64748b' }}>{k}</span><span style={{ fontWeight: 900, color: c as string }}>{v}</span>
+                </div>
+              ))}
+              <div style={{ fontSize: '9px', color: '#334155', lineHeight: '1.5', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '7px 9px' }}>{ortho.advice}</div>
+              <div style={{ fontSize: '9.5px', fontWeight: 800, color: '#047857' }}>{orthopedicPrescription(ortho)}</div>
+            </div>
+          ) : <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '10px' }}>3 dakikalık yürüyüş/koşu testi ile statik+dinamik basış raporu üretilir.</div>}
+          <button onClick={() => { setOrtho(runOrthopedicTest('Efe', Math.floor(Math.random() * 16))); }} style={{ ...lightBtn, marginTop: '10px' }}>🏃 3 dk Basış Testini Başlat</button>
+        </div>
+
+        {/* Geofencing kartı */}
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 800, color: '#0f172a' }}>🛡️ Tesis İçi Güvenli Alan Takibi</div>
+            <span style={{ fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', color: childSafe ? '#059669' : '#dc2626', background: childSafe ? '#f0fdf4' : '#fef2f2', border: `1px solid ${childSafe ? '#bbf7d0' : '#fecaca'}` }}>{childSafe ? '🟢 Efe Güvenli Bölgede' : '🔴 ALARM'}</span>
+          </div>
+          <div style={{ fontSize: '9px', color: '#64748b', marginTop: '8px' }}>{geofencingStatus()} • Kortlar perimeter 120m</div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '10px' }}>
+            <button onClick={() => { setChildSafe(true); setTourMsg('🟢 Efe Kortlar bölgesinde (BLE-COURT-1) — güvenli'); }} style={lightBtn}>📡 Kort BLE Tara</button>
+            <button onClick={() => { const r = scanChildLocation('Efe', 'BLE-OTOPARK-1', 'Otopark'); setChildSafe(r.safe); setGeoAlerts(getGeofenceAlerts()); setTourMsg(r.safe ? '🟢 Güvenli' : r.alert!.message); }} style={{ fontSize: '9.5px', fontWeight: 800, padding: '8px 12px', borderRadius: '10px', border: '1px solid #fecaca', background: '#fef2f2', color: '#dc2626', cursor: 'pointer' }}>🚨 Otopark Taraması (Test)</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '8px' }}>
+            {geoAlerts.slice(0, 3).map((a) => (
+              <div key={a.id} style={{ fontSize: '9px', fontWeight: 700, color: a.cleared ? '#059669' : '#dc2626', background: a.cleared ? '#f0fdf4' : '#fef2f2', border: `1px solid ${a.cleared ? '#bbf7d0' : '#fecaca'}`, borderRadius: '8px', padding: '6px 8px' }}>
+                {a.message.slice(0, 62)} {!a.cleared && <button onClick={() => { clearGeofenceAlert(a.id); setGeoAlerts(getGeofenceAlerts()); }} style={{ fontSize: '8px', fontWeight: 800, border: 'none', background: 'transparent', color: '#059669', cursor: 'pointer', marginLeft: '4px' }}>✓ Kapat</button>}
+              </div>
+            ))}
+            {geoAlerts.length === 0 && <div style={{ fontSize: '9px', color: '#94a3b8' }}>Aktif alarm yok — tüm güvenli bölgeler normal.</div>}
+          </div>
         </div>
       </div>
 
