@@ -1,8 +1,7 @@
 import './globals.css';
 import '../styles/form-validation.css';
 import type { Metadata, Viewport } from 'next';
-import SciFiLockScreen from './components/SciFiLockScreen';
-import PWARegister from './components/PWARegister';
+import GlobalShell from './components/GlobalShell';
 
 export const metadata: Metadata = {
   title: 'Likya Command CEO',
@@ -61,12 +60,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body>
-        <PWARegister />
-        <SciFiLockScreen>
-          <div className="dashboard-container">
-            {children}
-          </div>
-        </SciFiLockScreen>
+        <GlobalShell>
+          {children}
+        </GlobalShell>
       </body>
     </html>
   );

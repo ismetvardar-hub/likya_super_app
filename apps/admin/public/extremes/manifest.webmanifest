@@ -1,0 +1,20 @@
+{
+  "name": "ExtremeS — Likya Müşteri Süper Uygulaması",
+  "short_name": "ExtremeS",
+  "description": "Aile üyeliği, 365 gün ders kredisi, 10x referans ve ebeveyn onaylı çocuk cüzdanı — ExtremeS müşteri portalı",
+  "start_url": "/extremes",
+  "scope": "/extremes",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eef2ff",
+  "theme_color": "#4f46e5",
+  "categories": ["sports", "lifestyle", "education"],
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Hızlı Rezervasyon", "url": "/extremes?tab=rezervasyon", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Davet Et", "url": "/extremes?tab=davet", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
