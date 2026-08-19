@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'daze-market-maker',
+    title: 'Daze Market Maker + Neural Shell Telemetry HUD',
+    icon: '📈',
+    keywords: ['market maker', 'dinamik fiyat', 'borsa', 'edge', 'pnl', 'hedge', 'occupancy', 'velocity', 'neural', 'terminal', 'polymarket', 'sankey'],
+    content:
+      'lib/ops/dazeMarketMakerEngine.ts — Polymarket HFT mimarisi: talep-stok dengeli dinamik fiyatlandırma (restoran/kort/glamping). Girdiler: Occupancy, Stok riski, Velocity. Çıktılar: dynamicPrice (occupancy +%15, velocity +%10, stock -%12 bileşenleri), edgeScore, marginPct, riskHedgeCoeff (0-1) + deterministik PnL (tradePnl, computePnlSummary: netPnl/winRate/setEdge) + marketTick işlem geçmişi. components/DazeNeuralMarketHud.tsx — fütüristik terminal: Cüzdan/PnL özeti (Net PnL, Win Rate, Set Edge), Neural Core akış şeması (Market Ingest → Feature Nodes → Probability Core → Hedge Output), arz-talep Sankey/Hedge barları, MARKET TICK butonu; Finance görünümüne bağlı.',
+  },
+
+  {
     id: 'jsx-write-guard',
     title: 'JSX Yazım Koruması (logo/CEO execute) — string-aware parantez dengesi',
     icon: '🛡️',
