@@ -20,6 +20,7 @@ import MarketplacePaymentTerminal from './MarketplacePaymentTerminal';
 import DazeNeuralMarketHud from './DazeNeuralMarketHud';
 import DazeVisionKioskView from './DazeVisionKioskView';
 import N8nOrchestratorCard from './N8nOrchestratorCard';
+import LifeCoachDashboardCards from './LifeCoachDashboardCards';
 import DazeChef from './DazeChef';
 import VerifiedRevenueWidget from './VerifiedRevenueWidget';
 import TrustLeaderboard from './TrustLeaderboard';
@@ -1380,7 +1381,12 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
               )}
               {activeView === 'sportvisionx' && <SportVisionX />}
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
-              {activeView === 'holistic' && <HolisticChildDashboard />}
+              {activeView === 'holistic' && (
+                <>
+                  <HolisticChildDashboard />
+                  <LifeCoachDashboardCards />
+                </>
+              )}
               {activeView === 'scouting' && <ScoutingEcosystem />}
               {activeView === 'toolsagents' && (
                 <>

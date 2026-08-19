@@ -344,6 +344,15 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
   },
 
   {
+    id: 'life-coach-pedagogy',
+    title: 'Daze Vision Yaşam Koçu — Pedagojik Reçeteler + Gen-Z Sözlüğü + Akademi',
+    icon: '🩺',
+    keywords: ['yaşam koçu', 'pedagoji', 'mental', 'reçete', 'kriz', 'empati', 'gen-z', 'genz', 'slay', 'vibe', 'ghostlamak', 'cringe', 'eş anlamlı', 'lgs', 'yks', 'akademi', 'sınır', 'hayır'],
+    content:
+      'lib/coaching/pedagogicalCoachEngine.ts — FailureAnxietyPrescription (hata korkusu/yetersizlik/yalnız hallederim → süreç ve emek odaklı 3 reçete + günlük onay), CrisisManagementProtocol (8 adımlı kriz yatıştırma: "Seni dinliyorum", "Hissettiğin şeyi fark ediyorum" — öğüt yok), BoundaryAssertivenessGuide (7 davranış matrisi + hayır diyememe güçlendirme). lib/ai/dazeGenZDictionary.ts — 12 Gen-Z terimi (Vibe/Aura/Slay/NPC/Ghostlamak/Hypelamak/Cringe/Love Bombing/GOAT/Delulu) tone-aware + master üslup enjektörü (centilmen/naif/esprili). lib/coaching/academicLexiconEngine.ts — 16 eş anlamlı çift (Biçim-Şekil, Eser-Yapıt, Özgün-Orijinal, Müellif-Yazar) + 4 soruluk LGS/YKS mikro test. components/LifeCoachDashboardCards.tsx — holistic görünümünde Günün Reçetesi + 8 adım kriz + Gençlik Dili Tercümanı + Eş Anlamlı Pratik kartları.',
+  },
+
+  {
     id: 'fire-detection-evacuation',
     title: 'Erken Yangın/Alev Tespit Motoru + Otomatik Tahliye Protokolü',
     icon: '🔥',
