@@ -51,8 +51,6 @@ import DazeCrewView from './DazeCrewView';
 import DazeVisionOrderTracker from './DazeVisionOrderTracker';
 import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
-import AthletePerformanceAI from './AthletePerformanceAI';
-import SportVisionDashboard from './SportVisionDashboard';
 import SportVisionX from './SportVisionX';
 import YouthDevelopmentDashboard from './YouthDevelopmentDashboard';
 import HolisticChildDashboard from './HolisticChildDashboard';
@@ -140,7 +138,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     icon: '🎾',
     color: '#34d399',
     moduleIds: [
-      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic', 'scouting',
+      'sportvisionx', 'youthdev', 'holistic', 'scouting',
     ],
   },
   {
@@ -199,8 +197,6 @@ const MODULES: ModuleItem[] = [
   { id: 'gift', name: 'Daze-Gift', icon: <Gift size={16} />, color: '#fbbf24', description: 'İkram sistemi', category: 'daze' },
 
   // 🎾 SPOR, KAMPÜS & DENEYİM
-  { id: 'athlete', name: 'Sports Vision', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyomekanik AI analiz', category: 'sports' },
-  { id: 'sportvision', name: 'Sport Vision Ajanlar', icon: <Activity size={16} />, color: '#34d399', description: 'Otonom branş ajanları & BESYO akademisi', category: 'sports' },
   { id: 'youthdev', name: 'Gelişim Ligi & Biyometrik', icon: <Ruler size={16} />, color: '#4ade80', description: 'PHV büyüme atağı & genç sporcu akademisi', category: 'sports' },
   { id: 'holistic', name: '360° Çocuk Gelişimi', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Veli anketi, medikal OCR, tribün analizi', category: 'sports' },
   { id: 'scouting', name: 'Scouting & Rekabet', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Kulüp ihracı & küresel rekabet zekası', category: 'sports' },
@@ -1383,14 +1379,6 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                   </div>
                 ) : null;
               })()}
-              {activeView === 'athlete' && <AthletePerformanceAI />}
-              {activeView === 'sportvision' && (
-                <>
-                  <SportVisionDashboard />
-                  <SportsVisionMemoryCard />
-                  <MultiAgentSportsCard />
-                </>
-              )}
               {activeView === 'sportvisionx' && <SportVisionX />}
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
               {activeView === 'holistic' && (
