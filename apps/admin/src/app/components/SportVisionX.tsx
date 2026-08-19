@@ -74,14 +74,10 @@ export default function SportVisionX() {
       {tab === 'clip' && <ClipFactoryModule />}
       {tab === 'thermal' && <ThermalRadarModule />}
       {tab === 'metabolic' && <MetabolicBridgeModule />}
-      {tab === 'armband' && (
-        <>
-          <ExtremeSLiveTelemetryDashboard />
-          <ArmbandTelemetryModule />
-        </>
-      )}
+      {tab === 'armband' && <ArmbandTelemetryModule />}
       {tab === 'performance' && (
         <>
+          <ExtremeSLiveTelemetryDashboard />
           <ExtremeSLivePerformanceHub />
           <ExtremeSPostSessionReport />
         </>
