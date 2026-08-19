@@ -11,3 +11,4 @@
 # TypeScript build artefact
 tsconfig.tsbuildinfo
 *.tsbuildinfo
+.env*
