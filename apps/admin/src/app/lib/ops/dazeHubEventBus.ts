@@ -12,7 +12,9 @@ export type DazeEventType =
   | 'DAZE_REMINDER_TRIGGERED'
   | 'FIRE_EMERGENCY_TRIGGERED'
   | 'COURT_DELIVERY_PLACED'
-  | 'DELIVERY_DISPATCHED';
+  | 'DELIVERY_DISPATCHED'
+  | 'GEOFENCE_EXIT'
+  | 'GEOFENCE_ENTER';
 
 export interface DazeEvent {
   type: DazeEventType;
@@ -32,6 +34,8 @@ let listeners: Record<DazeEventType, Listener[]> = {
   FIRE_EMERGENCY_TRIGGERED: [],
   COURT_DELIVERY_PLACED: [],
   DELIVERY_DISPATCHED: [],
+  GEOFENCE_EXIT: [],
+  GEOFENCE_ENTER: [],
 };
 let history: DazeEvent[] = [];
 

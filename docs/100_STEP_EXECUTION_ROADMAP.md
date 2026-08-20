@@ -16,11 +16,11 @@
 | 03 | Native Web Share API fallback (navigator.share + kopyala/WA) | [x] |
 | 04 | Web Push service worker kaydı + push event handler (sw.js) | [x] |
 | 05 | In-app Bildirim Merkezi widget (Alerts, Badges, Milestones) | [x] |
-| 06 | Geofence çıkış → otomatik veli SMS/WhatsApp tetikleyici | [ ] |
-| 07 | Otomatik antrenör özet e-posta özet üretici | [ ] |
-| 08 | Yazdırılabilir yüksek kontrast A4 performans sertifikası | [ ] |
-| 09 | Tek tık sporcu QR kod üretici (profil anlık erişim) | [ ] |
-| 10 | Telegram bot webhook adaptörü (antrenör anlık alarm) | [ ] |
+| 06 | Geofence çıkış → otomatik veli SMS/WhatsApp tetikleyici | [x] |
+| 07 | Otomatik antrenör özet e-posta özet üretici | [x] |
+| 08 | Yazdırılabilir yüksek kontrast A4 performans sertifikası | [x] |
+| 09 | Tek tık sporcu QR kod üretici (profil anlık erişim) | [x] |
+| 10 | Telegram bot webhook adaptörü (antrenör anlık alarm) | [x] |
 | 11 | `/parent` ve `/coach` push tercih paneli | [ ] |
 | 12 | Eşik ihlali → sesli ikaz / haptik motor (yüksek sakatlık riski) | [ ] |
 | 13 | Seans CSV/JSON dışa aktarımı (akademik spor bilimi araştırması) | [ ] |
@@ -153,3 +153,4 @@
 ## Yürütme Günlüğü
 
 - **Batch 1 (Adım 1-5, Track 1):** PDF üretici · WhatsApp/Web Share · Push kaydı · Bildirim Merkezi — tamamlandı.
+- **Batch 2 (Adım 6-10, Track 1):** Geofence veli alarmı · Antrenör digest · A4 sertifika · Sporcu QR · Telegram webhook — tamamlandı.

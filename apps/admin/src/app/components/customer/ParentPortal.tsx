@@ -6,6 +6,7 @@ import { scanChildLocation } from '../../lib/security/geofencingProtection';
 import { footStrikePlain, loadingRatePlain, hrvDropPlain } from '../../lib/sports/plainLanguage';
 import { shareText, SHARE_TEMPLATES } from '../../lib/ops/communicationSuite';
 import { printPdf, type PdfReportData } from '../../lib/ops/pdfReportGenerator';
+import { simulateGeofenceEvent, getLastGeofenceAlert, type ParentAlertPayload } from '../../lib/ops/geofenceAlertTrigger';
 
 // ============================================================================
 // 👨‍👩‍👧 VELİ PORTALI (/parent) — çocuk gelişimi + güvenlik + sade rapor
@@ -24,6 +25,7 @@ export default function ParentPortal() {
   const [geo, setGeo] = useState(() => scanChildLocation('Efe', 'BLE-COURT-1'));
   const [form, setForm] = useState({ height: 148, weight: 41, foot: 24 });
   const [saved, setSaved] = useState(false);
+  const [geoAlert, setGeoAlert] = useState<ParentAlertPayload | null>(() => getLastGeofenceAlert());
 
   const foot = footStrikePlain(28);
   const loading = loadingRatePlain(1.9);
@@ -108,6 +110,19 @@ export default function ParentPortal() {
           <div style={{ padding: '10px 12px', borderRadius: '12px', background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
             <div style={{ fontSize: '10px', fontWeight: 800, color: '#047857' }}>💚 Bugünkü antrenmanda eklem ve kas yükü tamamen güvenli sınırlarda geçti.</div>
             <div style={{ fontSize: '9px', color: '#64748b', marginTop: '4px' }}>{foot.detail} · {loading.detail}</div>
+          </div>
+        </div>
+        {/* Geofence test tetikleyici + canlı alarm */}
+        <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {geoAlert && (
+            <div style={{ fontSize: '10px', fontWeight: 800, padding: '10px 12px', borderRadius: '12px', color: geoAlert.urgent ? '#dc2626' : '#047857', background: geoAlert.urgent ? '#fef2f2' : '#f0fdf4', border: `1px solid ${geoAlert.urgent ? '#fecaca' : '#bbf7d0'}` }}>
+              {geoAlert.message} {!geoAlert.urgent && '✅'}
+              <a href={geoAlert.whatsappUrl} target="_blank" rel="noreferrer" style={{ display: 'inline-block', marginLeft: 8, fontSize: '9px', fontWeight: 800, padding: '5px 10px', borderRadius: 8, background: '#25d366', color: '#0d1322', textDecoration: 'none' }}>📲 WhatsApp</a>
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => setGeoAlert(simulateGeofenceEvent('Efe', 'Kortlar', 'EXIT'))} style={{ fontSize: '9.5px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid #fecaca', background: '#fef2f2', color: '#dc2626', cursor: 'pointer' }}>🚨 Ayrılış Simülasyonu (Test)</button>
+            <button onClick={() => setGeoAlert(simulateGeofenceEvent('Efe', 'Kortlar', 'ENTER'))} style={{ fontSize: '9.5px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid #bbf7d0', background: '#f0fdf4', color: '#047857', cursor: 'pointer' }}>✅ Dönüş Simülasyonu (Test)</button>
           </div>
         </div>
       </div>

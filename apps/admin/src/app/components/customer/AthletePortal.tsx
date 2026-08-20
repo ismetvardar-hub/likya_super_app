@@ -5,6 +5,8 @@ import { generateLiveHubSnapshot, type LivePerformanceHubSnapshot } from '../../
 import { gctPlain, footStrikePlain, rsiPlain, loadingRatePlain, hrvDropPlain, heartRatePlain, type PlainMetric } from '../../lib/sports/plainLanguage';
 import { shareText, SHARE_TEMPLATES } from '../../lib/ops/communicationSuite';
 import { printPdf, type PdfReportData } from '../../lib/ops/pdfReportGenerator';
+import AthleteQrCard from '../AthleteQrCard';
+import PerformanceCertificate from '../PerformanceCertificate';
 
 // ============================================================================
 // 🏃 SPORCU PORTALI (/athlete) — sade dille bugünkü formum + başarılar
@@ -84,6 +86,7 @@ export default function AthletePortal() {
         <button onClick={() => setLive((v) => !v)} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #a7f3d0', background: '#fff', color: '#047857', cursor: 'pointer' }}>{live ? '⏸️ Duraklat' : '▶️ Devam'}</button>
         <button onClick={shareReport} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #34d399', background: '#d1fae5', color: '#065f46', cursor: 'pointer' }}>📲 Karnemi Paylaş</button>
         <button onClick={printPdfReport} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #f472b6', background: '#fdf2f8', color: '#9d174d', cursor: 'pointer' }}>📄 PDF Rapor</button>
+        <AthleteQrCard athlete="Arda" athleteId="ARD-001" />
       </div>
 
       {/* BUGÜNKÜ FORMUM — ENERJİ BAR + SKORLAR */}
@@ -158,6 +161,15 @@ export default function AthletePortal() {
           ))}
         </div>
       </div>
+
+      {/* RESMİ SERTİFİKA */}
+      <PerformanceCertificate
+        athlete="Arda G."
+        achievement={rsi.level === 'ELIT' ? 'Elit Patlayıcılık Rozeti' : hub.coordination.armSpeedKmh >= 98 ? '100 km/h Kulübü' : 'Sporcu Gelişim Rozeti'}
+        date={new Date().toLocaleDateString('tr-TR')}
+        coachName="Caner B."
+        verifyCode="ARD-001"
+      />
     </div>
   );
 }
