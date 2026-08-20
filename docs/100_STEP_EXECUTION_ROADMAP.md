@@ -82,11 +82,11 @@
 | 53 | Sporcu profili CRUD API + RBAC | [x] |
 | 54 | Antrenör çok sporcu squad yönetimi | [x] |
 | 55 | Tarihsel trend SQL fonksiyonları (haftalık/aylık rollup) | [x] |
-| 56 | Otomatik günlük DB yedekleme + saklama politikası | [ ] |
-| 57 | Tıbbi/büyüme verisi değişiklikleri denetim günlüğü | [ ] |
-| 58 | Canlı Supabase subscription (drill sevkiyatı) | [ ] |
-| 59 | Veli-çocuk hesap bağlama güvenlik handshake | [ ] |
-| 60 | Uçtan uca DB entegrasyon testleri | [ ] |
+| 56 | Otomatik günlük DB yedekleme + saklama politikası | [x] |
+| 57 | Tıbbi/büyüme verisi değişiklikleri denetim günlüğü | [x] |
+| 58 | Canlı Supabase subscription (drill sevkiyatı) | [x] |
+| 59 | Veli-çocuk hesap bağlama güvenlik handshake | [x] |
+| 60 | Uçtan uca DB entegrasyon testleri | [x] |
 
 ## Track 5: UX, Gamification & Athlete Portals (Adım 61–75)
 
@@ -178,4 +178,6 @@
 - **Batch 10 (Adım 46-50, Track 4 BAŞLANGIÇ):** İlişkisel PostgreSQL şeması (`supabase/schema.sql` — squads/athletes/sessions/telemetry_frames/growth_records/parent_links/injury_alerts, FK+indeks) · Çok rollü RLS politikaları (`20260220_rls_policies.sql` — ceo/manager tam, coach takım, parent SELECT, athlete kendi verisi + yardımcı fonksiyonlar) · Deterministik seed fikstürleri (`seedFixtures.ts` — 6 sporcu, 72 seans, 864 telemetri, sakatlık bayrakları) · Offline-first depolama (`offlineStorageEngine.ts` — IndexedDB + bellek yedeği, pending_sync_queue write-ahead) · Arka plan senkronizasyon (`backgroundSyncEngine.ts` — online olayları, batch flush, LWW çakışma, ilerleme olayları) · `track4Batch10SmokeTest.mts` (31/31).
 
 - **Batch 11 (Adım 51-55, Track 4 devam):** Telemetri zaman serisi sıkıştırma (`telemetryCompressor.ts` — delta(ts/HR) + kuantize GCT/basınç, ≥%70 payload, round-trip) · Supabase Storage adaptörü (`supabaseStorageAdapter.ts` — avatars/reports/drills bucket'lar, signed URL, mock CI yedeği) · Sporcu CRUD + RBAC (`athleteApiHandler.ts` — ceo/manager/coach düzenler, athlete kendi, boy 50-250/kilo 20-180 sanitizasyon) · Takım yönetimi (`squadManagementApi.ts` — çoklu coach, assign/remove, kadro istatistikleri) · Trend SQL fonksiyonları + TS sarmalayıcı (`20260220_trend_functions.sql` + `historicalTrendAggregator.ts` — haftalık rollup, takım hazırlığı) · `track4Batch11SmokeTest.mts` (26/26).
+
+- **Batch 12 (Adım 56-60, Track 4 KAPANIŞ):** Otomatik veri saklama/ayıklama (`retentionPolicyEngine.ts` + `20260220_retention_policy.sql` — ham 30g → özet 90g → prune, seans/uyarı kalıcı, prune_expired_telemetry) · Tıbbi/biyometrik denetim günlüğü (`auditLogService.ts` + `20260220_audit_log.sql` — append-only, UPDATE/DELETE bloke, KVKK/GDPR) · Realtime WebSocket abonelik (`realtimeSubscriptionManager.ts` — squad-alerts/session-telemetry, üstel backoff, mock fallback) · Veli-çocuk güvenli bağlama + OTP (`parentVerificationEngine.ts` — 6 haneli, 15dk TTL, antrenör/kimlik/telefon onayı, revoke) · `track4Batch12SmokeTest.mts` (23/23, Adım 46-60 bütünlük) — **TRACK 4 %100 TAMAMLANDI (60/60) 🎉**
 
