@@ -338,6 +338,48 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6aa. Cihaz İçi Mikro-Transformer Biyomekanik Çıkarım (Adım 131)
+
+`src/app/lib/ai/edgeMicroTransformerEngine.ts` — Karpathy nanoGPT esinli, sıfır-bağımlılık saf TypeScript transformer:
+
+- 100Hz füzyonlu kinematik karelerin (IMU + tabanlık + poz) **normalize kayan penceresi** → çok başlı self-attention ileri geçişi (Python/WASM yok).
+- **3 vuruş öncesi** kinetik çöküş / yorgunluk sıçraması olasılığı — **<15ms** gecikme hedefi; deterministik mulberry32 ağırlık başlatma.
+
+---
+
+## 6ab. Monte Carlo Taktik Maç Simülatörü (Adım 132)
+
+`src/modules/tactics/MatchTacticalSimulator.tsx` + `lib/tactics/monteCarloMatchSimulator.ts`:
+
+- Oyuncunun hız splitleri, servis tutarlılığı ve yorgunluk azalma hızına dayalı **1000 Monte Carlo maç** simülasyonu.
+- Rakip arketipleri: **Baseline Grinder / Big Server / All-Court Attacker**; kazanma olasılığı + **optimal vuruş seçimi** (3 strateji karşılaştırması).
+
+---
+
+## 6ac. Biyomekanik GPT Spor Bilimi Ajanı (Adım 133)
+
+`src/app/lib/ai/biomechanicGptAgent.ts` — yanıtları doğrudan ölçülen telemetriye dayanan NL ajanı:
+
+- Veli/koç sorgularını yanıtlar (örn. "Arda'nın ikinci servis hız düşüşünün kök nedeni nedir?") — **kinetik zincir gecikmesi, deselerasyon torku, PHV büyüme hızı** yerel depolardan referans alınır.
+- **Sade dil + ahlaki guardrail:** kibar ton, sade terminoloji, güvensiz girdi reddi.
+
+---
+
+## 6ad. Otomatik Acil Sakatlık Triyajı (Adım 134)
+
+`src/modules/medical/EmergencyTriageModal.tsx` + `lib/medical/emergencyTriageEngine.ts`:
+
+- Tetikleyiciler: **desel >7.0 m/s²** · **asimetri >%35** · **ani kinetik duruş**.
+- Standart protokoller: **PEACE & LOVE** / **RICE** + ortopedik konsültasyon için **zaman damgalı GRF-kinematik tıbbi olay raporu**.
+
+---
+
+## 6ae. Track 14 Uçtan Uca Test (Adım 135)
+
+`scripts/pilotPhase7SmokeTest.mts` (21/21) — mikro-transformer tensor ileri geçiş + latency (<15ms) + determinizm, Monte Carlo yakınsama + olasılık sağlığı (0-100%), GPT yanıt grounding + metrik referansı, triyaj tetikleri + PEACE & LOVE protokolü ve Track 14 dosya/veri hattı bütünlüğü (131-135).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -367,6 +409,10 @@ Yanıt yapısı (200 OK):
 25. ☐ Top yörünge: zıplama noktası + IN/OUT kararları doğru (marj ±2mm).
 26. ☐ Poz tahmini: X-Factor + kinetik lag canlı hesaplanıyor.
 27. ☐ GRF füzyonu: tıkanmada tabanlık birincil, kamera dönüşünde otomatik kurtarma.
+28. ☐ Edge transformer: 3 vuruş öncesi risk öngörüsü <15ms çalışıyor.
+29. ☐ Monte Carlo: 1000 maç simülasyonu + optimal vuruş stratejisi yayında.
+30. ☐ Biyomekanik GPT: telemetriye dayalı, sade dilli ve guardrail'li yanıtlar.
+31. ☐ Acil triyaj: desel/asimetri/duruş tetikleri + PEACE&LOVE/RICE + olay raporu hazır.
 
 ---
 
@@ -380,10 +426,11 @@ node scripts/pilotPhase3SmokeTest.mts   # 21/21 (Adım 111-115)
 node scripts/pilotPhase4SmokeTest.mts   # 18/18 (Adım 116-120)
 node scripts/pilotPhase5SmokeTest.mts   # 14/14 (Adım 121-125)
 node scripts/pilotPhase6SmokeTest.mts   # 21/21 (Adım 126-130)
+node scripts/pilotPhase7SmokeTest.mts   # 21/21 (Adım 131-135)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 61/61 (pilot faz 1-6 dahil)
+node scripts/master100StepVerification.mts  # 63/63 (pilot faz 1-7 dahil)
 ```
 
-**PİLOT FAZ 1-6 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-7 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 
