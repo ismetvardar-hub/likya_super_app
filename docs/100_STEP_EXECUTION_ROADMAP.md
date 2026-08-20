@@ -97,11 +97,11 @@
 | 63 | Dinamik günlük seri sayacı (dondurma koruması) | [x] |
 | 64 | Anonim yüzdelik akran karşılaştırma radar grafikleri | [x] |
 | 65 | Etkileşimli 3D ayak basınç modeli (Three.js/CSS3D) | [x] |
-| 66 | Özelleştirilebilir dashboard (sürükle-bırak metrik kartlar) | [ ] |
-| 67 | Veli büyüme kilometre taşı zaman çizelgesi (+foto) | [ ] |
-| 68 | Antrenör taktik beyaz tahtası (kort çizimi) | [ ] |
-| 69 | Koyu/açık tema token'ları (yüksek kontrast erişilebilirlik) | [ ] |
-| 70 | Dokunmatik kaydırma jestleri | [ ] |
+| 66 | Özelleştirilebilir dashboard (sürükle-bırak metrik kartlar) | [x] |
+| 67 | Veli büyüme kilometre taşı zaman çizelgesi (+foto) | [x] |
+| 68 | Antrenör taktik beyaz tahtası (kort çizimi) | [x] |
+| 69 | Koyu/açık tema token'ları (yüksek kontrast erişilebilirlik) | [x] |
+| 70 | Dokunmatik kaydırma jestleri | [x] |
 | 71 | Kişisel rekor (PB) konfeti tetikleyici | [ ] |
 | 72 | Çok dilli sözlük (TR, EN, DE, FR) | [ ] |
 | 73 | Canlı sesli geri bildirim (drill sırasında) | [ ] |
@@ -182,4 +182,6 @@
 - **Batch 12 (Adım 56-60, Track 4 KAPANIŞ):** Otomatik veri saklama/ayıklama (`retentionPolicyEngine.ts` + `20260220_retention_policy.sql` — ham 30g → özet 90g → prune, seans/uyarı kalıcı, prune_expired_telemetry) · Tıbbi/biyometrik denetim günlüğü (`auditLogService.ts` + `20260220_audit_log.sql` — append-only, UPDATE/DELETE bloke, KVKK/GDPR) · Realtime WebSocket abonelik (`realtimeSubscriptionManager.ts` — squad-alerts/session-telemetry, üstel backoff, mock fallback) · Veli-çocuk güvenli bağlama + OTP (`parentVerificationEngine.ts` — 6 haneli, 15dk TTL, antrenör/kimlik/telefon onayı, revoke) · `track4Batch12SmokeTest.mts` (23/23, Adım 46-60 bütünlük) — **TRACK 4 %100 TAMAMLANDI (60/60) 🎉**
 
 - **Batch 13 (Adım 61-65, Track 5 BAŞLANGIÇ):** Sporcu seviye & XP motoru (`athleteXpEngine.ts` — seans/RSI-PB/GCT/heftalık seri XP, Level=⌊√(XP/100)⌋+1, rütbe başlıkları) · Rozet kaydı + açılış modalı (`badgeRegistry.ts` + `AchievementBadgeModal.tsx` — ACE/Hız/Dayanıklılık/Denge/Tutarlılık, glow+paylaşım kartı) · Streak & tutarlılık (`streakTracker.ts` — ardışık seri, 1 gün dondurma koruması, katılım %) · Anonim kohort yüzdelik radar (`cohortRadarEngine.ts` + `CohortPercentileRadar.tsx` — 5 eksen, GCT ters yüzdelik, PII yok) · 3D ayak basınç ısı haritası (`footPressureShader.ts` + `FootPressureHeatmap3D.tsx` — Mavi→Yeşil→Kırmızı, eliptik maske, orbit/zoom) · `track5Batch13SmokeTest.mts` (27/27).
+
+- **Batch 14 (Adım 66-70, Track 5 devam):** Özelleştirilebilir dashboard widget grid (`dashboardLayoutEngine.ts` + `DashboardWidgetGrid.tsx` — 6 widget, aç/kapat/sırala/boyutlandır 1x1-2x2, Coach/Parent/CEO preset, localStorage) · Veli büyüme zaman çizelgesi & PHV eğrisi (`growthVelocityEngine.ts` + `ParentGrowthTimeline.tsx` — cm/yıl türev, PHV bükülme, koordinasyon banner) · Antrenör taktik beyaz tahtası (`drillCanvasEngine.ts` + `TacticalWhiteboardCanvas.tsx` — tenis/basketbol/çeviklik şablonları, oyuncu/vektör/pas/koni, JSON+SVG export) · Yüksek kontrast tema token'ları (`themeTokens.ts` + `ThemeProvider.tsx` — sunlight/midnight/cyber, WCAG AAA kontrast) · Saha dokunmatik jestler (`useTouchGestures.ts` + `FieldGestureContainer.tsx` — swipe/long-press/pinch) · `track5Batch14SmokeTest.mts` (28/28).
 
