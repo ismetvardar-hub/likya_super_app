@@ -343,7 +343,7 @@ function buildCodePlans(): MatrixPlan[] {
   return plans;
 }
 
-function buildResearchPlans(): MatrixPlan[] {
+export function buildResearchPlans(): MatrixPlan[] {
   const plans: MatrixPlan[] = [];
   // ⚡ NVIDIA NIM DGX Cloud — 1. ÖNCELİKLİ HAT (anahtar varsa)
   if (nvidiaEnvReady()) {
