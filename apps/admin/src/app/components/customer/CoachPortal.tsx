@@ -7,6 +7,7 @@ import { hrvDropPlain } from '../../lib/sports/plainLanguage';
 import { buildSquadDigest, buildDigestHtml, buildDigestMailto, buildDigestDispatchPayload, coachDigestStatus } from '../../lib/ops/coachDigestGenerator';
 import { buildCoachAlert, dispatchTelegramAlert, formatTelegramAlert, telegramAlertStatus, type CoachAlertKind } from '../../lib/ops/telegramAlertAdapter';
 import NotificationPreferences from '../NotificationPreferences';
+import TacticalWorkflowCanvas from '../../modules/sports/TacticalWorkflowCanvas';
 
 // ============================================================================
 // 🧑‍🏫 ANTRENÖR PORTALI (/coach) — sporcu takibi + drill atama + rapor onayı
@@ -126,6 +127,9 @@ export default function CoachPortal() {
         </div>
         {sent && <div style={{ fontSize: '10px', fontWeight: 700, color: '#059669', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '8px 12px', marginTop: '8px' }}>✅ Rapor onaylandı ve sporcuya iletildi.</div>}
       </div>
+
+      {/* TAKTİK WORKFLOW CANVAS */}
+      <TacticalWorkflowCanvas />
 
       {/* SQUAD DIGEST + TELEGRAM ALARM */}
       <div style={{ background: '#fff', border: '1px solid #dbeafe', borderRadius: '18px', padding: '16px' }}>
