@@ -102,11 +102,11 @@
 | 68 | Antrenör taktik beyaz tahtası (kort çizimi) | [x] |
 | 69 | Koyu/açık tema token'ları (yüksek kontrast erişilebilirlik) | [x] |
 | 70 | Dokunmatik kaydırma jestleri | [x] |
-| 71 | Kişisel rekor (PB) konfeti tetikleyici | [ ] |
-| 72 | Çok dilli sözlük (TR, EN, DE, FR) | [ ] |
-| 73 | Canlı sesli geri bildirim (drill sırasında) | [ ] |
-| 74 | Mobil responsive alt navigasyon çubuğu | [ ] |
-| 75 | UI snapshot & etkileşim testleri | [ ] |
+| 71 | Kişisel rekor (PB) konfeti tetikleyici | [x] |
+| 72 | Çok dilli sözlük (TR, EN, DE, FR) | [x] |
+| 73 | Canlı sesli geri bildirim (drill sırasında) | [x] |
+| 74 | Mobil responsive alt navigasyon çubuğu | [x] |
+| 75 | UI snapshot & etkileşim testleri | [x] |
 
 ## Track 6: Tournament, Scouting & Video Integration (Adım 76–85)
 
@@ -184,4 +184,6 @@
 - **Batch 13 (Adım 61-65, Track 5 BAŞLANGIÇ):** Sporcu seviye & XP motoru (`athleteXpEngine.ts` — seans/RSI-PB/GCT/heftalık seri XP, Level=⌊√(XP/100)⌋+1, rütbe başlıkları) · Rozet kaydı + açılış modalı (`badgeRegistry.ts` + `AchievementBadgeModal.tsx` — ACE/Hız/Dayanıklılık/Denge/Tutarlılık, glow+paylaşım kartı) · Streak & tutarlılık (`streakTracker.ts` — ardışık seri, 1 gün dondurma koruması, katılım %) · Anonim kohort yüzdelik radar (`cohortRadarEngine.ts` + `CohortPercentileRadar.tsx` — 5 eksen, GCT ters yüzdelik, PII yok) · 3D ayak basınç ısı haritası (`footPressureShader.ts` + `FootPressureHeatmap3D.tsx` — Mavi→Yeşil→Kırmızı, eliptik maske, orbit/zoom) · `track5Batch13SmokeTest.mts` (27/27).
 
 - **Batch 14 (Adım 66-70, Track 5 devam):** Özelleştirilebilir dashboard widget grid (`dashboardLayoutEngine.ts` + `DashboardWidgetGrid.tsx` — 6 widget, aç/kapat/sırala/boyutlandır 1x1-2x2, Coach/Parent/CEO preset, localStorage) · Veli büyüme zaman çizelgesi & PHV eğrisi (`growthVelocityEngine.ts` + `ParentGrowthTimeline.tsx` — cm/yıl türev, PHV bükülme, koordinasyon banner) · Antrenör taktik beyaz tahtası (`drillCanvasEngine.ts` + `TacticalWhiteboardCanvas.tsx` — tenis/basketbol/çeviklik şablonları, oyuncu/vektör/pas/koni, JSON+SVG export) · Yüksek kontrast tema token'ları (`themeTokens.ts` + `ThemeProvider.tsx` — sunlight/midnight/cyber, WCAG AAA kontrast) · Saha dokunmatik jestler (`useTouchGestures.ts` + `FieldGestureContainer.tsx` — swipe/long-press/pinch) · `track5Batch14SmokeTest.mts` (28/28).
+
+- **Batch 15 (Adım 71-75, Track 5 KAPANIŞ):** Kişisel rekor (PB) tespiti + konfeti kutlama (`pbDetectionEngine.ts` + `PersonalBestCelebration.tsx` — MAX_RSI/MIN_GCT/sprint/serve, milestone kartı + paylaşım) · Çok dilli spor bilimi sözlüğü (`sportsDictionaryData.ts` + `SportsDictionaryView.tsx` — TR/EN/DE/FR 8 terim, 3 kategori, arama+dil seçici) · Saha sesli işaret & haptik motoru (`courtAudioCueEngine.ts` — DRILL_START/STOP, INJURY_ALARM, PB fanfar, haptik desenler, güvenli fallback) · Mobil/tablet alt navigasyon (`courtActionBarConfig.ts` + `CourtBottomActionBar.tsx` — 5 tek-parmak aksiyon, portrait/landscape, serileştirme) · `track5Batch15SmokeTest.mts` (32/32, Adım 61-75 bütünlük) — **TRACK 5 %100 TAMAMLANDI (75/75) 🎉**
 
