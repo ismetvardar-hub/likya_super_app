@@ -506,6 +506,23 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6at. Canlı Saha Seans Simülasyonu & Kalibrasyon Protokolü (Field Test)
+
+`scripts/simulateLiveCourtMatch.mts` — uçtan uca simüle on-court pilot testi (12/12):
+
+- **FAZ 0:** Kort #1 çıkışı · Akıllı Dolap **#12** (ephemeral BLE anahtar) · **HRM #04** + **Çift Tabanlık #02** CHECKED_OUT.
+- **FAZ 1:** **500 örneklik zero-drift kalibrasyon** (stabil ofset 5) + self-healing drift düzeltmesi (baseline 12 → 5.12).
+- **FAZ 2:** **3 set** rekabetçi maç @ 100Hz çift tabanlık (ralli patlamaları, ayak vuruşu GRF sivri uçları, kardiyovasküler drift 142→177bpm). GCT drift **+28ms > 20ms** → **mola taktik kartı** + yorgunluk alarmları (2×) + **koç sesli not** break-point rallisinde işaretlendi (çerçeve #6303).
+- **FAZ 3:** **Veli WhatsApp özeti** (TRIMP 91 + PB rekoru) + **master CSV/JSON export** (19.817 kare, CSV 643KB/JSON 720KB, Track9 10/10) → `/tmp/likya-sim-export/`.
+- **DİAGNOSTİK:** paket kaybı **%0 < %2** · ring-buffer **1.21MB ≤ 50MB** · heap **25MB** stabil · akış sıra bütünlüğü ✓.
+
+```bash
+cd apps/admin
+node scripts/simulateLiveCourtMatch.mts   # 12/12 — tam saha akışı
+```
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -552,6 +569,7 @@ Yanıt yapısı (200 OK):
 42. ☐ Edge replikasyon: en-yakın PoP + CRDT tutarlılığı (3 bölge) aktif.
 43. ☐ Çok para birimi: EUR/USD/TRY/GBP + KDV/DST + PDF fatura hazır.
 44. ☐ ✅ **FINAL: 150/150 yol haritası %100 — üretim + 10 pilot fazı tamamlandı.**
+45. ☐ ✅ **Saha simülasyonu: `simulateLiveCourtMatch.mts` 12/12 — kalibrasyon + 3 set + yorgunluk + sesli not + veli özeti + export.**
 
 ---
 
