@@ -112,11 +112,11 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 76 | Canlı maç skoru + biyomekanik telemetri overlay | [ ] |
-| 77 | Scout Rapor üretici (radar grafik + PDF dosya) | [ ] |
-| 78 | Akıllı telefon kamera video + sensör zaman senkronu | [ ] |
-| 79 | Ağır çekim oynatıcı + yan yana poz karşılaştırma | [ ] |
-| 80 | Turnuva braket üretici (canlı ilerleme) | [ ] |
+| 76 | Canlı maç skoru + biyomekanik telemetri overlay | [x] |
+| 77 | Scout Rapor üretici (radar grafik + PDF dosya) | [x] |
+| 78 | Akıllı telefon kamera video + sensör zaman senkronu | [x] |
+| 79 | Ağır çekim oynatıcı + yan yana poz karşılaştırma | [x] |
+| 80 | Turnuva braket üretici (canlı ilerleme) | [x] |
 | 81 | Seyirci görünümü (public skorbord + seçili canlı vitaller) | [ ] |
 | 82 | Yetenek tespiti (TID) endeksi benchmark | [ ] |
 | 83 | Kort pozisyon ısı haritası (kamera koordinatları) | [ ] |
@@ -186,4 +186,6 @@
 - **Batch 14 (Adım 66-70, Track 5 devam):** Özelleştirilebilir dashboard widget grid (`dashboardLayoutEngine.ts` + `DashboardWidgetGrid.tsx` — 6 widget, aç/kapat/sırala/boyutlandır 1x1-2x2, Coach/Parent/CEO preset, localStorage) · Veli büyüme zaman çizelgesi & PHV eğrisi (`growthVelocityEngine.ts` + `ParentGrowthTimeline.tsx` — cm/yıl türev, PHV bükülme, koordinasyon banner) · Antrenör taktik beyaz tahtası (`drillCanvasEngine.ts` + `TacticalWhiteboardCanvas.tsx` — tenis/basketbol/çeviklik şablonları, oyuncu/vektör/pas/koni, JSON+SVG export) · Yüksek kontrast tema token'ları (`themeTokens.ts` + `ThemeProvider.tsx` — sunlight/midnight/cyber, WCAG AAA kontrast) · Saha dokunmatik jestler (`useTouchGestures.ts` + `FieldGestureContainer.tsx` — swipe/long-press/pinch) · `track5Batch14SmokeTest.mts` (28/28).
 
 - **Batch 15 (Adım 71-75, Track 5 KAPANIŞ):** Kişisel rekor (PB) tespiti + konfeti kutlama (`pbDetectionEngine.ts` + `PersonalBestCelebration.tsx` — MAX_RSI/MIN_GCT/sprint/serve, milestone kartı + paylaşım) · Çok dilli spor bilimi sözlüğü (`sportsDictionaryData.ts` + `SportsDictionaryView.tsx` — TR/EN/DE/FR 8 terim, 3 kategori, arama+dil seçici) · Saha sesli işaret & haptik motoru (`courtAudioCueEngine.ts` — DRILL_START/STOP, INJURY_ALARM, PB fanfar, haptik desenler, güvenli fallback) · Mobil/tablet alt navigasyon (`courtActionBarConfig.ts` + `CourtBottomActionBar.tsx` — 5 tek-parmak aksiyon, portrait/landscape, serileştirme) · `track5Batch15SmokeTest.mts` (32/32, Adım 61-75 bütünlük) — **TRACK 5 %100 TAMAMLANDI (75/75) 🎉**
+
+- **Batch 16 (Adım 76-80, Track 6 BAŞLANGIÇ):** Canlı maç skoru + biyomekanik overlay (`matchScoreEngine.ts` + `LiveMatchScoreboard.tsx` — tenis 0/15/30/40+Deuce/Avantaj+set, basketbol periyot/shot clock, momentum log, canlı nabız/servis/GCT HUD) · Scout rapor & PDF (`scoutReportGenerator.ts` + `ScoutReportView.tsx` — 20-80 skala, radar profil, gizli notlar, print/PDF) · Video↔BLE saat senkronizasyonu (`videoBleSyncEngine.ts` — Δt=video−BLE, ±10ms eşleştirme, clap anchor) · Ağır çekim oynatıcı + açı ölçümü (`videoPlayerEngine.ts` + `SlowMotionBiomechanicalPlayer.tsx` — 0.1×-1.0×, 33ms kare, diz/savrulma açısı) · Turnuva braket (`bracketGenerator.ts` + `TournamentBracketView.tsx` — 4-64 oyuncu tek/çift, standart seed dağılım, kazanan ilerleme, kort atama) · `track6Batch16SmokeTest.mts` (31/31).
 
