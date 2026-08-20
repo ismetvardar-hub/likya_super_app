@@ -164,6 +164,50 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6g. Çoklu Akademi Canlı Liderlik Tablosu (Adım 111)
+
+`src/modules/analytics/MultiClubLeaderboard.tsx` — bağlı pilot tesislerin anonim karşılaştırması:
+
+- Antalya / Lara / Belek kohortlarının telemetri **yüzdelikleri** toplanır; **Academy Power Index (API)** = RSI %40 + Sprint Çevikliği %35 + Tutarlılık Serisi %25.
+- **Sıkı gizlilik filtresi:** rakip akademiler yalnızca anonimleştirilmiş kohort ortalamalarını görür. `verifyPrivacyIsolation()` sporcu kimliğinin özetlerde **asla** sızmadığını doğrular.
+
+---
+
+## 6h. Otonom AI Maç İçi Yorgunluk Tahmincisi (Adım 112)
+
+`src/app/lib/ai/inMatchFatigueAdvisor.ts` — gerçek zamanlı dayanıklılık öngörüsü:
+
+- **Model:** GCT uzama hızı (ms/set) + aktif deselerasyon sayısı + kardiyovasküler drift → yorgunluk skoru (0-100) ve **T_fatigue** (kalan dakika).
+- Risk kademeleri: `low` < 30 · `moderate` < 50 · `high` < 70 · `critical` ≥ 70.
+- Eşik aşıldığında koça otomatik taktik alarmı:
+  > *"Oyuncunun bacak reaktif gücü 4. oyunda %27 düştü; servis-vole taktiği yerine taban çizgisinde tempo kontrolüne geçin."*
+
+---
+
+## 6i. Biyomekanik Kinetik Dijital İkiz 3D Replay (Adım 113)
+
+`src/modules/three/KineticDigitalTwinReplay.tsx` + `lib/three/digitalTwinReplayEngine.ts`:
+
+- 100Hz çift tabanlık basınç vektörleri + IMU rotasyonel hızlarından **prosedürel alt ekstremite kinematiği**: ayak vuruş açısı, diz fleksiyon yörüngesi, zemin temas vektörü.
+- Kare süpürme (scrub) + **360° kamera dönüşü**; çerçeve sınırları ve lineer interpolasyon motoru (SVG 3D izdüşüm; Three.js/WebGL aynı motoru tüketir).
+
+---
+
+## 6j. Otomatik TID Havuz Sıralayıcı (Adım 114)
+
+`src/modules/scouting/TalentPoolRankerView.tsx` + `lib/scouting/tidPoolRankingEngine.ts`:
+
+- Akademiler arası tüm genç profil profilleri toplanır; biyometri **PHV ofsetine göre normalize** edilir (erken olgunlaşma avantajı cezalandırılır, geç olgunlaşana projeksiyon boyu eklenir).
+- Otomatik tier kademeleri: **Top 5% Elite National Prospect** · **Developmental Tier 1** · **High Upside Raw Athlete** · **Developmental Tier 2**.
+
+---
+
+## 6k. Track 10 Uçtan Uca Test (Adım 115)
+
+`scripts/pilotPhase3SmokeTest.mts` (21/21) — liderlik toplama + gizlilik izolasyonu, yorgunluk tahmin matematiği + taktik kural tetikleri, dijital ikiz interpolasyon/çerçeve sınırları, TID havuz PHV normalizasyonu ve Track 10 dosya/veri hattı bütünlüğü (111-115).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -177,6 +221,10 @@ Yanıt yapısı (200 OK):
 9. ☐ Master export (CSV/JSON + ACWR/TRIMP + scout notu) oluşturuldu; Track 9 bütünlüğü 10/10.
 10. ☐ Maç boyunca kort stres paneli: paket kaybı %2 altında, buffer 50MB içinde.
 11. ☐ Çökme olursa: çevrimdışı kuyruğa düştü, Wi-Fi dönünce otomatik flush edildi.
+12. ☐ Çoklu akademi liderlik tablosu: API sıralaması canlı; gizlilik izolasyonu doğrulandı.
+13. ☐ Maç içi yorgunluk danışmanı T_fatigue öngörüsü ve taktik alarmları çalıştı.
+14. ☐ Dijital ikiz 3D replay: vuruş geri sarma + 360° kamera sorunsuz.
+15. ☐ TID havuz sıralaması PHV normalize edilmiş tier kademeleriyle yayında.
 
 ---
 
@@ -186,10 +234,11 @@ Yanıt yapısı (200 OK):
 cd apps/admin
 node scripts/pilotPhase1SmokeTest.mts   # 32/32 (Adım 101-105)
 node scripts/pilotPhase2SmokeTest.mts   # 24/24 (Adım 106-110)
+node scripts/pilotPhase3SmokeTest.mts   # 21/21 (Adım 111-115)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 52/52 (pilot faz 1-2 dahil)
+node scripts/master100StepVerification.mts  # 55/55 (pilot faz 1-3 dahil)
 ```
 
-**PİLOT FAZ 1-2 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-3 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 

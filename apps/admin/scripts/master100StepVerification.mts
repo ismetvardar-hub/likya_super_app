@@ -1,7 +1,7 @@
 // ============================================================================
-// 🏁 MASTER 100-STEP VERIFICATION (Adım 101-110 dahil — PİLOT FAZ 1-2)
-// • 22 batch'in tüm smoke testlerini + 6 birim testini + E2E'yi çalıştırır
-// • Roadmap'te 110/110 adımın [x] olduğunu doğrular
+// 🏁 MASTER 100-STEP VERIFICATION (Adım 111-115 dahil — PİLOT FAZ 3)
+// • 23 batch'in tüm smoke testlerini + 6 birim testini + E2E'yi çalıştırır
+// • Roadmap'te 115/115 adımın [x] olduğunu doğrular
 // • Her batch'in anahtar motor dosyasının varlığını kontrol eder
 // Çalıştırma: node scripts/master100StepVerification.mts
 // ============================================================================
@@ -41,6 +41,7 @@ const smokeTests = [
   'scripts/track8Batch20SmokeTest.mts',
   'scripts/pilotPhase1SmokeTest.mts',
   'scripts/pilotPhase2SmokeTest.mts',
+  'scripts/pilotPhase3SmokeTest.mts',
 ];
 let smokePass = 0;
 for (const t of smokeTests) {
@@ -95,6 +96,7 @@ const batchEngines: Array<[string, string]> = [
   ['Batch 20 (Adım 96-100)', 'src/app/lib/security/securityHeadersEngine.ts'],
   ['Batch 21 (Adım 101-105)', 'src/app/lib/monitoring/healthCheckEngine.ts'],
   ['Batch 22 (Adım 106-110)', 'src/app/lib/court/matchDaySessionEngine.ts'],
+  ['Batch 23 (Adım 111-115)', 'src/app/lib/analytics/multiClubLeaderboardEngine.ts'],
 ];
 let enginePass = 0;
 for (const [batch, engine] of batchEngines) {
@@ -102,15 +104,15 @@ for (const [batch, engine] of batchEngines) {
   if (ok) enginePass++;
   check(`${batch} motor: ${engine}`, ok);
 }
-check('22 batch motor dosyası mevcut', enginePass === batchEngines.length, `${enginePass}/${batchEngines.length}`);
+check('23 batch motor dosyası mevcut', enginePass === batchEngines.length, `${enginePass}/${batchEngines.length}`);
 
-// ── 5. ROADMAP 110/110 [x] ────────────────────────────────────────────────────
+// ── 5. ROADMAP 115/115 [x] ────────────────────────────────────────────────────
 const roadmap = readFileSync('../../docs/100_STEP_EXECUTION_ROADMAP.md', 'utf8');
 const checked = (roadmap.match(/^\| \d{2,3} \|.*\[x\]/gm) ?? []).length;
 const totalSteps = (roadmap.match(/^\| \d{2,3} \|/gm) ?? []).length;
-check('Roadmap: 110/110 adım [x]', checked >= 110 && totalSteps >= 110, `${checked} [x] / ${totalSteps} adım`);
+check('Roadmap: 115/115 adım [x]', checked >= 115 && totalSteps >= 115, `${checked} [x] / ${totalSteps} adım`);
 
 // ── SONUÇ ─────────────────────────────────────────────────────────────────────
 const failed = results.filter((r) => !r.ok).length;
-console.log(`\n🎉 MASTER VERIFICATION: ${results.length - failed}/${results.length} kontrol geçti — 110/110 ROADMAP %100 (Pilot Faz 1-2 dahil)`);
+console.log(`\n🎉 MASTER VERIFICATION: ${results.length - failed}/${results.length} kontrol geçti — 115/115 ROADMAP %100 (Pilot Faz 1-3 dahil)`);
 process.exit(failed > 0 ? 1 : 0);
