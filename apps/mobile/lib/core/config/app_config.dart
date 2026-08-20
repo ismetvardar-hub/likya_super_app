@@ -8,7 +8,7 @@ class AppConfig {
     defaultValue: 'https://your-supabase-project.supabase.co',
   );
 
-  static const String supabaseAnonKey = String.fromEnvironment(
+  static const String supabasePublishableKey = String.fromEnvironment(
     'SUPABASE_ANON_KEY',
     defaultValue: 'your-anon-key',
   );
