@@ -11,7 +11,7 @@ class SarDroneDispatchScreen extends StatefulWidget {
 
 class _SarDroneDispatchScreenState extends State<SarDroneDispatchScreen> {
   bool _isDroneDispatched = false;
-  int _etaMinutes = 3;
+  final int _etaMinutes = 3;
 
   void _dispatchDrone() {
     AudioFeedbackService().playErrorAlertSound();
