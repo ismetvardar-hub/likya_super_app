@@ -422,6 +422,48 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6aj. Birleşik Atlet/Veli Mobil Köprü API (Adım 141)
+
+`src/app/lib/mobile/mobileBridgeEngine.ts` + `src/app/api/mobile/sync/route.ts`:
+
+- Çift yönlü senkron: **çevrimdışı seanslar**, günlük **iyilik anketleri** (Uyku/Ağrı/Ruh Hali 1-5) ve kişisel rekorlar.
+- **ETag önbelleği + payload diff sıkıştırma** — senkron döngüsü başına **<10KB** bütçe; değişmeyen veride `noop` (HTTP 304).
+
+---
+
+## 6ak. Apple HealthKit & Google Health Connect Çift Adaptör (Adım 142)
+
+`src/app/lib/health/healthConnectAdapter.ts`:
+
+- Apple Watch / Garmin / Whoop / Galaxy Watch'tan **RHR, HRV (SDNN ms), Derin/REM uyku ve VO2 Max** senkronu.
+- **Baseline Readiness Skoru (0-100%)** → kort öncesi **ACWR yük önerisi otomatik ayarlanır** (RED %40 / AMBER %20 / GREEN %0 azaltma).
+
+---
+
+## 6al. APNS & FCM Mobil Push Alert Yönlendirici (Adım 143)
+
+`src/app/lib/notifications/mobilePushRouter.ts`:
+
+- 5 kategori: `INJURY_RISK_ALERT` (kritik) · `TRAINING_REMINDER` · `NEW_PB_BADGE` · `COURT_CHANGE` · `WEATHER_CANCELLATION`.
+- **Veli sessiz saatleri (22:00-07:00):** kritik olmayan bildirimler bastırılır. Profil tercihine göre **TR / EN / DE / FR** yerelleştirilmiş payload.
+
+---
+
+## 6am. Dinamik Veli Takvimi & iCal Senkron Motoru (Adım 144)
+
+`src/app/lib/calendar/calendarSyncEngine.ts` + `src/app/api/calendar/[token]/route.ts`:
+
+- **RFC 5545** uyumlu `.ics` abonelik beslemeleri (Apple Calendar / Google Calendar / Outlook) — token doğrulamalı.
+- Kort ataması, maç saati veya turnuva değişiklikleri beslemeye **dinamik** yansır (manüel yeniden içe aktarma yok); zaman damgaları UTC.
+
+---
+
+## 6an. Track 16 Uçtan Uca Test (Adım 145)
+
+`scripts/pilotPhase9SmokeTest.mts` (19/19) — mobil köprü payload sıkıştırma + diff senkron, HRV/RHR Readiness + ACWR yük azaltma, push sessiz saat bastırma + çok dilli payload, RFC 5545 VEVENT + zaman dilimi uyumu ve Track 16 dosya/veri hattı bütünlüğü (141-145).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -459,6 +501,10 @@ Yanıt yapısı (200 OK):
 33. ☐ Turnike: 60sn QR/NFC token + feragat/rezervasyon/üyelik kapı kuralları aktif.
 34. ☐ Akıllı dolap: otomatik atama + BLE anahtar + sanitasyon + master override.
 35. ☐ Hava motoru: WBGT >28°C alarmı + zemin kayma/zıplama telafisi yayında.
+36. ☐ Mobil köprü: ETag + diff senkron <10KB; iyilik anketleri çalışıyor.
+37. ☐ Health Connect: Readiness skoru ACWR yükünü otomatik ayarlıyor.
+38. ☐ Push: sessiz saatler + TR/EN/DE/FR yerelleştirme doğru.
+39. ☐ iCal: RFC5545 abonelik beslemesi Apple/Google/Outlook'a dinamik akıyor.
 
 ---
 
@@ -474,10 +520,11 @@ node scripts/pilotPhase5SmokeTest.mts   # 14/14 (Adım 121-125)
 node scripts/pilotPhase6SmokeTest.mts   # 21/21 (Adım 126-130)
 node scripts/pilotPhase7SmokeTest.mts   # 21/21 (Adım 131-135)
 node scripts/pilotPhase8SmokeTest.mts   # 20/20 (Adım 136-140)
+node scripts/pilotPhase9SmokeTest.mts   # 19/19 (Adım 141-145)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 65/65 (pilot faz 1-8 dahil)
+node scripts/master100StepVerification.mts  # 67/67 (pilot faz 1-9 dahil)
 ```
 
-**PİLOT FAZ 1-8 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-9 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 
