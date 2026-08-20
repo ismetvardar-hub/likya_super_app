@@ -132,11 +132,11 @@
 | 88 | Antrenör seans saati & faturalama hesabı | [x] |
 | 89 | Üyelik tier yöneticisi (Basic/Pro/Elite Academy) + özellik kapısı | [x] |
 | 90 | Dijital feragat + medikal izin formu | [x] |
-| 91 | Akıllı dolap/sensör ekipman takip sistemi | [ ] |
-| 92 | Gelir analitiği paneli (üyelik, özel ders, ekipman) | [ ] |
-| 93 | Çok kiracılı kulüp seçici + marka özelleştirme | [ ] |
-| 94 | Otomatik aylık akademi performans bülteni | [ ] |
-| 95 | Tesis & faturalama entegrasyon testleri | [ ] |
+| 91 | Akıllı dolap/sensör ekipman takip sistemi | [x] |
+| 92 | Gelir analitiği paneli (üyelik, özel ders, ekipman) | [x] |
+| 93 | Çok kiracılı kulüp seçici + marka özelleştirme | [x] |
+| 94 | Otomatik aylık akademi performans bülteni | [x] |
+| 95 | Tesis & faturalama entegrasyon testleri | [x] |
 
 ## Track 8: Security, CI/CD, Production Hardening & Launch (Adım 96–100)
 
@@ -192,4 +192,6 @@
 - **Batch 17 (Adım 81-85, Track 6 KAPANIŞ):** Seyirci & büyük ekran yayın görünümü (`broadcastDisplayConfig.ts` + `SpectatorBroadcastView.tsx` — aşama+kort etiketi, sponsor banner, telemetri banner, 72px tipografi) · AI yetenek tespiti (TID) endeksi (`talentIdIndexEngine.ts` — PHV olgunlaşma ofseti, reaktif güç hızı, bilişsel tepki, fren verimi, direnç → 0-100 + Regional/National/International/Pro tavan) · Kort pozisyon ısı haritası & kapsama (`courtCoverageEngine.ts` + `CourtCoverageHeatmap.tsx` — 4 taktik bölge %, mesafe m, L/R önyargı) · Otomatik highlight klipçi (`videoHighlightClipper.ts` — servis>%90, ralli>10, COD>5.0 m/s², EDL + klip aralıkları) · `track6Batch17SmokeTest.mts` (23/23, Adım 76-85 bütünlük) — **TRACK 6 %100 TAMAMLANDI (85/85) 🎉**
 
 - **Batch 18 (Adım 86-90, Track 7 BAŞLANGIÇ):** Çok kortlu canlı doluluk ızgarası (`courtOccupancyEngine.ts` + `MultiCourtLiveGrid.tsx` — 12 kort, 4 durum, canlı HR/geri sayım, acil kilit/yeniden atama) · Kort rezervasyon & çakışma zamanlayıcı (`courtBookingScheduler.ts` — kort/koç/kohort çakışma tespiti, 10dk tampon, boş slot, tekrarlayan takım rezervasyonu) · Koç bordro & faturalama (`coachPayrollEngine.ts` — özel/takım/bonus/mesai 1.5x/hafta sonu %20, vergi+kesinti, CSV/JSON) · Üyelik tier & abonelik döngüsü (`membershipTierEngine.ts` + `MembershipTierManager.tsx` — 4 tier, ödeme durumu, oranlı yükselt/indir) · Dijital tıbbi izin & feragat (`digitalWaiverEngine.ts` + `DigitalWaiverModal.tsx` — imza+sağlık belgesi, EXPIRED/VALID/PENDING giriş kilidi) · `track7Batch18SmokeTest.mts` (28/28).
+
+- **Batch 19 (Adım 91-95, Track 7 KAPANIŞ):** Akıllı dolap & donanım teslim takibi (`hardwareCheckoutEngine.ts` + `HardwareCheckoutManager.tsx` — dolap 1-40, tabanlık/HRM, 5 durum, otomatik seans atama) · Gelir analitiği & MRR (`revenueAnalyticsEngine.ts` + `RevenueAnalyticsDashboard.tsx` — MRR/ARR, churn, ARPU, komisyon, 3/6 ay nakit tahmini) · Çok kiracılı kulüp motoru (`multiTenantEngine.ts` + `ClubOrganizationSwitcher.tsx` — 3 şube, club_id izolasyon, kiracı değiştirici) · Otomatik veli bülteni (`parentDigestGenerator.ts` — haftalık TRIMP/RSI özeti, HTML+metin, {{etiket}} kişiselleştirme) · `track7Batch19SmokeTest.mts` (28/28, Adım 86-95 bütünlük) — **TRACK 7 %100 TAMAMLANDI (95/95) 🎉**
 
