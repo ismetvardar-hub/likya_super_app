@@ -127,11 +127,11 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 86 | Çok kortlu canlı monitör (akademi direktörü) | [ ] |
-| 87 | Kort rezervasyon + ekipman takip takvimi | [ ] |
-| 88 | Antrenör seans saati & faturalama hesabı | [ ] |
-| 89 | Üyelik tier yöneticisi (Basic/Pro/Elite Academy) + özellik kapısı | [ ] |
-| 90 | Dijital feragat + medikal izin formu | [ ] |
+| 86 | Çok kortlu canlı monitör (akademi direktörü) | [x] |
+| 87 | Kort rezervasyon + ekipman takip takvimi | [x] |
+| 88 | Antrenör seans saati & faturalama hesabı | [x] |
+| 89 | Üyelik tier yöneticisi (Basic/Pro/Elite Academy) + özellik kapısı | [x] |
+| 90 | Dijital feragat + medikal izin formu | [x] |
 | 91 | Akıllı dolap/sensör ekipman takip sistemi | [ ] |
 | 92 | Gelir analitiği paneli (üyelik, özel ders, ekipman) | [ ] |
 | 93 | Çok kiracılı kulüp seçici + marka özelleştirme | [ ] |
@@ -190,4 +190,6 @@
 - **Batch 16 (Adım 76-80, Track 6 BAŞLANGIÇ):** Canlı maç skoru + biyomekanik overlay (`matchScoreEngine.ts` + `LiveMatchScoreboard.tsx` — tenis 0/15/30/40+Deuce/Avantaj+set, basketbol periyot/shot clock, momentum log, canlı nabız/servis/GCT HUD) · Scout rapor & PDF (`scoutReportGenerator.ts` + `ScoutReportView.tsx` — 20-80 skala, radar profil, gizli notlar, print/PDF) · Video↔BLE saat senkronizasyonu (`videoBleSyncEngine.ts` — Δt=video−BLE, ±10ms eşleştirme, clap anchor) · Ağır çekim oynatıcı + açı ölçümü (`videoPlayerEngine.ts` + `SlowMotionBiomechanicalPlayer.tsx` — 0.1×-1.0×, 33ms kare, diz/savrulma açısı) · Turnuva braket (`bracketGenerator.ts` + `TournamentBracketView.tsx` — 4-64 oyuncu tek/çift, standart seed dağılım, kazanan ilerleme, kort atama) · `track6Batch16SmokeTest.mts` (31/31).
 
 - **Batch 17 (Adım 81-85, Track 6 KAPANIŞ):** Seyirci & büyük ekran yayın görünümü (`broadcastDisplayConfig.ts` + `SpectatorBroadcastView.tsx` — aşama+kort etiketi, sponsor banner, telemetri banner, 72px tipografi) · AI yetenek tespiti (TID) endeksi (`talentIdIndexEngine.ts` — PHV olgunlaşma ofseti, reaktif güç hızı, bilişsel tepki, fren verimi, direnç → 0-100 + Regional/National/International/Pro tavan) · Kort pozisyon ısı haritası & kapsama (`courtCoverageEngine.ts` + `CourtCoverageHeatmap.tsx` — 4 taktik bölge %, mesafe m, L/R önyargı) · Otomatik highlight klipçi (`videoHighlightClipper.ts` — servis>%90, ralli>10, COD>5.0 m/s², EDL + klip aralıkları) · `track6Batch17SmokeTest.mts` (23/23, Adım 76-85 bütünlük) — **TRACK 6 %100 TAMAMLANDI (85/85) 🎉**
+
+- **Batch 18 (Adım 86-90, Track 7 BAŞLANGIÇ):** Çok kortlu canlı doluluk ızgarası (`courtOccupancyEngine.ts` + `MultiCourtLiveGrid.tsx` — 12 kort, 4 durum, canlı HR/geri sayım, acil kilit/yeniden atama) · Kort rezervasyon & çakışma zamanlayıcı (`courtBookingScheduler.ts` — kort/koç/kohort çakışma tespiti, 10dk tampon, boş slot, tekrarlayan takım rezervasyonu) · Koç bordro & faturalama (`coachPayrollEngine.ts` — özel/takım/bonus/mesai 1.5x/hafta sonu %20, vergi+kesinti, CSV/JSON) · Üyelik tier & abonelik döngüsü (`membershipTierEngine.ts` + `MembershipTierManager.tsx` — 4 tier, ödeme durumu, oranlı yükselt/indir) · Dijital tıbbi izin & feragat (`digitalWaiverEngine.ts` + `DigitalWaiverModal.tsx` — imza+sağlık belgesi, EXPIRED/VALID/PENDING giriş kilidi) · `track7Batch18SmokeTest.mts` (28/28).
 
