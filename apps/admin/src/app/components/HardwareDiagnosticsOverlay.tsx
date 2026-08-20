@@ -1,43 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
+import { linkStability, packetCoveragePct, rssiQuality, RSSI_QUALITY, type DiagnosticsMetrics } from '../lib/hardware/diagnosticsMetrics.ts';
 
 // ============================================================================
-// 📊 DONANIM TEŞHİS & TELEMETRİ OVERLAY (Adım 25)
+// 📊 DONANIM TEŞHİS & TELEMETRİ OVERLAY (Adım 25) — UI katmanı
 // Antrenör/mühendis için toggle'lanabilir yüzen HUD:
 // RSSI (dBm) • bağlantı stabilitesi • uçtan uca paket gecikmesi (ms)
-// düşen paket sayacı • frame rate jitter monitörü.
+// düşen paket sayacı • frame rate jitter monitörü. (mantık: diagnosticsMetrics.ts)
 // ============================================================================
-
-export interface DiagnosticsMetrics {
-  rssiDbm: number;
-  latencyMs: number;
-  droppedPackets: number;
-  jitterMs: number;
-  framesPerSec: number;
-}
-
-export const RSSI_QUALITY: Record<string, { label: string; color: string }> = {
-  EXCELLENT: { label: 'Mükemmel', color: '#4ade80' },
-  GOOD: { label: 'İyi', color: '#a3e635' },
-  FAIR: { label: 'Orta', color: '#facc15' },
-  WEAK: { label: 'Zayıf', color: '#fb923c' },
-  POOR: { label: 'Kritik', color: '#fb7185' },
-};
-
-export function rssiQuality(rssiDbm: number): string {
-  if (rssiDbm >= -55) return 'EXCELLENT';
-  if (rssiDbm >= -65) return 'GOOD';
-  if (rssiDbm >= -75) return 'FAIR';
-  if (rssiDbm >= -85) return 'WEAK';
-  return 'POOR';
-}
 
 export default function HardwareDiagnosticsOverlay({ metrics }: { metrics: DiagnosticsMetrics }) {
   const [visible, setVisible] = useState(false);
   const q = rssiQuality(metrics.rssiDbm);
   const quality = RSSI_QUALITY[q];
-  const stability = metrics.droppedPackets === 0 ? 'Stabil' : metrics.droppedPackets < 10 ? 'Dikkat' : 'Kritik';
+  const stability = linkStability(metrics.droppedPackets);
 
   return (
     <>
@@ -50,7 +27,7 @@ export default function HardwareDiagnosticsOverlay({ metrics }: { metrics: Diagn
           </div>
           {[
             ['📶 RSSI', `${metrics.rssiDbm} dBm`, quality.color],
-            ['🔗 Stabilite', `${stability} • %${Math.max(0, 100 - metrics.droppedPackets)}`, metrics.droppedPackets === 0 ? '#4ade80' : '#facc15'],
+            ['🔗 Stabilite', `${stability} • %${packetCoveragePct(metrics.droppedPackets)}`, metrics.droppedPackets === 0 ? '#4ade80' : '#facc15'],
             ['⏱️ Gecikme', `${metrics.latencyMs} ms`, metrics.latencyMs < 100 ? '#4ade80' : '#facc15'],
             ['📉 Düşen Paket', `${metrics.droppedPackets}`, metrics.droppedPackets === 0 ? '#4ade80' : '#fb7185'],
             ['🔄 Jitter', `${metrics.jitterMs} ms`, metrics.jitterMs < 15 ? '#4ade80' : '#facc15'],

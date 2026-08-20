@@ -234,9 +234,10 @@ export class VirtualBleSensorLab {
     const insole = this.streamPackets(durationMs, 100);       // 10Hz insole
     const hrm = this.streamPackets(durationMs, 1000);         // 1Hz HRM
     for (const f of insole) {
-      raw.push({ source: 'INSOLE', tMs: f.tMs, value: f.forefootFsr });
+      raw.push({ source: 'INSOLE', tMs: f.tMs, value: f.forefootFsr, channel: 'forefoot' });
+      raw.push({ source: 'INSOLE', tMs: f.tMs, value: f.heelFsr, channel: 'heel' });
+      if (f.gctMs > 0) raw.push({ source: 'INSOLE', tMs: f.tMs, value: f.gctMs, channel: 'gct' });
       raw.push({ source: 'IMU', tMs: f.tMs, value: f.accelMag });
-      if (f.gctMs > 0) raw.push({ source: 'INSOLE', tMs: f.tMs + 1, value: f.gctMs / 2 });
     }
     for (const f of hrm) raw.push({ source: 'HRM', tMs: f.tMs, value: f.hr });
     return buildSyncedFrames(raw, 0, durationMs);

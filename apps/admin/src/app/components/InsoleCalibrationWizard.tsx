@@ -1,37 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { applyCalibration, computeCalibrationCoefficients, loadCalibration, saveCalibration, type CalibrationCoefficients } from '../lib/hardware/insoleCalibration.ts';
 
 // ============================================================================
-// ⚖️ TABANLIK KALİBRASYON SİHİRBAZI (Adım 22)
+// ⚖️ TABANLIK KALİBRASYON SİHİRBAZI (Adım 22) — UI katmanı
 // 1. Tare / Sıfır Yük   2. Tek Bacak Durma   3. Dinamik Adım Testi
-// k_toe, k_heel katsayıları localStorage'a kaydedilir, canlı akışa uygulanır.
+// k_toe, k_heel katsayıları localStorage'a kaydedilir (mantık: insoleCalibration.ts)
 // ============================================================================
-
-const LS_KEY = 'extremes_insole_calibration';
-
-export interface CalibrationCoefficients {
-  kToe: number;      // ADC birimi → Newton (toe)
-  kHeel: number;
-  tareToe: number;   // sıfır yük ADC
-  tareHeel: number;
-  calibratedAt: string;
-}
-
-export function loadCalibration(): CalibrationCoefficients | null {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? (JSON.parse(raw) as CalibrationCoefficients) : null;
-  } catch {
-    return null;
-  }
-}
-
-/** Calibration katsayılarını ham ADC'ye uygula → Newton */
-export function applyCalibration(adcValue: number, tare: number, k: number): number {
-  return (adcValue - tare) * k;
-}
 
 export default function InsoleCalibrationWizard() {
   const [open, setOpen] = useState(false);
@@ -49,11 +25,9 @@ export default function InsoleCalibrationWizard() {
   ];
 
   const runCalibration = () => {
-    const weightN = weightKg * 9.81;
-    const kToe = Number(((weightN * 0.8) / Math.max(1, singleAdc.toe - tareAdc.toe)).toFixed(3));
-    const kHeel = Number(((weightN * 0.2) / Math.max(1, singleAdc.heel - tareAdc.heel)).toFixed(3));
-    const c: CalibrationCoefficients = { kToe, kHeel, tareToe: tareAdc.toe, tareHeel: tareAdc.heel, calibratedAt: new Date().toISOString() };
-    localStorage.setItem(LS_KEY, JSON.stringify(c));
+    const k = computeCalibrationCoefficients({ weightKg, tareAdc, singleAdc });
+    const c: CalibrationCoefficients = { ...k, calibratedAt: new Date().toISOString() };
+    saveCalibration(c);
     setCoeff(c);
     setStep(3);
   };

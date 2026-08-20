@@ -6,10 +6,13 @@
 
 export type SyncSource = 'HRM' | 'INSOLE' | 'IMU';
 
+export type InsoleChannel = 'forefoot' | 'heel' | 'gct';
+
 export interface RawSample {
   source: SyncSource;
   tMs: number;          // kaynak zaman damgası
   value: number;
+  channel?: InsoleChannel; // INSOLE için kanal ayrımı (toe/heel/GCT)
 }
 
 export interface SyncedFrame {
@@ -50,8 +53,11 @@ export function interpolateAt(series: RawSample[], tMs: number): number | undefi
 export function buildSyncedFrames(raw: RawSample[], startMs?: number, endMs?: number): SyncedFrame[] {
   const bySource = (s: SyncSource) => raw.filter((r) => r.source === s).sort((a, b) => a.tMs - b.tMs);
   const hrm = bySource('HRM');
-  const insole = bySource('INSOLE');
   const imu = bySource('IMU');
+  // INSOLE kanalları: forefoot (varsayılan), heel, gct — ayrı serilere ayrılır
+  const toeSeries = raw.filter((r) => r.source === 'INSOLE' && (r.channel ?? 'forefoot') === 'forefoot').sort((a, b) => a.tMs - b.tMs);
+  const heelSeries = raw.filter((r) => r.source === 'INSOLE' && r.channel === 'heel').sort((a, b) => a.tMs - b.tMs);
+  const gctSeries = raw.filter((r) => r.source === 'INSOLE' && r.channel === 'gct').sort((a, b) => a.tMs - b.tMs);
 
   const allT = raw.map((r) => r.tMs).sort((a, b) => a - b);
   if (allT.length === 0) return [];
@@ -63,8 +69,12 @@ export function buildSyncedFrames(raw: RawSample[], startMs?: number, endMs?: nu
     const frame: SyncedFrame = { tMs: t };
     const hr = interpolateAt(hrm, t);
     if (hr !== undefined) frame.hr = Math.round(hr);
-    const toe = interpolateAt(insole.filter((x) => true).map((x) => ({ ...x })), t);
-    const gctSample = insole.find((x) => x.tMs >= t - 50 && x.tMs <= t + 50);
+    const toe = interpolateAt(toeSeries, t);
+    if (toe !== undefined) frame.toePct = Math.round(toe);
+    const heel = interpolateAt(heelSeries, t);
+    if (heel !== undefined) frame.heelPct = Math.round(heel);
+    const gct = interpolateAt(gctSeries, t);
+    if (gct !== undefined) frame.gctMs = Math.round(gct);
     const imuVal = interpolateAt(imu, t);
     if (imuVal !== undefined) frame.imuG = Number(imuVal.toFixed(2));
     frames.push(frame);

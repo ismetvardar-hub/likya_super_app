@@ -163,3 +163,5 @@
 
 - **MLSys Derinleştirme (Harvard MLSys/TinyTorch uyarlaması):** TinyTorch ek katmanları (tanh/leakyRelu, CE/MSE loss, SGD on-device eğitim döngüsü, deterministik ağırlık başlatma) · akış sınıflandırma (pencere çoğunluk oyu + güven eşiği/Belirsiz red) · kalibrasyon normalizasyonu · güç modeli (100Hz→18mA, mAh/pil %) · kanal simülasyonu (gecikme jitter + paket kaybı) · oturum JSON dışa aktarımı · Edge Profile Engine (bayt/FLOPs/RAM/µs/mAh + ESP32/Pico/mobil hedef karşılaştırması) — `tinyMlsys.test.mts` 27/27.
 
+- **Batch 5 Denetim & Düzeltme (Adım 21-25):** Mevcut uygulama denetlendi; eksikler giderildi — ① `sensorSyncEngine` senkron vektöründe tabanlık kanalları (toePct/heelPct/gctMs) artık `channel` alanıyla interpolasyonla dolduruluyor (önceden hesaplanıp kullanılmıyordu), `feedToSync` heel+GCT dahil besliyor · ② Kalibrasyon lineer regresyonu saf `insoleCalibration.ts` modülüne taşındı (`computeCalibrationCoefficients`) · ③ Teşhis RSSI/stabilite mantığı saf `diagnosticsMetrics.ts` modülüne taşındı · ④ `track2Batch5SmokeTest.mts` node-runnable hale getirildi (19/19).
+
