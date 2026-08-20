@@ -1,0 +1,107 @@
+# ============================================================================
+# LİKYA SUPER-APP — ÜRETİM DAĞITIMI (Dokploy / VPS Self-Hosted)
+# Vercel Pro / Heroku yerine tek VPS üzerinde sıfır abonelik (≈$5/ay altyapı).
+# Servisler:
+#   1. web           → Next.js (apps/admin) bağımsız sunucu çıktısı + medya arşivi
+#   2. postgres      → Self-hosted PostgreSQL + PostGIS (oturum telemetrisi)
+#   3. local-whisper → Yerel CPU/GPU ses→metin (koç sesli notları; buluta veri gitmez)
+#
+# Kullanım:
+#   cp .env.prod.example .env.prod
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+# ============================================================================
+
+name: likya-prod
+
+services:
+  # -------------------------------------------------------------------------
+  # 1) Next.js / React Web (CEO Command Center + Koç/Veli/Sporcu portalları)
+  # -------------------------------------------------------------------------
+  web:
+    build:
+      context: ./apps/admin
+      dockerfile: Dockerfile
+    container_name: likya_web
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      # Sporcu medya kasası yerel disk kökü (athleteMediaVault)
+      LIKYA_MEDIA_ROOT: /var/lib/likya/media
+    volumes:
+      - likya_media:/var/lib/likya/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>{if(r.ok)process.exit(0);process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - likya_prod
+
+  # -------------------------------------------------------------------------
+  # 2) PostgreSQL + PostGIS (self-hosted oturum telemetrisi & coğrafi veri)
+  # -------------------------------------------------------------------------
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: likya_postgres
+    restart: always
+    # Güvenlik: yalnızca VPS içinden erişim (Dokploy ters proxy → 3000)
+    ports:
+      - "127.0.0.1:5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-likya}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD zorunludur (.env.prod)}
+      POSTGRES_DB: ${POSTGRES_DB:-likya}
+    volumes:
+      - likya_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-likya} -d ${POSTGRES_DB:-likya}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - likya_prod
+
+  # -------------------------------------------------------------------------
+  # 3) Local Whisper ASR — koç sesli notlarını yerel CPU/GPU ile metne döker
+  #    (Otter.ai / Fireflies yerine tamamen yerel; buluta veri yüklenmez)
+  #    API: POST http://localhost:9000/asr (multipart audio) → { "text": ... }
+  # -------------------------------------------------------------------------
+  local-whisper:
+    image: onerahmet/openai-whisper-asr-webservice:${WHISPER_TAG:-latest-cpu}
+    container_name: likya_local_whisper
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      ASR_ENGINE: ${WHISPER_ENGINE:-openai_whisper}
+      ASR_MODEL: ${WHISPER_MODEL:-small}
+      ASR_LANGUAGE: ${WHISPER_LANGUAGE:-tr}
+      ASR_GPU: ${WHISPER_GPU:-false}
+    volumes:
+      - likya_whisper_cache:/root/.cache/whisper
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    networks:
+      - likya_prod
+
+volumes:
+  likya_pgdata:
+  likya_media:
+  likya_whisper_cache:
+
+networks:
+  likya_prod:
+    name: likya_prod_network
+    driver: bridge
