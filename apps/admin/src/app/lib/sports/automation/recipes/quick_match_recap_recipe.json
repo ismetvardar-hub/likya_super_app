@@ -1,0 +1,53 @@
+{
+  "id": "quick_match_recap_recipe",
+  "name": "Quick Match Recap",
+  "version": "1.0.0",
+  "description": "Sensor sync → GCT/RSI stats → PDF rapor → Veli WhatsApp alarmı. Sıfır LLM maliyeti, tamamen lokal.",
+  "runtimeCost": "FREE",
+  "steps": [
+    {
+      "id": "step-1",
+      "action": "INGEST_TELEMETRY",
+      "label": "Sensör verisini topla",
+      "params": { "source": "insole+HRM" }
+    },
+    {
+      "id": "step-2",
+      "action": "APPLY_FILTER",
+      "label": "Gürültü filtresi uygula",
+      "params": { "windowMs": 100 }
+    },
+    {
+      "id": "step-3",
+      "action": "CALCULATE_BIOMECHANICS",
+      "label": "GCT/RSI hesabı",
+      "params": {}
+    },
+    {
+      "id": "step-4",
+      "action": "GENERATE_PLAIN_REPORT",
+      "label": "Sade dil maç özeti",
+      "params": {}
+    },
+    {
+      "id": "step-5",
+      "action": "EXPORT_PDF",
+      "label": "PDF raporu dışa aktar",
+      "params": {}
+    },
+    {
+      "id": "step-6",
+      "action": "TRIGGER_NOTIFICATION",
+      "label": "Veli WhatsApp bildirimi",
+      "params": { "channel": "whatsapp", "message": "Maç özeti ve GCT/RSI raporu hazır" },
+      "conditions": [
+        {
+          "metric": "reactionQuality",
+          "operator": "EQ",
+          "value": "POOR",
+          "thenAction": "TRIGGER_NOTIFICATION"
+        }
+      ]
+    }
+  ]
+}

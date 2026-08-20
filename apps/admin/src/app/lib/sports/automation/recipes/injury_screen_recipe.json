@@ -1,0 +1,44 @@
+{
+  "id": "injury_screen_recipe",
+  "name": "Injury Screen",
+  "version": "1.0.0",
+  "description": "Darbe yükü kontrolü → ACWR kontrolü → Antrenör sesli alarmı. Sıfır LLM maliyeti, tamamen lokal.",
+  "runtimeCost": "FREE",
+  "steps": [
+    {
+      "id": "step-1",
+      "action": "INGEST_TELEMETRY",
+      "label": "Antrenman telemetrisini topla",
+      "params": { "source": "insole" }
+    },
+    {
+      "id": "step-2",
+      "action": "CALCULATE_BIOMECHANICS",
+      "label": "Biyomekanik hesap",
+      "params": {}
+    },
+    {
+      "id": "step-3",
+      "action": "GENERATE_PLAIN_REPORT",
+      "label": "Risk özeti üret",
+      "params": {},
+      "conditions": [
+        {
+          "metric": "loadingKnS",
+          "operator": "GT",
+          "value": 2.5,
+          "thenAction": "TRIGGER_NOTIFICATION",
+          "thenParams": { "channel": "audio", "message": "Yüksek darbe yükü (loadingKnS) tespit edildi" }
+        },
+        {
+          "metric": "acwr",
+          "operator": "GTE",
+          "value": 1.5,
+          "thenAction": "TRIGGER_NOTIFICATION",
+          "thenParams": { "channel": "audio", "message": "Yüksek ACWR — sakatlık riski arttı" }
+        }
+      ]
+    }
+  ]
+}
+
