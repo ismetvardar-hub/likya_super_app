@@ -72,11 +72,11 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 46 | Sporcu/seans/telemetri/fiziksel metrik relasyonel Supabase şeması | [ ] |
-| 47 | RLS politikaları (CEO/Coach/Parent/Athlete) | [ ] |
-| 48 | DB migration scriptleri + seed veri fikstürleri | [ ] |
-| 49 | Offline-first IndexedDB önbellek katmanı | [ ] |
-| 50 | Arka plan senkronizasyon motoru (IndexedDB → Supabase) | [ ] |
+| 46 | Sporcu/seans/telemetri/fiziksel metrik relasyonel Supabase şeması | [x] |
+| 47 | RLS politikaları (CEO/Coach/Parent/Athlete) | [x] |
+| 48 | DB migration scriptleri + seed veri fikstürleri | [x] |
+| 49 | Offline-first IndexedDB önbellek katmanı | [x] |
+| 50 | Arka plan senkronizasyon motoru (IndexedDB → Supabase) | [x] |
 | 51 | Telemetri zaman serisi batch sıkıştırma | [ ] |
 | 52 | Supabase Storage (PDF + avatar medya) | [ ] |
 | 53 | Sporcu profili CRUD API + RBAC | [ ] |
@@ -174,4 +174,6 @@
 - **Batch 9 (Adım 41-45, Track 3 KAPANIŞ):** Maç sonrası metabolik toparlanma & EPOC (`recoveryDurationEngine.ts` — EPOC=α·TRIMP·(HRm/HRmax)², 24h/48h/72h pencere, ertesi gün hazırlık) · Sprint ivmelenme & hız profili (`sprintProfileEngine.ts` — 0-5m first-step/5-10m drive, a_max, F-V eğimi S_fv) · Dinamik pronasyon/supinasyon tahmini (`pronationSupinationEngine.ts` — 5 kademe, ayakkabı/tabanlık önerisi) · Spor bilimi sözlüğü + tooltip bileşeni (`sportsScienceGlossary.ts` + `SportsScienceGlossaryTooltip.tsx` — veli dostu sade dil) · `track3Batch9SmokeTest.mts` (26/26, Adım 31-45 bütünlük) — **TRACK 3 %100 TAMAMLANDI (45/45) 🎉**
 
 - **Akıllı Kort Geospatial + Sıfır-Token Önbellek (MapLibre/Sereniy konsepti):** `CourtGeospatialMap.tsx` (vektör SVG koyu tema — Kort 1-8/Salon/Soyunma, geofence sınırları + GEOFENCE ENTER/EXIT pin takibi, IoT durum göstergeleri) + saf `courtGeoEngine.ts` (ekvirektangular projeksiyon, nokta-çokgen, GeofenceTracker) · `semanticQueryCache.ts` (FNV-1a profil parmak izi, hit/miss, IndexedDB kalıcılık — $0 token) · `seasonMemoryBuffer.ts` (sezon hafıza vektörü: milestone/tekrarlayan kusur/toparlanma trendi, Ghost Avatar bağlam enjeksiyonu) · `geospatialCacheSmokeTest.mts` (23/23).
+
+- **Batch 10 (Adım 46-50, Track 4 BAŞLANGIÇ):** İlişkisel PostgreSQL şeması (`supabase/schema.sql` — squads/athletes/sessions/telemetry_frames/growth_records/parent_links/injury_alerts, FK+indeks) · Çok rollü RLS politikaları (`20260220_rls_policies.sql` — ceo/manager tam, coach takım, parent SELECT, athlete kendi verisi + yardımcı fonksiyonlar) · Deterministik seed fikstürleri (`seedFixtures.ts` — 6 sporcu, 72 seans, 864 telemetri, sakatlık bayrakları) · Offline-first depolama (`offlineStorageEngine.ts` — IndexedDB + bellek yedeği, pending_sync_queue write-ahead) · Arka plan senkronizasyon (`backgroundSyncEngine.ts` — online olayları, batch flush, LWW çakışma, ilerleme olayları) · `track4Batch10SmokeTest.mts` (31/31).
 
