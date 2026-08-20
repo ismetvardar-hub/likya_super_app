@@ -165,3 +165,5 @@
 
 - **Batch 5 Denetim & Düzeltme (Adım 21-25):** Mevcut uygulama denetlendi; eksikler giderildi — ① `sensorSyncEngine` senkron vektöründe tabanlık kanalları (toePct/heelPct/gctMs) artık `channel` alanıyla interpolasyonla dolduruluyor (önceden hesaplanıp kullanılmıyordu), `feedToSync` heel+GCT dahil besliyor · ② Kalibrasyon lineer regresyonu saf `insoleCalibration.ts` modülüne taşındı (`computeCalibrationCoefficients`) · ③ Teşhis RSSI/stabilite mantığı saf `diagnosticsMetrics.ts` modülüne taşındı · ④ `track2Batch5SmokeTest.mts` node-runnable hale getirildi (19/19).
 
+- **Batch 6 (Adım 26-30, Track 2 KAPANIŞ):** Web Bluetooth API mock (`virtualBlePeripheral.ts` — BluetoothDevice/GATTServer/Characteristic, headless CI) · Çift periferik GATT yöneticisi (`dualInsoleManager.ts` — INSOLE_LEFT/RIGHT eş zamanlı notify → bilateral stride paketi) · Asimetri & bilateral denge motoru (`asymmetryEngine.ts` — |GCT_L−GCT_R|/max×100, 52/48 yük dengesi, >%10 uyarı) · BLE OTA servisi (`bleOtaService.ts` — chunked GATT yazım, CRC32, ilerleme olayları) · kapsamlı `track2Batch6SmokeTest.mts` (25/25) — **TRACK 2 %100 TAMAMLANDI (30/30) 🎉**
+
