@@ -270,7 +270,9 @@ function loadDomainOrder(): Record<string, string[]> {
       for (const dom of MODULE_DOMAINS) {
         const saved = parsed[dom.id];
         const defIds = defaults[dom.id];
-        const present = Array.isArray(saved) ? saved.filter((id) => defIds.includes(id) || id.startsWith('custom-')) : [];
+        const present = Array.isArray(saved)
+          ? Array.from(new Set(saved.filter((id) => defIds.includes(id) || id.startsWith('custom-'))))
+          : [];
         for (const id of defIds) if (!present.includes(id)) present.push(id);
         merged[dom.id] = present;
       }
@@ -660,7 +662,11 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
   }, [domainOrder]);
 
   // Bir domain'in modül listesi (varsayılan + kullanıcı düzeni + özel modüller)
-  const getDomainIds = (domId: string): string[] => domainOrder[domId] ?? MODULE_DOMAINS.find((d) => d.id === domId)?.moduleIds ?? [];
+  // Tekrarlara karşı runtime dedupe — bozuk localStorage kayıtlarına kalkan
+  const getDomainIds = (domId: string): string[] => {
+    const list = domainOrder[domId] ?? MODULE_DOMAINS.find((d) => d.id === domId)?.moduleIds ?? [];
+    return Array.from(new Set(list));
+  };
 
   // Modül nesnesini çöz: statik MODULES veya özel modül
   const findModule = (id: string): ModuleItem | CustomModule | undefined =>
@@ -1177,7 +1183,15 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
 
           {MODULE_DOMAINS.map((dom) => {
             const domIds = getDomainIds(dom.id);
-            const catModules = domIds.map((id) => findModule(id)).filter((m): m is ModuleItem | CustomModule => !!m);
+            // Renderer tarafında benzersizlik garantisi: id tekrarı olsa bile modül bir kez çizilir
+            const seenModuleIds = new Set<string>();
+            const catModules = domIds
+              .map((id) => findModule(id))
+              .filter((m): m is ModuleItem | CustomModule => {
+                if (!m || seenModuleIds.has(m.id)) return false;
+                seenModuleIds.add(m.id);
+                return true;
+              });
             const isOpen = openCategory === dom.id;
             const hasActive = catModules.some((m) => m.id === activeView);
             const isDropTarget = !!dragState && dragState.fromDomain !== dom.id;
@@ -2294,7 +2308,13 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
             {/* 5 Alan Kategorili Akordiyon (sürükle-bırak) */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px calc(env(safe-area-inset-bottom) + 16px)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {MODULE_DOMAINS.filter((d) => filterDomain === 'all' || filterDomain === d.id).map((dom) => {
-                const domModules = getDomainIds(dom.id).map((id) => findModule(id)).filter((m): m is ModuleItem | CustomModule => !!m);
+                const domIds = getDomainIds(dom.id);
+                const seenLibraryIds = new Set<string>();
+                const domModules = domIds.map((id) => findModule(id)).filter((m): m is ModuleItem | CustomModule => {
+                  if (!m || seenLibraryIds.has(m.id)) return false;
+                  seenLibraryIds.add(m.id);
+                  return true;
+                });
                 const isOpen = openMobileDomain === dom.id;
                 const isDropTarget = !!dragState && dragState.fromDomain !== dom.id;
                 return (
