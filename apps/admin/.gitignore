@@ -12,3 +12,6 @@
 tsconfig.tsbuildinfo
 *.tsbuildinfo
 .env*
+!.env.prod.example
+
+
