@@ -295,6 +295,49 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6v. Çoklu Kamera RTSP/WebRTC Kalibratör (Adım 126)
+
+`src/modules/cv/CourtCameraCalibrationView.tsx` + `lib/cv/cameraCalibrationEngine.ts`:
+
+- 2-4 senkron kamera açısı (Baseline / Service / High-Angle Overhead) için extrinsic/intrinsic geometri kalibratörü.
+- **DLT homography** (u,v) piksel → gerçek kort (X,Y,Z) metre; **reprojeksiyon hatası < 2cm** hedefi doğrulanır.
+- Radyal/tanjantiyal **distorsiyon katsayıları** + kamera yerleşim doğrulama bayrakları (yükselme açısı, kapsama).
+
+---
+
+## 6w. Top Yörüngesi & İçeri/Dışarı Zıplama Tahmini (Adım 127)
+
+`src/app/lib/cv/ballTrajectoryEngine.ts` — yüksek hızlı top uçuş fiziği:
+
+- Video kareleri arasında (x(t), y(t), z(t)) interpolasyonu; **tepe yüksekliği**, **zıplama koordinatları** (X_bounce, Y_bounce) ve **çarpma hızı (km/h)** öngörüsü.
+- Karar sınıfları: `IN_COURT` · `OUT_OF_BOUNDS` · `FAULT_SERVICE` (servis kutusu) · `NET_TOUCH` — **±2mm** milimetrik marj.
+
+---
+
+## 6x. 2D/3D İskelet Poz & Eklem Açısı Tahmini (Adım 128)
+
+`src/app/lib/cv/poseEstimationEngine.ts` — 17-keypoint COCO/MediaPipe:
+
+- Dirsek ekstansiyon açısı, **omuz-kalça kinetik ayırımı (X-Factor)**, temas anında diz fleksiyon.
+- Hazırlık→vuruş **kinetik gecikme** (ayak basışı zaman damgası ↔ raket teması) tespiti + kütle merkezi (CoM).
+
+---
+
+## 6y. BLE Tabanlık & CV GRF Füzyon Filtresi (Adım 129)
+
+`src/app/lib/fusion/sensorVisionFusionEngine.ts` — EKF + complementary füzyon:
+
+- 100Hz BLE tabanlık basıncı + kamera CoM ivmesi birleştirilir; **tıkanma** (örn. ayak file arkası) → tabanlık birincil, kamera dönünce **otomatik kurtarma**.
+- IMU açısal drift'i görsel optik işaretlerle düzeltilir; hibrit GRF (BW) çerçeveleri üretilir.
+
+---
+
+## 6z. Track 13 Uçtan Uca Test (Adım 130)
+
+`scripts/pilotPhase6SmokeTest.mts` (21/21) — homography matris matematiği + reprojeksiyon hatası (<2cm), top zıplama parabolik fiziği + içeri/dışarı kararları, poz açı geometrisi + X-Factor, EKF yakınsama + kayıp-kare kurtarma ve Track 13 dosya/veri hattı bütünlüğü (126-130).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -320,6 +363,10 @@ Yanıt yapısı (200 OK):
 21. ☐ Akademi bütçesi: günlük $2 limiti; aşımda yerel kural motoru devrede.
 22. ☐ Semantik cache: tekrar eden telemetri sorguları $0/0ms hit ile döner.
 23. ☐ Ghost Avatar orkestrasyonu: yorgunluk (FAST) + sezon/scout (DEEP) uçtan uca.
+24. ☐ Kamera kalibrasyonu: homography reprojeksiyon hatası <2cm + yerleşim flag'leri temiz.
+25. ☐ Top yörünge: zıplama noktası + IN/OUT kararları doğru (marj ±2mm).
+26. ☐ Poz tahmini: X-Factor + kinetik lag canlı hesaplanıyor.
+27. ☐ GRF füzyonu: tıkanmada tabanlık birincil, kamera dönüşünde otomatik kurtarma.
 
 ---
 
@@ -332,10 +379,11 @@ node scripts/pilotPhase2SmokeTest.mts   # 24/24 (Adım 106-110)
 node scripts/pilotPhase3SmokeTest.mts   # 21/21 (Adım 111-115)
 node scripts/pilotPhase4SmokeTest.mts   # 18/18 (Adım 116-120)
 node scripts/pilotPhase5SmokeTest.mts   # 14/14 (Adım 121-125)
+node scripts/pilotPhase6SmokeTest.mts   # 21/21 (Adım 126-130)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 59/59 (pilot faz 1-5 dahil)
+node scripts/master100StepVerification.mts  # 61/61 (pilot faz 1-6 dahil)
 ```
 
-**PİLOT FAZ 1-5 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-6 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 

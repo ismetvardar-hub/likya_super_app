@@ -1,6 +1,6 @@
-# 🗺️ SportVisionX & Likya Platform — Üretim + Pilot Yol Haritası (125 Adım)
+# 🗺️ SportVisionX & Likya Platform — Üretim + Pilot Yol Haritası (130 Adım)
 
-> **🎉 125/125 STEPS %100 COMPLETE — v1.0.0-production-launch + Pilot Faz 1-5 🎉**
+> **🎉 130/130 STEPS %100 COMPLETE — v1.0.0-production-launch + Pilot Faz 1-6 🎉**
 
 > **Canlı Takip Paneli** · Her batch atomik mikro-grup (3-5 adım) halinde yürütülür.
 > **Kalite Kapıları:** `npx tsc --noEmit` (0 hata) → smoke test → `npm run build` (EXIT 0) → semantic commit → CI yeşil → deploy.
@@ -195,6 +195,16 @@
 | 124 | Ghost Avatar & yorgunluk danışmanı çok-modelli orkestrasyon | [x] |
 | 125 | Track 12 uçtan uca test suite (gateway + bütçe + cache + orkestratör) | [x] |
 
+## Track 13: Computer Vision & Sensor Fusion Layer (Adım 126–130) ✅
+
+| # | Adım | Durum |
+|---|---|---|
+| 126 | Çoklu kamera kalibratör (homography (u,v)→(X,Y,Z)m + distorsiyon + yerleşim) | [x] |
+| 127 | Top yörüngesi & içeri/dışarı zıplama tahmini (parabolik + IN/OUT/FAULT/NET) | [x] |
+| 128 | 2D/3D atlet iskelet poz & eklem açısı tahmini (X-Factor + kinetik lag) | [x] |
+| 129 | BLE tabanlık & CV GRF füzyon filtresi (EKF + tıkanma kurtarma + IMU drift) | [x] |
+| 130 | Track 13 uçtan uca test suite (homography + top + poz + füzyon) | [x] |
+
 ---
 
 ## Yürütme Günlüğü
@@ -253,5 +263,7 @@
 - **Batch 24 (Adım 116-120, Track 11):** Donanım filo sağlığı & batarya telemetri yöneticisi (`modules/facility/HardwareFleetDashboard.tsx` + `lib/hardware/hardwareFleetManager.ts` — 50+ BLE cihaz SoC/şarj döngüsü/firmware drift/membran bozulma indeksi, bakım uyarıları ("Insole Set #08: FSR pressure membrane degradation >15%"), Canary→Akademi stage-gated OTA rollout) · Sub-saniye WebRTC düşük gecikmeli video & telemetri streamer (`modules/video/LiveWebRtcPlayer.tsx` + `lib/video/webrtcCourtStreamer.ts` — <300ms hedef, `telemetry_channel` + `event_marker_channel` DataChannel'ları, 100Hz GRF paketleme, mikro-saniye faz hizası) · Ulusal federasyon (TTF/ITF) veri değişimi & uyumluluk API (`lib/federation/federationDataExchange.ts` — ITF Junior Biometric + TTF Development Passport şemaları, PII maskeli, doğrulanmış maç yükü/hız splitleri/TID yüzdelikleri) · Aktif sensör self-healing & dinamik oto-kalibrasyon (`lib/hardware/sensorSelfHealingEngine.ts` — 10sn dinlenme aralığı tespiti, FSR zero-load baseline drift düzeltmesi) · Track 11 uçtan uca test suite (`scripts/pilotPhase4SmokeTest.mts` — filo + WebRTC + federasyon + self-healing, 18/18) — **TRACK 11 TAMAMLANDI (120/120) 🎉**
 
 - **Batch 25 (Adım 121-125, Track 12):** OpenRouter birleşik API gateway (`lib/ai/openRouterGateway.ts` — FAST_TACTICAL (flash-001/haiku, <400ms) / DEEP_REASONING (sonnet/r1) / VISION_MULTIMODAL (gpt-4o/gemini-pro-vision) tier preset'leri, 429/5xx/timeout üstel backoff failover zinciri, offline/CI deterministik mock sandbox, bütçe aşımında yerel kural motoru) · Token/gecikme/cost + günlük akademi bütçesi (`lib/ai/aiCostTracker.ts` — $2/gün akademi limiti, maliyet/gecikme izleme, limit aşımında dış çağrı yok) · Semantik cache sıfır-maliyet interceptor (`lib/ai/openRouterCacheInterceptor.ts` — FNV-1a hash, aynı metrik profili → hit → $0/0ms, miss → OpenRouter + cache yaz) · Ghost Avatar & yorgunluk danışmanı çok-modelli orkestrasyon (`lib/ai/ghostAvatarOrchestrator.ts` — inMatchFatigueAdvisor→FAST_TACTICAL, seasonMemoryBuffer + scoutReportGenerator→DEEP_REASONING, cache-first + ortak bütçe tracker) · Track 12 uçtan uca test suite (`scripts/pilotPhase5SmokeTest.mts` — gateway serileştirme + ardışık kesinti failover + bütçe limiti + cache intercept + orkestratör, 14/14) — **TRACK 12 TAMAMLANDI (125/125) 🎉**
+
+- **Batch 26 (Adım 126-130, Track 13):** Çoklu kamera RTSP/WebRTC kalibratör (`modules/cv/CourtCameraCalibrationView.tsx` + `lib/cv/cameraCalibrationEngine.ts` — Baseline/Service/Overhead 2-4 kamera, DLT homography (u,v)→(X,Y,Z)m, reprojeksiyon hatası <2cm, distorsiyon katsayıları + yerleşim doğrulama bayrakları) · Top yörüngesi & içeri/dışarı zıplama tahmini (`lib/cv/ballTrajectoryEngine.ts` — parabolik uçuş fiziği, tepe yüksekliği, zıplama (X,Y) + çarpma hızı km/h, IN_COURT/OUT_OF_BOUNDS/FAULT_SERVICE/NET_TOUCH ±2mm marj) · 2D/3D iskelet poz & eklem açısı (`lib/cv/poseEstimationEngine.ts` — 17-keypoint COCO, dirsek ekstansiyon, omuz-kalça X-Factor, temas anında diz fleksiyon, ayak basışı→raket teması kinetik lag) · BLE tabanlık & CV GRF füzyon filtresi (`lib/fusion/sensorVisionFusionEngine.ts` — EKF(2 durum) + complementary füzyon, tıkanma → tabanlık birincil + geri dönüş, IMU drift'i görsel optik işaretle düzeltme) · Track 13 uçtan uca test suite (`scripts/pilotPhase6SmokeTest.mts` — homography + top + poz + füzyon, 21/21) — **TRACK 13 TAMAMLANDI (130/130) 🎉**
 
 
