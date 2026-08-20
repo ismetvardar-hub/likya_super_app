@@ -247,3 +247,75 @@ export class VirtualBleSensorLab {
 export function virtualBleSensorLabStatus(): string {
   return 'Virtual BLE Lab: cift-FSR + HR/HRV profilleri, deterministik PRNG';
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+// 5. POWER MODEL — Hardware Kits: pil & gecikme kısıtlamaları (Harvard MLSys)
+// ══════════════════════════════════════════════════════════════════════════
+export interface PowerEstimate {
+  activeMah: number;        // seans boyunca harcanan şarj
+  activePct: number;        // pilin yüzde kaçı tüketildi
+  currentMa: number;        // ortalama akım (örnekleme hızına bağlı)
+  capacityMah: number;
+  hoursUntilEmpty: number;  // sürekli aktif kullanımda pil ömrü
+}
+
+/**
+ * Örnekleme hızına bağlı güç modeli: 100Hz ≈ 18mA, 10Hz ≈ 6mA, 1Hz ≈ 1.2mA
+ * (ESP32 + BLE tx yaklaşımı). Dinamik örnekleme = pil tasarrufu göstergesi.
+ */
+export function estimateBatteryDrain(input: { activeMs: number; sampleRateHz?: number; mahCapacity?: number }): PowerEstimate {
+  const { activeMs, sampleRateHz = 100, mahCapacity = 120 } = input;
+  const activeH = activeMs / 3_600_000;
+  const currentMa = 1.2 + (sampleRateHz / 100) * 16.8; // 100Hz → 18mA
+  const activeMah = Number((activeH * currentMa).toFixed(2));
+  return {
+    activeMah,
+    activePct: Number(((activeMah / mahCapacity) * 100).toFixed(2)),
+    currentMa: Number(currentMa.toFixed(1)),
+    capacityMah: mahCapacity,
+    hoursUntilEmpty: Number((mahCapacity / currentMa).toFixed(1)),
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 6. KANAL SİMÜLASYONU — BLE gecikmesi + paket kaybı (deterministik)
+// ══════════════════════════════════════════════════════════════════════════
+export interface ChannelOptions {
+  packetLossPct?: number; // 0-100 düşen paket oranı
+  latencyMs?: number;     // baz gecikme
+  seed?: number;
+}
+
+export interface ChannelResult {
+  frames: SensorFrame[];
+  dropped: number;
+  lossPct: number;
+  latenciesMs: number[]; // kabul edilen paketlerin gecikmeleri
+}
+
+/** Gerçek dünya BLE kısıtlamalarını simüle eder: kayıp + jitter'li gecikme. */
+export function simulateChannel(frames: SensorFrame[], opts: ChannelOptions = {}): ChannelResult {
+  const rand = mulberry32(opts.seed ?? 42);
+  const lossPct = opts.packetLossPct ?? 0;
+  const latency = opts.latencyMs ?? 0;
+  const out: SensorFrame[] = [];
+  const latenciesMs: number[] = [];
+  let dropped = 0;
+  for (const f of frames) {
+    if (rand() * 100 < lossPct) {
+      dropped++;
+      continue;
+    }
+    out.push(f);
+    latenciesMs.push(latency > 0 ? Math.round(latency * (0.7 + rand() * 0.6)) : 0);
+  }
+  return { frames: out, dropped, lossPct, latenciesMs };
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// 7. OTURUM DIŞA AKTARIMI — offline replay / CI fikstürü (portable JSON)
+// ══════════════════════════════════════════════════════════════════════════
+export function sessionToJson(frames: SensorFrame[], meta: Record<string, unknown> = {}): string {
+  return JSON.stringify({ version: 1, meta, frames }, null, 2);
+}
+

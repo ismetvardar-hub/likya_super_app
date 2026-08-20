@@ -152,3 +152,89 @@ export function tinyKinematicsStatus(): string {
   return `Tiny Kinematics: ${KIN_MODEL.classes.length} sinif, 12 oznitelik, <5ms, sifir bagimlilik`;
 }
 
+
+// ── 5. AKIŞ SINIFLANDIRMA — zamansal yumuşatma + güven eşiği (on-device) ────
+export interface StreamClassifyOptions {
+  windowSize?: number;    // pencere boyutu (örnek sayısı)
+  minConfidence?: number; // kabul eşiği (0-1)
+}
+
+export interface StreamClassification {
+  label: (typeof KIN_MODEL.classes)[number] | 'Belirsiz';
+  smoothedLabel: (typeof KIN_MODEL.classes)[number] | 'Belirsiz';
+  confidence: number;            // pencere içi çoğunluk oranı
+  votes: Record<string, number>;
+  rawLabels: (typeof KIN_MODEL.classes)[number][];
+}
+
+/**
+ * Örnek akışını sınıflandırır; pencere içi çoğunluk oyu ile "flicker" önlenir.
+ * Çoğunluk oranı eşiğin altındaysa sonuç 'Belirsiz' — kararsız hareket reddi.
+ */
+export function classifyStream(samples: KinematicFeatures[], opts: StreamClassifyOptions = {}): StreamClassification {
+  const windowSize = Math.max(1, opts.windowSize ?? 5);
+  const minConfidence = opts.minConfidence ?? 0.35;
+  const rawLabels = samples.map((f) => forwardKinematics(f).label);
+  const window = rawLabels.slice(-windowSize);
+
+  const votes: Record<string, number> = {};
+  for (const l of window) votes[l] = (votes[l] ?? 0) + 1;
+  const entries = Object.entries(votes).sort((a, b) => b[1] - a[1]);
+  const top = entries[0];
+  const smoothedLabel = top ? (top[0] as StreamClassification['smoothedLabel']) : 'Belirsiz';
+  const confidence = top ? top[1] / window.length : 0;
+  const label: StreamClassification['label'] = confidence >= minConfidence ? smoothedLabel : 'Belirsiz';
+  return { label, smoothedLabel, confidence, votes, rawLabels };
+}
+
+export interface ConfidenceResult {
+  label: (typeof KIN_MODEL.classes)[number] | 'Belirsiz';
+  confidence: number;
+  accepted: boolean;
+}
+
+/** Tek örneğin güveni eşiğin altındaysa 'Belirsiz' olarak reddeder. */
+export function confidentPrediction(f: KinematicFeatures, minConfidence = 0.4): ConfidenceResult {
+  const r = forwardKinematics(f);
+  const accepted = r.confidence >= minConfidence;
+  return { label: accepted ? r.label : 'Belirsiz', confidence: r.confidence, accepted };
+}
+
+// ── 6. KALİBRASYON — min-max normalizasyon (donanım verisi için) ─────────────
+export interface NormalizationRange { min: number; max: number; }
+
+/** Ham sensör değerlerini 0-1 aralığına ölçekler (cihaz kalibrasyonu). */
+export function normalizeFeatures(
+  f: KinematicFeatures,
+  ranges: Record<keyof KinematicFeatures, NormalizationRange>,
+): KinematicFeatures {
+  const clamp01 = (v: number, r: NormalizationRange) =>
+    Math.max(0, Math.min(1, (v - r.min) / Math.max(1e-6, r.max - r.min)));
+  return {
+    gctMs: clamp01(f.gctMs, ranges.gctMs),
+    heelPressure: clamp01(f.heelPressure, ranges.heelPressure),
+    forefootPressure: clamp01(f.forefootPressure, ranges.forefootPressure),
+    accelX: clamp01(f.accelX, ranges.accelX),
+    accelY: clamp01(f.accelY, ranges.accelY),
+    accelZ: clamp01(f.accelZ, ranges.accelZ),
+    jerk: clamp01(f.jerk, ranges.jerk),
+    angularVelocity: clamp01(f.angularVelocity, ranges.angularVelocity),
+    velocityZ: clamp01(f.velocityZ, ranges.velocityZ),
+    lateralVelocity: clamp01(f.lateralVelocity, ranges.lateralVelocity),
+  };
+}
+
+/** Saha donanımı için varsayılan kalibrasyon aralıkları. */
+export const DEFAULT_CALIBRATION_RANGES: Record<keyof KinematicFeatures, NormalizationRange> = {
+  gctMs: { min: 100, max: 320 },
+  heelPressure: { min: 0, max: 100 },
+  forefootPressure: { min: 0, max: 100 },
+  accelX: { min: -20, max: 20 },
+  accelY: { min: -20, max: 20 },
+  accelZ: { min: -20, max: 20 },
+  jerk: { min: 0, max: 400 },
+  angularVelocity: { min: -20, max: 20 },
+  velocityZ: { min: -3, max: 3 },
+  lateralVelocity: { min: -5, max: 5 },
+};
+

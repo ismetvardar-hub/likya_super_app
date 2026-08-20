@@ -161,3 +161,5 @@
 
 - **Batch 7 (Adım 27-30, Track 2):** Çift tabanlık (Sol+Sağ eş zamanlı BLE simülasyonu) · ayak basış asimetrisi (topuk/önayak/GCT denge %) · BLE firmware OTA (CRC32 + ACK/yeniden gönderim) · BLE parsing & kalibrasyon smoke testleri — **TRACK 2 TAMAMLANDI 30/30 🎉**
 
+- **MLSys Derinleştirme (Harvard MLSys/TinyTorch uyarlaması):** TinyTorch ek katmanları (tanh/leakyRelu, CE/MSE loss, SGD on-device eğitim döngüsü, deterministik ağırlık başlatma) · akış sınıflandırma (pencere çoğunluk oyu + güven eşiği/Belirsiz red) · kalibrasyon normalizasyonu · güç modeli (100Hz→18mA, mAh/pil %) · kanal simülasyonu (gecikme jitter + paket kaybı) · oturum JSON dışa aktarımı · Edge Profile Engine (bayt/FLOPs/RAM/µs/mAh + ESP32/Pico/mobil hedef karşılaştırması) — `tinyMlsys.test.mts` 27/27.
+

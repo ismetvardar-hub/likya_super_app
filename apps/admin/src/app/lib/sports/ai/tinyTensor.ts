@@ -88,3 +88,155 @@ export const KIN_MODEL = {
   ],
   b: [0.3, 0.3, 0.2, 0.2, 0.2, 0.2],
 } as const;
+
+// ══════════════════════════════════════════════════════════════════════════
+// 🧠 TINYTORCH EK KATMANLAR — aktivasyon • redüksiyon • kayıp • SGD eğitimi
+// (Harvard MLSys müfredatı: sıfırdan hafif PyTorch benzeri kütüphane)
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── Ek aktivasyonlar ─────────────────────────────────────────────────────────
+export function tanh(x: TinyTensor): TinyTensor {
+  return new TinyTensor(x.data.map((v) => Math.tanh(v)), x.shape);
+}
+
+export function leakyRelu(x: TinyTensor, alpha = 0.01): TinyTensor {
+  return new TinyTensor(x.data.map((v) => (v > 0 ? v : alpha * v)), x.shape);
+}
+
+// ── Redüksiyonlar & yardımcılar ──────────────────────────────────────────────
+export function sum(x: TinyTensor): number {
+  return x.data.reduce((a, b) => a + b, 0);
+}
+
+export function mean(x: TinyTensor): number {
+  return x.data.length === 0 ? 0 : x.data.reduce((a, b) => a + b, 0) / x.data.length;
+}
+
+/** En yüksek değerin düz (flat) indeksi — sınıf tahmini için. */
+export function argmax(x: TinyTensor): number {
+  let best = 0;
+  for (let i = 1; i < x.data.length; i++) if (x.data[i] > x.data[best]) best = i;
+  return best;
+}
+
+/** Sınıflandırma doğruluğu: satır bazlı tahmin indeksi vs hedef. */
+export function accuracy(predRows: number[][], targets: number[]): number {
+  if (predRows.length === 0) return 0;
+  let correct = 0;
+  for (let i = 0; i < predRows.length; i++) {
+    if (argmax(new TinyTensor(predRows[i], [predRows[i].length])) === targets[i]) correct++;
+  }
+  return correct / predRows.length;
+}
+
+// ── İkili aritmetik ───────────────────────────────────────────────────────────
+export function scale(x: TinyTensor, s: number): TinyTensor {
+  return new TinyTensor(x.data.map((v) => v * s), x.shape);
+}
+
+export function addTensors(a: TinyTensor, b: TinyTensor): TinyTensor {
+  if (a.data.length !== b.data.length) throw new Error('addTensors boyut uyumsuz');
+  return new TinyTensor(a.data.map((v, i) => v + b.data[i]), a.shape);
+}
+
+export function subTensors(a: TinyTensor, b: TinyTensor): TinyTensor {
+  if (a.data.length !== b.data.length) throw new Error('subTensors boyut uyumsuz');
+  return new TinyTensor(a.data.map((v, i) => v - b.data[i]), a.shape);
+}
+
+// ── Kayıp fonksiyonları ───────────────────────────────────────────────────────
+/** Kategorik çapraz entropi: -ln(p[hedef]) — softmax olasılıkları üzerinden. */
+export function crossEntropy(probs: TinyTensor, targetIdx: number): number {
+  const p = probs.data[targetIdx] ?? 0;
+  return -Math.log(Math.max(1e-9, Math.min(1, p)));
+}
+
+/** Ortalama kare hata. */
+export function mse(pred: TinyTensor, target: TinyTensor): number {
+  if (pred.data.length !== target.data.length) throw new Error('mse boyut uyumsuz');
+  let s = 0;
+  for (let i = 0; i < pred.data.length; i++) s += (pred.data[i] - target.data[i]) ** 2;
+  return s / pred.data.length;
+}
+
+// ── Deterministik ağırlık başlatma (xorshift PRNG + Box-Muller) ───────────────
+export function randomNormal(shape: [number, number], seed: number, scale = 0.1): number[][] {
+  let s = seed >>> 0;
+  const next = () => {
+    s ^= s << 13; s >>>= 0;
+    s ^= s >> 17; s ^= s << 5; s >>>= 0;
+    return s / 4294967296;
+  };
+  const out: number[][] = [];
+  for (let i = 0; i < shape[0]; i++) {
+    const row: number[] = [];
+    for (let j = 0; j < shape[1]; j++) {
+      const u1 = Math.max(1e-9, next());
+      const u2 = next();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      row.push(Number((z * scale).toFixed(4)));
+    }
+    out.push(row);
+  }
+  return out;
+}
+
+
+// ── SGD EĞİTİM DÖNGÜSÜ (on-device training) — softmax+CE gradyanı ─────────────
+// Geri yayılım: logits gradyanı (probs - onehot), W -= lr·(1/N)·Σ(xᵀ·grad)
+export interface TrainLinearInput {
+  X: number[][]; // N×D öznitelikler
+  y: number[];   // N hedef sınıf indeksleri
+}
+
+export interface TrainLinearResult {
+  weights: number[][];  // D×C
+  bias: number[];
+  lossHistory: number[];
+  accuracyFinal: number;
+}
+
+/** Çok sınıflı doğrusal modeli SGD ile sıfırdan eğitir (deterministik, tarayıcıda). */
+export function trainLinearModel(input: TrainLinearInput, epochs = 200, lr = 0.5, seed = 1): TrainLinearResult {
+  const n = input.X.length;
+  const d = input.X[0]?.length ?? 0;
+  if (n === 0 || d === 0) throw new Error('Eğitim verisi boş');
+  const C = Math.max(...input.y) + 1;
+
+  let W = randomNormal([d, C], seed, 0.1);
+  let b = new Array(C).fill(0);
+  const lossHistory: number[] = [];
+
+  const logitsFor = (i: number): number[] =>
+    b.map((bb, c) => bb + W.reduce((acc, wrow, k) => acc + wrow[c] * input.X[i][k], 0));
+
+  for (let e = 0; e < epochs; e++) {
+    let lossSum = 0;
+    const gradW = Array.from({ length: d }, () => new Array<number>(C).fill(0));
+    const gradB = new Array<number>(C).fill(0);
+
+    for (let i = 0; i < n; i++) {
+      const probs = softmax(new TinyTensor(logitsFor(i), [1, C])).data;
+      lossSum += -Math.log(Math.max(1e-9, probs[input.y[i]]));
+      for (let k = 0; k < d; k++) {
+        for (let c = 0; c < C; c++) {
+          const err = probs[c] - (c === input.y[i] ? 1 : 0);
+          gradW[k][c] += (err * input.X[i][k]) / n;
+        }
+      }
+      for (let c = 0; c < C; c++) gradB[c] += (probs[c] - (c === input.y[i] ? 1 : 0)) / n;
+    }
+    W = W.map((row, k) => row.map((v, c) => v - lr * gradW[k][c]));
+    b = b.map((v, c) => v - lr * gradB[c]);
+    lossHistory.push(Number((lossSum / n).toFixed(4)));
+  }
+
+  let correct = 0;
+  for (let i = 0; i < n; i++) if (argmax(new TinyTensor(logitsFor(i), [1, C])) === input.y[i]) correct++;
+  return { weights: W, bias: b, lossHistory, accuracyFinal: correct / n };
+}
+
+export function tinyTensorStatus(): string {
+  return 'TinyTensor: matmul/relu/tanh/softmax • CE/MSE • SGD eğitim döngüsü — sıfır bağımlılık';
+}
+
