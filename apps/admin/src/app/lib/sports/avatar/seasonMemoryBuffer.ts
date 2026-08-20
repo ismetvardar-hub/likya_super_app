@@ -4,7 +4,11 @@
 //  • Kilometre taşları (milestones), tekrarlayan biyomekanik kusurlar, toparlanma trendleri
 //  • Bağlamsal uzun-hafıza metni → Ghost Avatar tavsiye motoruna enjeksiyon
 // Deterministik; sıfır bağımlılık; node-runnable.
+// OpenRouter Gateway entegrasyonu: sezon bağlamı DEEP_REASONING tier ile
+// derinlemesine içgörüye dönüştürülür (semantik cache önce — hit → $0).
 // ============================================================================
+import { OpenRouterGateway, type CompletionRequest } from '../../ai/openRouterGateway.ts';
+import { SemanticQueryCache, type TelemetryProfile } from '../../ai/cache/semanticQueryCache.ts';
 
 export interface Milestone {
   label: string;
@@ -143,6 +147,68 @@ export class SeasonMemoryBuffer {
     const ctx = this.injectContext(athleteId);
     return `[Sezon Hafıza · ${ctx.athleteId}] ${ctx.summary} • Tekrarlayan kusurlar: ${ctx.recurringFlaws.join(', ') || 'yok'} • Toparlanma: ${ctx.recoveryNote}`;
   }
+
+  /**
+   * OpenRouter entegrasyonu: sezon hafıza bağlamını DEEP_REASONING tier ile
+   * derin içgörüye dönüştürür. Semantik önbellek önce sorgulanır — aynı
+   * bağlam tekrar sorgulanırsa $0 token harcanmaz.
+   */
+  async seasonInsightWithGateway(
+    athleteId: string,
+    opts: { gateway?: OpenRouterGateway; cache?: SemanticQueryCache; scopeId?: string } = {},
+  ): Promise<SeasonInsightResult> {
+    const gateway = opts.gateway ?? new OpenRouterGateway();
+    const cache = opts.cache ?? new SemanticQueryCache();
+    const context = this.seasonContextBlock(athleteId);
+    const memory = this.getMemory(athleteId);
+    const profile: TelemetryProfile = {
+      athleteId,
+      version: 1,
+      metrics: {
+        sessionCount: memory?.sessionCount ?? 0,
+        flawCount: memory?.flaws.length ?? 0,
+        milestoneCount: memory?.milestones.length ?? 0,
+      },
+    };
+
+    const key = cache.fingerprint(profile);
+    const cached = await cache.get(key);
+    if (cached) {
+      return { athleteId, text: cached.interpretation, fromCache: true, tokensSpent: 0, costUsd: 0, model: 'semantic-cache' };
+    }
+
+    const request: CompletionRequest = {
+      prompt: `Sporcu sezon uzun-hafıza bağlamı:\n${context}\n\nBu bağlama dayanarak gelecek sezon için derinlemesine, yapıcı bir atletik gelişim içgörüsü üret (3 cümle).`,
+      systemPrompt: 'Sen spor bilimcisi + gelişim antrenörüsün. Deterministik ve kanıta dayalı içgörü üret.',
+      tier: 'DEEP_REASONING',
+      scopeId: opts.scopeId,
+    };
+    const result = await gateway.complete(request);
+    await cache.set(key, {
+      key,
+      interpretation: result.content,
+      insight: result.content,
+      generatedAt: new Date().toISOString(),
+      tokensSaved: result.usage.totalTokens,
+    });
+    return {
+      athleteId,
+      text: result.content,
+      fromCache: false,
+      tokensSpent: result.usage.totalTokens,
+      costUsd: result.costUsd,
+      model: result.model,
+    };
+  }
+}
+
+export interface SeasonInsightResult {
+  athleteId: string;
+  text: string;
+  fromCache: boolean;
+  tokensSpent: number;
+  costUsd: number;
+  model: string;
 }
 
 export function seasonMemoryStatus(): string {
