@@ -41,7 +41,7 @@
 | 23 | Çok sensörlü senkronizasyon motoru (HRM/Insole/IMU zaman hizası) | [x] |
 | 24 | Dinamik örnekleme hızı (güç tasarrufu vs. hızlı drill) | [x] |
 | 25 | Donanım teşhis overlay (RSSI, gecikme, düşen çerçeve) | [x] |
-| 26 | Mock BLE sanal periferik üretici (offline CI) | [ ] |
+| 26 | Mock BLE sanal periferik üretici (offline CI) | [x] |
 | 27 | Çift tabanlık desteği (Sol + Sağ eş zamanlı BLE) | [ ] |
 | 28 | Ayak basış asimetrisi algoritması (L/R denge %) | [ ] |
 | 29 | BLE üzerinden firmware OTA güncelleme | [ ] |
@@ -51,21 +51,21 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 31 | ACWR (Akut:Kronik Yük Oranı) hesaplama motoru | [ ] |
-| 32 | Gerçek zamanlı yorgunluk eğrisi modeli (glikojen vs. mekanik) | [ ] |
-| 33 | Spektral HRV analizi (LF/HF, SDNN + rMSSD) | [ ] |
-| 34 | Dinamik GRF vektör yaklaşımı | [ ] |
-| 35 | Tenis vuruş sınıflandırıcı (Forehand/Backhand/Serve/Smash) | [ ] |
-| 36 | RSI-modified yaş/cinsiyet tier tabloları | [ ] |
-| 37 | Deselerasyon Stres İndeksi (mekanik fren yükü) | [ ] |
-| 38 | TRIMP exp-ağırlıklı kardiyovasküler yük | [ ] |
-| 39 | AI Koç Öneri Motoru (zayıf bölge → drill reçetesi) | [ ] |
-| 40 | Büyüme atağı biyomekanik anomali tespiti | [ ] |
-| 41 | EPOC metabolik toparlanma süresi tahmini | [ ] |
-| 42 | Sprint hız ivmelenme profili (0-5m, 5-10m) | [ ] |
-| 43 | Pronasyon/supinasyon açı tahmincisi | [ ] |
-| 44 | Spor bilimi terim sözlüğü + bağlamsal tooltip bileşeni | [ ] |
-| 45 | Kinematik & fizyolojik hesaplama doğrulama testleri | [ ] |
+| 31 | ACWR (Akut:Kronik Yük Oranı) hesaplama motoru | [x] |
+| 32 | Gerçek zamanlı yorgunluk eğrisi modeli (glikojen vs. mekanik) | [x] |
+| 33 | Spektral HRV analizi (LF/HF, SDNN + rMSSD) | [x] |
+| 34 | Dinamik GRF vektör yaklaşımı | [x] |
+| 35 | Tenis vuruş sınıflandırıcı (Forehand/Backhand/Serve/Smash) | [x] |
+| 36 | RSI-modified yaş/cinsiyet tier tabloları | [x] |
+| 37 | Deselerasyon Stres İndeksi (mekanik fren yükü) | [x] |
+| 38 | TRIMP exp-ağırlıklı kardiyovasküler yük | [x] |
+| 39 | AI Koç Öneri Motoru (zayıf bölge → drill reçetesi) | [x] |
+| 40 | Büyüme atağı biyomekanik anomali tespiti | [x] |
+| 41 | EPOC metabolik toparlanma süresi tahmini | [x] |
+| 42 | Sprint hız ivmelenme profili (0-5m, 5-10m) | [x] |
+| 43 | Pronasyon/supinasyon açı tahmincisi | [x] |
+| 44 | Spor bilimi terim sözlüğü + bağlamsal tooltip bileşeni | [x] |
+| 45 | Kinematik & fizyolojik hesaplama doğrulama testleri | [x] |
 
 
 ## Track 4: Database Persistence, Cloud Sync & Supabase (Adım 46–60)
@@ -157,3 +157,5 @@
 - **Batch 3 (Adım 11-15, Track 1):** Push tercih paneli · Duyusal motor (ses+haptik) · CSV/JSON seans export · Kulüp şablonları · Uçtan uca entegrasyon testi — **TRACK 1 TAMAMLANDI 15/15 🎉**
 - **Batch 4 (Adım 16-20, Track 2):** ESP32 firmware (`esp32_insole_ble.ino`) · ADC filtre (`adc_filter.h` + TS mirror) · BLE GATT protokol · Web Serial Flasher · Oto-reconnect + watchdog — tamamlandı.
 - **Batch 5 (Adım 21-25, Track 2):** Pil telemetrisi (0x180F) · Kalibrasyon sihirbazı · Sensör senkron (100ms) · Adaptif örnekleme · Teşhis HUD — tamamlandı.
+- **Batch 6 (Adım 26+31-45, Track 2+3):** Mock BLE sanal periferik üretici (offline CI, node-runnable) · 6 sınıflı tenis vuruş sınıflandırıcı · ACWR yük dengesi · exp-TRIMP · yorgunluk eğrisi + EPOC · spektral HRV (Goertzel LF/HF) · GRF vektör · RSI yaş/cinsiyet tier · sprint 0-5/5-10m profili · AI koç drill reçetesi · büyüme atağı (PHV) anomali tespiti + doğrulama testleri — **TRACK 3 TAMAMLANDI 15/15 🎉**
+
