@@ -43,6 +43,20 @@
       "description": "CEO Command Center'a doğrudan git",
       "url": "/",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Canlı Kortlar",
+      "short_name": "Kortlar",
+      "description": "Çok kortlu canlı doluluk ızgarası",
+      "url": "/extremes",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sporcu Paneli",
+      "short_name": "Sporcu",
+      "description": "Sporcu gelişim paneli",
+      "url": "/athlete",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

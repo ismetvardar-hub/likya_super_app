@@ -14,6 +14,11 @@ const nextConfig = {
       { protocol: 'https', hostname: '**' },
     ],
   },
+  // ⚡ Adım 99 — Bundle optimizasyonu:
+  // Ağır görselleştirmeler (FootPressureHeatmap3D, SlowMotionBiomechanicalPlayer,
+  // TacticalWhiteboardCanvas) bileşenlerde `next/dynamic` ile lazy-load edilir;
+  // böylece başlangıç JS yükü <200KB hedefinin altında kalır.
+  // Denetim: src/app/lib/ui/bundleOptimizationReport.ts (bundleOptimizationStatus)
 };
 
 module.exports = nextConfig;
