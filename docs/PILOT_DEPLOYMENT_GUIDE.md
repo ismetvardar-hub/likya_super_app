@@ -252,6 +252,49 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6q. OpenRouter Birleşik API Gateway (Adım 121)
+
+`src/app/lib/ai/openRouterGateway.ts` — tek OpenRouter anahtarı üzerinden dayanıklı çok-modelli yönlendirme:
+
+- **3 tier preset:** `FAST_TACTICAL` (flash-001 → haiku, **<400ms** mola/drill önerisi) · `DEEP_REASONING` (sonnet → r1, TID/çok haftalık ilerleme) · `VISION_MULTIMODAL` (gpt-4o → gemini-pro-vision, kinematik açı/kort karesi).
+- **Otomatik failover zinciri:** 429/5xx/timeout → üstel backoff ile sıralı fallback; tüm sağlayıcılar kapalıysa **deterministik mock sandbox** spor içgörüsü döner.
+
+---
+
+## 6r. Token, Gecikme & Günlük Bütçe Takipçisi (Adım 122)
+
+`src/app/lib/ai/aiCostTracker.ts` — akademi seviyesi AI kaynak monitörü:
+
+- Prompt/completion token, **uçtan uca gecikme (ms)** ve model fiyat bandına göre tahmini USD harcama izlenir.
+- Kulüp başına **$2.00/gün** harcama limiti uygulanır; limit aşıldığında dış çağrı yapılmaz ve **yerel kural motoruna** otomatik düşülür.
+
+---
+
+## 6s. Semantik Cache & Sıfır-Maliyet Interceptor (Adım 123)
+
+`src/app/lib/ai/openRouterCacheInterceptor.ts` — FNV-1a semantik cache'i OpenRouter hattına yerleştirir:
+
+- Sporcu metrik yorum istekleri **dış ağ çağrısından önce** yakalanır; aynı telemetri profili → **anında hit → $0 token, 0ms ağ gecikmesi**.
+- İsabetsizde OpenRouter'a gider ve sonuç cache'lenir (sonraki sorgular ücretsiz).
+
+---
+
+## 6t. Ghost Avatar & Yorgunluk Danışmanı Çok-Modelli Orkestrasyon (Adım 124)
+
+`src/app/lib/ai/ghostAvatarOrchestrator.ts` — çekirdek spor motorlarını OpenRouter'a bağlar:
+
+- `inMatchFatigueAdvisor` → **FAST_TACTICAL** (anında mola tavsiyesi)
+- `seasonMemoryBuffer` + `scoutReportGenerator` → **DEEP_REASONING** (uzun vadeli gelişim/scout özeti)
+- Tüm çağrılar cache-first interceptor üzerinden; ortak bütçe tracker'ı $2/gün zorlamasını sağlar.
+
+---
+
+## 6u. Track 12 Uçtan Uca Test (Adım 125)
+
+`scripts/pilotPhase5SmokeTest.mts` (14/14) — istek/yanıt serileştirme + çok-tier seçim, ardışık sağlayıcı kesintilerinde failover retry, günlük bütçe tavanı + yerel kural motoru aktivasyonu, semantik cache hit intercept ($0) ve Track 12 dosya/veri hattı bütünlüğü (121-125).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -273,6 +316,10 @@ Yanıt yapısı (200 OK):
 17. ☐ WebRTC canlı yayın <300ms; telemetri overlay mikro-saniye hizalı.
 18. ☐ Federasyon pasaportu (ITF/TTF) şema geçerli + PII maskeli gönderildi.
 19. ☐ Sensör self-healing: dinlenme molalarında baseline drift düzeltmesi aktif.
+20. ☐ OpenRouter gateway: tier yönlendirme + failover + <400ms FAST hedefi.
+21. ☐ Akademi bütçesi: günlük $2 limiti; aşımda yerel kural motoru devrede.
+22. ☐ Semantik cache: tekrar eden telemetri sorguları $0/0ms hit ile döner.
+23. ☐ Ghost Avatar orkestrasyonu: yorgunluk (FAST) + sezon/scout (DEEP) uçtan uca.
 
 ---
 
@@ -284,10 +331,11 @@ node scripts/pilotPhase1SmokeTest.mts   # 32/32 (Adım 101-105)
 node scripts/pilotPhase2SmokeTest.mts   # 24/24 (Adım 106-110)
 node scripts/pilotPhase3SmokeTest.mts   # 21/21 (Adım 111-115)
 node scripts/pilotPhase4SmokeTest.mts   # 18/18 (Adım 116-120)
+node scripts/pilotPhase5SmokeTest.mts   # 14/14 (Adım 121-125)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 57/57 (pilot faz 1-4 dahil)
+node scripts/master100StepVerification.mts  # 59/59 (pilot faz 1-5 dahil)
 ```
 
-**PİLOT FAZ 1-4 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-5 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 

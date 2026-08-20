@@ -11,6 +11,17 @@ import { AiCostTracker, costForModel, estimateTokens, type TokenUsage } from './
 export const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
 export const MOCK_COMPLETION_TOKENS = 180;
 
+// ── Tier gecikme bütçeleri (Track 12: FAST < 400ms hedef) ────────────────────
+export const FAST_TACTICAL_LATENCY_BUDGET_MS = 400;
+export const DEEP_REASONING_LATENCY_BUDGET_MS = 3000;
+export const VISION_MULTIMODAL_LATENCY_BUDGET_MS = 1500;
+
+export function tierLatencyBudget(tier: GatewayTier): number {
+  if (tier === 'FAST_TACTICAL') return FAST_TACTICAL_LATENCY_BUDGET_MS;
+  if (tier === 'VISION_MULTIMODAL') return VISION_MULTIMODAL_LATENCY_BUDGET_MS;
+  return DEEP_REASONING_LATENCY_BUDGET_MS;
+}
+
 export type GatewayTier = 'FAST_TACTICAL' | 'DEEP_REASONING' | 'VISION_MULTIMODAL';
 
 export interface TierPreset {
@@ -176,6 +187,11 @@ export class OpenRouterGateway {
   // ── Birincil → fallback zinciri (üstel backoff ile) ─────────────────────────
   async complete(req: CompletionRequest): Promise<CompletionResult> {
     const key = this.apiKey();
+    // Track 12: günlük bütçe limiti aşıldıysa dış çağrı yapılmaz —
+    // otomatik olarak yerel kural motoruna (deterministik mock) düşülür.
+    if (req.scopeId && this.tracker.budgetExceeded(req.scopeId)) {
+      return this.mockResult(req, 1, ['günlük bütçe limiti aşıldı → yerel kural motoru (Plan Z)']);
+    }
     if (this.deps.forceMock || !key) {
       return this.mockResult(req, 1, ['mock sandbox (API anahtarı yok / forceMock)']);
     }

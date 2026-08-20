@@ -12,6 +12,7 @@ export interface TokenUsage {
 }
 
 export const DEFAULT_DAILY_BUDGET_USD = 5.0;
+export const ACADEMY_DAILY_BUDGET_USD = 2.0; // Track 12: akademi başına günlük harcama limiti örneği
 
 // OpenRouter üzerindeki model başına milyon token fiyatı (USD)
 export const MODEL_PRICES: Record<string, { inputPerM: number; outputPerM: number }> = {
@@ -115,6 +116,17 @@ export class AiCostTracker {
     const used = this.scopes.get(scopeId)?.costUsd ?? 0;
     const capUsd = this.dailyCapUsd(scopeId);
     return { scopeId, usedUsd: used, capUsd, remainingUsd: Math.round(Math.max(0, capUsd - used) * 1000) / 1000, exceeded: used > capUsd };
+  }
+
+  /** Track 12: limit aşıldı mı? (aşıldıysa yerel kural motoruna düş) */
+  budgetExceeded(scopeId: string): boolean {
+    return this.dailyBudget(scopeId).exceeded;
+  }
+
+  /** Bütçe bilinçli kayıt: limit altındaysa dış çağrı yapılabilir. */
+  budgetAllows(scopeId: string, estimatedCostUsd: number): boolean {
+    const budget = this.dailyBudget(scopeId);
+    return budget.usedUsd + estimatedCostUsd <= budget.capUsd;
   }
 
   activeScopes(): string[] {
