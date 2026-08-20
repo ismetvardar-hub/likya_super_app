@@ -5,7 +5,13 @@
 // ============================================================================
 
 export class TinyTensor {
-  constructor(public data: number[], public shape: number[]) {}
+  data: number[];
+  shape: number[];
+
+  constructor(data: number[], shape: number[]) {
+    this.data = data;
+    this.shape = shape;
+  }
 
   static zeros(shape: number[]): TinyTensor {
     return new TinyTensor(new Array(shape.reduce((a, b) => a * b, 1)).fill(0), shape);
@@ -58,22 +64,27 @@ export function softmax(x: TinyTensor): TinyTensor {
   return new TinyTensor(out, x.shape);
 }
 
-// ── Tek katman softmax regresyon: 8 → 4 (logits) ───────────────────────────
+// ── Tek katman softmax regresyon: 12 → 6 (logits) ───────────────────────────
 export const KIN_MODEL = {
-  inputDim: 8,
-  outputDim: 4,
-  classes: ['Forehand', 'Backhand', 'Sprint', 'JumpLanding'] as const,
+  inputDim: 12,
+  outputDim: 6,
+  classes: ['Forehand', 'Backhand', 'Serve', 'Volley', 'Sprint', 'JumpLanding'] as const,
   // Elle kurulmuş deterministik ayrıştırıcı (mock-first eğitim)
-  // W 8×4: satır = öznitelik [gct, heel, fore, accel, jerk, vz, latV, ratio], kolon = sınıf
+  // W 12×6: satır = öznitelik, kolon = [Fore, Back, Serve, Volley, Sprint, Jump]
+  // Öznitelikler: [gct, heel, fore, accel, jerk, angVel, vz, latV, ratio, angVelZ, jerkLow, heelImpact]
   W: [
-    [0.0, 0.0, -1.5, 0.0],   // gct:  sprint'te kısa temas
-    [-0.3, -0.3, -1.5, 1.5], // heel: JumpLanding topuk, sprint topuk yok
-    [0.0, 0.0, 0.0, -0.4],   // fore: JumpLanding düşük önayak
-    [-0.8, -0.8, 2.0, -0.3], // accel: sprint yüksek ivme
-    [-0.3, -0.3, 0.4, 0.8],  // jerk: jump sert iniş
-    [0.0, 0.0, 0.0, -0.6],   // vz:  jump negatif dikey hız
-    [1.5, -1.5, 0.0, 0.0],   // latV: forehand +, backhand -
-    [0.0, 0.0, 0.8, -1.2],   // ratio: sprint önayak, jump topuk
+    [0.0, 0.0, 0.0, 0.0, -1.5, 0.0],     // gct:  sprint kısa temas
+    [-0.3, -0.3, -0.2, -0.2, -1.5, 1.2], // heel: jump sert topuk, sprint topuk yok
+    [0.1, 0.1, 0.2, 0.2, 0.2, -0.4],     // fore: jump düşük önayak
+    [-0.8, -0.8, -0.2, -1.0, 2.0, -0.3], // accel: sprint yüksek ivme, volley düşük
+    [-0.3, -0.3, -0.3, -1.2, 0.4, 0.6],  // jerk: volley kontrollü, jump sert
+    [0.3, -0.6, 0.8, 0.3, -0.5, 0.2],    // angVel: backhand ters yön, serve yüksek
+    [0.0, 0.0, 0.5, -0.2, 0.3, -0.8],    // vz:  serve yukarı, jump aşağı
+    [2.0, -2.0, 0.5, 0.6, 0.0, 0.0],     // latV: forehand +, backhand -
+    [0.0, 0.0, 0.0, 0.0, 0.8, -1.2],     // ratio: sprint önayak, jump topuk
+    [0.0, 0.0, 2.2, 0.0, 0.0, 0.0],      // angVelZ: serve (açısal × dikey)
+    [0.0, 0.0, -0.3, 1.8, 0.0, 0.0],     // jerkLow: volley (düşük jerk)
+    [0.0, 0.0, 0.0, 0.0, 0.2, 1.6],      // heelImpact: jump (heel × topuk oranı)
   ],
-  b: [0.2, 0.2, 0.2, 0.1],
+  b: [0.3, 0.3, 0.2, 0.2, 0.2, 0.2],
 } as const;

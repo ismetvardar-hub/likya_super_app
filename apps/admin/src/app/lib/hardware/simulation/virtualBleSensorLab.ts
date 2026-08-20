@@ -1,12 +1,16 @@
 // ============================================================================
 // 🧪 VIRTUAL BLE SENSOR LAB — fiziksel sensör olmadan uçtan uca test
-// ESP32 çift-FSR basınç eğrileri (topuk basışı → önayak itişi)
+// ESP32 çift-FSR basınç eğrileri (topuk basışı → önayak itişi) + GCT üretimi
+// Decathlon HRM: HR eğrileri + RR interval'leri (HRV) • Wrist IMU stroke burst
 // HR spike + HRV bozulması (yorgunluk profilleri) • BLE paket akışı
+// start/stop kontrolü + sensorSyncEngine'e doğrudan besleme (feedToSync)
 // Deterministik: aynı profile aynı seri (mulberry32 PRNG) — Mock-first
 // ============================================================================
+import { buildSyncedFrames, type RawSample, type SyncedFrame } from '../sensorSyncEngine.ts';
 
 export type FatigueProfile = 'fresh' | 'normal' | 'fatigued';
 export type ActivityKind = 'stance' | 'walk' | 'sprint' | 'jump';
+export type StrokeKind = 'forehand' | 'backhand' | 'serve' | 'volley';
 
 export interface SensorFrame {
   tMs: number;
@@ -16,6 +20,17 @@ export interface SensorFrame {
   hrvMs: number;
   activity: ActivityKind;
   accelMag: number;
+  gctMs: number;          // zemin temas süresi (150-300ms; stance=0)
+}
+
+export interface ImuFrame {
+  tMs: number;
+  accelX: number;
+  accelY: number;
+  accelZ: number;
+  angularVelocity: number; // rad/s (gyro)
+  jerk: number;
+  stroke: StrokeKind;
 }
 
 export interface BlePacket {
@@ -56,8 +71,10 @@ export class VirtualBleSensorLab {
   private rand: () => number;
   private cfg: typeof PROFILE_CFG[FatigueProfile];
   private stepCount = 0;
+  private readonly profile: FatigueProfile;
 
-  constructor(private readonly profile: FatigueProfile = 'normal', seed = 42) {
+  constructor(profile: FatigueProfile = 'normal', seed = 42) {
+    this.profile = profile;
     this.rand = mulberry32(seed);
     this.cfg = PROFILE_CFG[profile];
   }
@@ -88,7 +105,13 @@ export class VirtualBleSensorLab {
     const timeFatigue = Math.min(1, tMs / 20000);
     const hrv = Math.round(hrvBase * (1 - fatigueDecay) * (1 - timeFatigue * 0.35) + this.rand() * 6 - 3);
 
-    return { tMs, heelFsr: heel, forefootFsr: forefoot, hr, hrvMs: Math.max(8, hrv), activity, accelMag: Math.round((activity === 'sprint' ? 16 : activity === 'jump' ? 18 : activity === 'walk' ? 3 : 0.4) * 10) / 10 };
+    // GCT üretimi (150-300ms; stance'te temas yok)
+    const gctMs = activity === 'sprint' ? 120 + Math.round(this.rand() * 30)
+      : activity === 'jump' ? 250 + Math.round(this.rand() * 50)
+      : activity === 'walk' ? 190 + Math.round(this.rand() * 30)
+      : 0;
+
+    return { tMs, heelFsr: heel, forefootFsr: forefoot, hr, hrvMs: Math.max(8, hrv), activity, accelMag: Math.round((activity === 'sprint' ? 16 : activity === 'jump' ? 18 : activity === 'walk' ? 3 : 0.4) * 10) / 10, gctMs };
   }
 
   /** 6 byte BLE paketine çevir (heel|forefoot 2'er byte + HR 1 + flags 1) */
@@ -133,7 +156,93 @@ export class VirtualBleSensorLab {
       profile: this.profile,
     };
   }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 2. WRIST IMU — dinamik stroke burst eğrileri (gerçekçi ivme + gyro)
+  // ══════════════════════════════════════════════════════════════════════════
+  /** Stroke burst üret: sinüs zarfı içinde ivme vektörü + açısal hız eğrisi */
+  nextImuFrame(tMs: number, stroke: StrokeKind): ImuFrame {
+    const PROFILES: Record<StrokeKind, { angVelPk: number; accelPk: number; jerkPk: number }> = {
+      forehand: { angVelPk: 8, accelPk: 9, jerkPk: 130 },
+      backhand: { angVelPk: -7, accelPk: 8.5, jerkPk: 112 },
+      serve: { angVelPk: 14, accelPk: 12, jerkPk: 180 },
+      volley: { angVelPk: 5, accelPk: 6, jerkPk: 70 },
+    };
+    const p = PROFILES[stroke];
+    this.stepCount++;
+    const phase = this.stepCount % 40;
+    const envelope = Math.sin((phase / 40) * Math.PI);      // 0→1→0 burst
+    const noise = 1 + (this.rand() - 0.5) * 0.2;            // ±10% gürültü
+    const mag = p.accelPk * envelope * noise;
+    const ax = mag * 0.85;
+    const ay = mag * 0.35;
+    const az = mag * (stroke === 'serve' ? 0.5 : stroke === 'backhand' ? 0.35 : 0.3);
+    return {
+      tMs,
+      accelX: Math.round(ax * 10) / 10,
+      accelY: Math.round(ay * 10) / 10,
+      accelZ: Math.round(az * 10) / 10,
+      angularVelocity: Math.round(p.angVelPk * envelope * 10) / 10,
+      jerk: Math.round(p.jerkPk * (phase < 20 ? envelope : envelope * 0.7)),
+      stroke,
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 3. DECATHLON HRM — RR interval üretimi (HRV için)
+  // ══════════════════════════════════════════════════════════════════════════
+  /** HR'den RR interval dizisi üret (ms): varyans HRV ile orantılı */
+  rrIntervals(count = 10, hrOverride?: number): number[] {
+    const { hrBase, hrvBase } = this.cfg;
+    const hr = hrOverride ?? hrBase;
+    const meanRR = 60000 / hr;
+    const out: number[] = [];
+    for (let i = 0; i < count; i++) {
+      const jitter = (this.rand() - 0.5) * hrvBase * 2;    // yüksek HRV → yüksek varyans
+      out.push(Math.round(meanRR + jitter));
+    }
+    return out;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // 4. START/STOP KONTROLÜ + sensorSyncEngine'e besleme
+  // ══════════════════════════════════════════════════════════════════════════
+  private running = false;
+  private simTMs = 0;
+  private currentActivity: ActivityKind = 'walk';
+  private currentStroke: StrokeKind = 'forehand';
+
+  start(): this { this.running = true; return this; }
+  stop(): this { this.running = false; return this; }
+  get isRunning(): boolean { return this.running; }
+
+  /** Çalışıyorsa yeni senkron telemetri tick'i üret */
+  tick(intervalMs = 50): SensorFrame | null {
+    if (!this.running) return null;
+    const frame = this.nextFrame(this.simTMs, this.currentActivity);
+    this.simTMs += intervalMs;
+    if (this.simTMs % 800 < 400) this.currentActivity = 'sprint';
+    else if (this.simTMs % 800 < 560) this.currentActivity = 'jump';
+    else this.currentActivity = 'walk';
+    this.currentStroke = (['forehand', 'backhand', 'serve', 'volley'] as StrokeKind[])[Math.floor(this.simTMs / 1600) % 4];
+    return frame;
+  }
+
+  /** Sahte telemetriyi RawSample'lerle sensorSyncEngine'e besle → 100ms senkron çerçeveler */
+  feedToSync(durationMs: number): SyncedFrame[] {
+    const raw: RawSample[] = [];
+    const insole = this.streamPackets(durationMs, 100);       // 10Hz insole
+    const hrm = this.streamPackets(durationMs, 1000);         // 1Hz HRM
+    for (const f of insole) {
+      raw.push({ source: 'INSOLE', tMs: f.tMs, value: f.forefootFsr });
+      raw.push({ source: 'IMU', tMs: f.tMs, value: f.accelMag });
+      if (f.gctMs > 0) raw.push({ source: 'INSOLE', tMs: f.tMs + 1, value: f.gctMs / 2 });
+    }
+    for (const f of hrm) raw.push({ source: 'HRM', tMs: f.tMs, value: f.hr });
+    return buildSyncedFrames(raw, 0, durationMs);
+  }
 }
+
 
 export function virtualBleSensorLabStatus(): string {
   return 'Virtual BLE Lab: cift-FSR + HR/HRV profilleri, deterministik PRNG';
