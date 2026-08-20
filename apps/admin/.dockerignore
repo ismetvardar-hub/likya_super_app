@@ -1,0 +1,40 @@
+# ============================================================================
+# 🚫 DOCKER BUILD BAĞLAM HARİCİ (gizlilik + imaj boyutu)
+# ============================================================================
+
+# Git & yerel VCS
+.git
+.gitignore
+
+# Node
+node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Next.js
+.next
+out
+build
+next-env.d.ts
+
+# TS build
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Test & CI
+coverage
+scripts/_debugTmp.mts
+
+# Ortam / sırlar — ASLA imaja girmez
+.env
+.env.*
+!.env.example
+!.env.prod.example
+
+# Dokümantasyon / veri
+docs
+data
+*.md
+
+# OS
+.DS_Store

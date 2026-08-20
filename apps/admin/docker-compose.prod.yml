@@ -1,0 +1,105 @@
+# ============================================================================
+# 🚀 SPORTVISIONX — DOKPLOY & TRAEFIK ÜRETİM COMPOSE STACK (Adım 2)
+# Servisler:
+#   • sportvisionx-app        → Next.js standalone (Dockerfile multi-stage)
+#   • supabase-edge-sync-agent → çok-bölgeli edge telemetri senkron ajanı
+#   • redis-cache             → gerçek zamanlı rate limiting + CRDT edge replikasyon
+# Traefik: otomatik Let's Encrypt TLS (certresolver), HTTPS yönlendirme,
+# WebSocket passthrough. Sağlık denetimi → /api/health (10sn, 3 retry).
+#
+# Kullanım (Dokploy: Apps → Compose):
+#   cp .env.prod.example .env.prod   # NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+#                                    # OPENROUTER_API_KEY, KNX_GATEWAY_HOST, JWT_SECRET, DOMAIN
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+# ============================================================================
+
+name: sportvisionx
+
+services:
+  # ── 1) NEXT.JS UYGULAMA (standalone) ────────────────────────────────────────
+  sportvisionx-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sportvisionx_app
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      KNX_GATEWAY_HOST: ${KNX_GATEWAY_HOST}
+      JWT_SECRET: ${JWT_SECRET}
+      REDIS_URL: redis://redis-cache:6379
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+      supabase-edge-sync-agent:
+        condition: service_started
+    # Adım 101 /api/health uyumlu container sağlık denetimi (10s aralık, 3 retry)
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>r.ok?process.exit(0):process.exit(1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sportvisionx.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.sportvisionx.entrypoints=websecure"
+      - "traefik.http.routers.sportvisionx.tls=true"
+      - "traefik.http.routers.sportvisionx.tls.certresolver=letsencrypt"
+      # HTTPS yönlendirme (HTTP → HTTPS)
+      - "traefik.http.middlewares.redirect-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.sportvisionx-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.sportvisionx-http.entrypoints=web"
+      - "traefik.http.routers.sportvisionx-http.middlewares=redirect-https"
+      # WebSocket passthrough (canlı telemetri/WebRTC senkronu)
+      - "traefik.http.middlewares.sportvisionx-ws.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.middlewares.sportvisionx-ws.headers.customrequestheaders.Connection=upgrade"
+      - "traefik.http.routers.sportvisionx.middlewares=sportvisionx-ws"
+      - "traefik.http.services.sportvisionx.loadbalancer.server.port=3000"
+      - "traefik.http.services.sportvisionx.loadbalancer.server.scheme=http"
+    networks:
+      - sportvisionx
+
+  # ── 2) SUPABASE EDGE SYNC AJANI (çok-bölgeli edge replikasyon) ──────────────
+  supabase-edge-sync-agent:
+    image: ghcr.io/likya/supabase-edge-sync-agent:latest
+    container_name: supabase_edge_sync_agent
+    restart: always
+    environment:
+      SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      REDIS_URL: redis://redis-cache:6379
+      EDGE_REGIONS: FRA1,IST1,DUB1
+    depends_on:
+      redis-cache:
+        condition: service_healthy
+    networks:
+      - sportvisionx
+
+  # ── 3) REDIS CACHE (rate limiting + CRDT edge replikasyon tamponu) ──────────
+  redis-cache:
+    image: redis:7-alpine
+    container_name: sportvisionx_redis
+    restart: always
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis_data:/data
+    networks:
+      - sportvisionx
+
+volumes:
+  redis_data:
+
+networks:
+  sportvisionx:
+    driver: bridge
