@@ -1,6 +1,6 @@
-# 🗺️ SportVisionX & Likya Platform — 100 Adımlı Üretim Yol Haritası
+# 🗺️ SportVisionX & Likya Platform — Üretim + Pilot Yol Haritası (105 Adım)
 
-> **🎉 100/100 STEPS %100 COMPLETE — v1.0.0-production-launch 🎉**
+> **🎉 105/105 STEPS %100 COMPLETE — v1.0.0-production-launch + Pilot Faz 1 🎉**
 
 > **Canlı Takip Paneli** · Her batch atomik mikro-grup (3-5 adım) halinde yürütülür.
 > **Kalite Kapıları:** `npx tsc --noEmit` (0 hata) → smoke test → `npm run build` (EXIT 0) → semantic commit → CI yeşil → deploy.
@@ -150,6 +150,16 @@
 | 99 | Bundle optimizasyonu (code-split, <200KB ilk chunk) | [x] |
 | 100 | Üretim release tag + dokümantasyon indeksi + operasyon runbook | [x] |
 
+## Track 9: Live Field Pilot & Production Readiness (Adım 101–105) ✅
+
+| # | Adım | Durum |
+|---|---|---|
+| 101 | Production health-check & canlı servis monitörü (DB ping + Storage + PWA SW) | [x] |
+| 102 | Kort tablet BLE eşleştirme & kalibrasyon sihirbazı (RSSI ölçer + pil + 5sn baseline) | [x] |
+| 103 | 100Hz telemetri tampon & kort stres monitörü (50MB ring-buffer + paket kaybı/jitter) | [x] |
+| 104 | Pilot ekip & veli hızlı kayıt (1 koç + 4 sporcu + 6 haneli OTP davetleri) | [x] |
+| 105 | Saha hata telemetrisi & çevrimdışı çökme raporlayıcı (GATT/kota/ağ + otomatik flush) | [x] |
+
 ---
 
 ## Yürütme Günlüğü
@@ -198,5 +208,7 @@
 - **Batch 19 (Adım 91-95, Track 7 KAPANIŞ):** Akıllı dolap & donanım teslim takibi (`hardwareCheckoutEngine.ts` + `HardwareCheckoutManager.tsx` — dolap 1-40, tabanlık/HRM, 5 durum, otomatik seans atama) · Gelir analitiği & MRR (`revenueAnalyticsEngine.ts` + `RevenueAnalyticsDashboard.tsx` — MRR/ARR, churn, ARPU, komisyon, 3/6 ay nakit tahmini) · Çok kiracılı kulüp motoru (`multiTenantEngine.ts` + `ClubOrganizationSwitcher.tsx` — 3 şube, club_id izolasyon, kiracı değiştirici) · Otomatik veli bülteni (`parentDigestGenerator.ts` — haftalık TRIMP/RSI özeti, HTML+metin, {{etiket}} kişiselleştirme) · `track7Batch19SmokeTest.mts` (28/28, Adım 86-95 bütünlük) — **TRACK 7 %100 TAMAMLANDI (95/95) 🎉**
 
 - **Batch 20 (Adım 96-100, Track 8 — FİNAL):** Güvenlik sıkılaştırma (`securityHeadersEngine.ts` — CSP/HSTS/nosniff/frame DENY/referrer + denetim · `inputSanitizer.ts` — SQLi/XSS/prototype pollution sanitizer + token bucket rate limiter: auth/OTP/webhook) · PWA offline-first (`manifest.json` kurulabilir standalone + spor shortcuts · `sw.js` cache-first statik/3D/ses + network-first/IndexedDB kadro/program + `sync-ble-frames` background sync · `pwaServiceWorkerManager.ts` strateji rotaları) · Playwright E2E suite (`e2e/courtSessionE2E.spec.ts` — Koç BLE→drill→yorgunluk→PDF / Veli OTP→büyüme+PB→feragat / Offline→IDB→reconnect sync + `scripts/runE2eHeadless.mts`) · Bundle optimizasyonu (`bundleOptimizationReport.ts` — 4 ağır modül lazy-load, 144KB < 200KB hedef + `next.config.js` code-split notu) · Üretim runbook (`docs/PRODUCTION_OPERATIONS_RUNBOOK.md` — olay müdahale, sensör arıza matrisi, yedekleme/restore, zero-downtime) + `master100StepVerification.mts` (18 smoke + 6 unit + E2E + 20 batch motor + roadmap 100/100) + `track8Batch20SmokeTest.mts` (14/14) — **🎉 100/100 STEPS %100 TAMAMLANDI — v1.0.0-production-launch 🎉**
+
+- **Batch 21 (Adım 101-105, Track 9 — PİLOT FAZ 1):** Production health-check & canlı servis monitörü (`api/health/route.ts` + `lib/monitoring/healthCheckEngine.ts` — Supabase DB ping ms, Storage bucket erişimi, PWA SW durumu, uptime, 200 OK payload + self-check) · Kort tablet BLE eşleştirme & kalibrasyon sihirbazı (`modules/hardware/FieldPairingWizard.tsx` + `lib/hardware/fieldPairingWizardEngine.ts` — Sol/Sağ tabanlık + Decathlon HRM keşfi, 4 bar RSSI ölçer, pil voltaj göstergesi, 5 sn baseline zero-kalibrasyonu, bonded localStorage 1-dokunuş yeniden bağlanma) · 100Hz telemetri tampon & kort stres monitörü (`lib/telemetry/courtTelemetryStressEngine.ts` — çift akış paket kaybı >%2 uyarı, jitter, 50MB ring-buffer üst sınırı = 2 saatlik maç güvenliği) · Pilot ekip & veli hızlı kayıt (`modules/onboarding/PilotSquadOnboarding.tsx` + `lib/onboarding/pilotOnboardingEngine.ts` — 1 baş koç + "U14 Elit Gelişim" + 4 genç sporcu profili + 4 veli davet linki & 6 haneli OTP, 48sa TTL) · Saha hata telemetrisi & çevrimdışı çökme raporlayıcı (`lib/monitoring/fieldCrashReporter.ts` — GATT/kota/ağ/runtime sınıflandırma, 200 döküm kuyruğu, ağ dönünce otomatik flush) + `docs/PILOT_DEPLOYMENT_GUIDE.md` + `scripts/pilotPhase1SmokeTest.mts` (32/32) — **PİLOT FAZ 1 TAMAMLANDI (105/105) 🎉**
 
 
