@@ -380,6 +380,48 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6af. GVS KNX Kort Aydınlatma & Otomasyon Gateway (Adım 136)
+
+`src/modules/facility/KnxLightingControlView.tsx` + `lib/facility/knxLightingGateway.ts`:
+
+- Komutlar: `ON` · `OFF` · `DIM_LUX (0-100%)` · `SCENE_MATCH_HIGH_INTENSITY` · `SCENE_STANDBY_ECO` — telegram payload (`KNX/1/1/1/COMMAND[:value]`) derleme.
+- **Otomatik zamanlama:** planlı seans başlamadan **5 dk önce** açılır; kort **10 dk boşsa** ECO standby **%15**'e düşer. Başarısız-güvenli bellek-içi simülasyon driver (headless CI/offline).
+
+---
+
+## 6af-2. NFC / Dinamik QR Turnike Erişim Motoru (Adım 137)
+
+`src/app/lib/facility/turnstileAccessEngine.ts`:
+
+- **60sn dönüşümlü** kriptografik QR token + 24 saat NFC UID kart — FNV-1a zaman kovalı imza.
+- Kapı kuralları: aktif rezervasyon + geçerli tıbbi feragat (Adım 90) + ödenmiş üyelik tier'ı (Adım 89) → red gerekçeleri: `EXPIRED_WAIVER` · `NO_ACTIVE_BOOKING` · `UNPAID_MEMBERSHIP`.
+
+---
+
+## 6ag. Dinamik Akıllı Dolap BLE/NFC Kilit Kontrolörü (Adım 138)
+
+`src/app/lib/facility/smartLockerController.ts`:
+
+- Turnike girişinde **müsait dolabı otomatik talep** eder + **ephemeral BLE açma anahtarı** üretir.
+- Çıkışta otomatik serbest bırakma + **sanitasyon denetimi** (Adım 91); koç **acil master override** açma.
+
+---
+
+## 6ah. Çevresel Hava Sensörü & Zemin Telafi Motoru (Adım 139)
+
+`src/app/lib/environment/courtWeatherEngine.ts`:
+
+- Sıcaklık, bağıl nem, rüzgar ve zemin ıslaklığı alır; **WBGT** hesaplar (eşik **>28°C** → sıcak çarpması/hidrasyon molası alarmı).
+- Adım 127 top zıplama fiziğini ıslaklık/nem ile düzeltir + **kayma riski/sürtünme katsayısı** üretir.
+
+---
+
+## 6ai. Track 15 Uçtan Uca Test (Adım 140)
+
+`scripts/pilotPhase8SmokeTest.mts` (20/20) — KNX komut payload + otomatik karartma (ECO %15), turnike QR TTL rotasyonu + feragat/üyelik kilitleri, akıllı dolap ephemeral anahtar + master override, WBGT ısı alarmı + slip riski ve Track 15 dosya/veri hattı bütünlüğü (136-140).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -413,6 +455,10 @@ Yanıt yapısı (200 OK):
 29. ☐ Monte Carlo: 1000 maç simülasyonu + optimal vuruş stratejisi yayında.
 30. ☐ Biyomekanik GPT: telemetriye dayalı, sade dilli ve guardrail'li yanıtlar.
 31. ☐ Acil triyaj: desel/asimetri/duruş tetikleri + PEACE&LOVE/RICE + olay raporu hazır.
+32. ☐ KNX aydınlatma: seans öncesi otomatik açılış + boşlukta ECO %15 çalışıyor.
+33. ☐ Turnike: 60sn QR/NFC token + feragat/rezervasyon/üyelik kapı kuralları aktif.
+34. ☐ Akıllı dolap: otomatik atama + BLE anahtar + sanitasyon + master override.
+35. ☐ Hava motoru: WBGT >28°C alarmı + zemin kayma/zıplama telafisi yayında.
 
 ---
 
@@ -427,10 +473,11 @@ node scripts/pilotPhase4SmokeTest.mts   # 18/18 (Adım 116-120)
 node scripts/pilotPhase5SmokeTest.mts   # 14/14 (Adım 121-125)
 node scripts/pilotPhase6SmokeTest.mts   # 21/21 (Adım 126-130)
 node scripts/pilotPhase7SmokeTest.mts   # 21/21 (Adım 131-135)
+node scripts/pilotPhase8SmokeTest.mts   # 20/20 (Adım 136-140)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 63/63 (pilot faz 1-7 dahil)
+node scripts/master100StepVerification.mts  # 65/65 (pilot faz 1-8 dahil)
 ```
 
-**PİLOT FAZ 1-7 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-8 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 

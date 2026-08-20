@@ -1,6 +1,6 @@
-# 🗺️ SportVisionX & Likya Platform — Üretim + Pilot Yol Haritası (135 Adım)
+# 🗺️ SportVisionX & Likya Platform — Üretim + Pilot Yol Haritası (140 Adım)
 
-> **🎉 135/135 STEPS %100 COMPLETE — v1.0.0-production-launch + Pilot Faz 1-7 🎉**
+> **🎉 140/140 STEPS %100 COMPLETE — v1.0.0-production-launch + Pilot Faz 1-8 🎉**
 
 > **Canlı Takip Paneli** · Her batch atomik mikro-grup (3-5 adım) halinde yürütülür.
 > **Kalite Kapıları:** `npx tsc --noEmit` (0 hata) → smoke test → `npm run build` (EXIT 0) → semantic commit → CI yeşil → deploy.
@@ -215,6 +215,16 @@
 | 134 | Otomatik acil sakatlık triyajı (PEACE & LOVE / RICE + tıbbi olay raporu) | [x] |
 | 135 | Track 14 uçtan uca test suite (transformer + MC + GPT + triyaj) | [x] |
 
+## Track 15: Facility Automation & Smart IoT Layer (Adım 136–140) ✅
+
+| # | Adım | Durum |
+|---|---|---|
+| 136 | GVS KNX kort aydınlatma & otomasyon gateway (5 komut + otomatik zamanlama) | [x] |
+| 137 | NFC / dinamik QR turnike erişim motoru (60sn TTL + feragat/üyelik kapıları) | [x] |
+| 138 | Dinamik akıllı dolap BLE/NFC kilit kontrolörü (ephemeral anahtar + master override) | [x] |
+| 139 | Çevresel hava sensörü & zemin telafi motoru (WBGT > 28°C alarm + slip riski) | [x] |
+| 140 | Track 15 uçtan uca test suite (KNX + turnike + dolap + hava) | [x] |
+
 ---
 
 ## Yürütme Günlüğü
@@ -277,5 +287,7 @@
 - **Batch 26 (Adım 126-130, Track 13):** Çoklu kamera RTSP/WebRTC kalibratör (`modules/cv/CourtCameraCalibrationView.tsx` + `lib/cv/cameraCalibrationEngine.ts` — Baseline/Service/Overhead 2-4 kamera, DLT homography (u,v)→(X,Y,Z)m, reprojeksiyon hatası <2cm, distorsiyon katsayıları + yerleşim doğrulama bayrakları) · Top yörüngesi & içeri/dışarı zıplama tahmini (`lib/cv/ballTrajectoryEngine.ts` — parabolik uçuş fiziği, tepe yüksekliği, zıplama (X,Y) + çarpma hızı km/h, IN_COURT/OUT_OF_BOUNDS/FAULT_SERVICE/NET_TOUCH ±2mm marj) · 2D/3D iskelet poz & eklem açısı (`lib/cv/poseEstimationEngine.ts` — 17-keypoint COCO, dirsek ekstansiyon, omuz-kalça X-Factor, temas anında diz fleksiyon, ayak basışı→raket teması kinetik lag) · BLE tabanlık & CV GRF füzyon filtresi (`lib/fusion/sensorVisionFusionEngine.ts` — EKF(2 durum) + complementary füzyon, tıkanma → tabanlık birincil + geri dönüş, IMU drift'i görsel optik işaretle düzeltme) · Track 13 uçtan uca test suite (`scripts/pilotPhase6SmokeTest.mts` — homography + top + poz + füzyon, 21/21) — **TRACK 13 TAMAMLANDI (130/130) 🎉**
 
 - **Batch 27 (Adım 131-135, Track 14):** Cihaz içi mikro-transformer biyomekanik çıkarım (`lib/ai/edgeMicroTransformerEngine.ts` — nanoGPT tarzı saf TS çok başlı self-attention, normalize pencereli 100Hz füzyon kareleri, 3 vuruş öncesi kinetik çöküş/yorgunluk öngörüsü <15ms, deterministik mulberry32 ağırlık başlatma) · Monte Carlo taktik maç simülatörü (`modules/tactics/MatchTacticalSimulator.tsx` + `lib/tactics/monteCarloMatchSimulator.ts` — 1000 simülasyon, Baseline Grinder/Big Server/All-Court Attacker arketipleri, puan olasılık modeli (servis+hız+yorgunluk), optimal vuruş seçimi) · Biyomekanik GPT spor bilimi ajanı (`lib/ai/biomechanicGptAgent.ts` — telemetri grounding: kinetik zincir gecikmesi + desel torku + PHV hızı, sade dil + ahlaki guardrail, niyet tespiti) · Otomatik acil sakatlık triyajı (`modules/medical/EmergencyTriageModal.tsx` + `lib/medical/emergencyTriageEngine.ts` — desel >7.0 m/s² / asimetri >%35 / ani kinetik duruş tetikleri, PEACE&LOVE/RICE protokolleri, zaman damgalı GRF-kinematik tıbbi olay raporu) · Track 14 uçtan uca test suite (`scripts/pilotPhase7SmokeTest.mts` — transformer tensor + MC yakınsama + GPT grounding + triyaj, 21/21) — **TRACK 14 TAMAMLANDI (135/135) 🎉**
+
+- **Batch 28 (Adım 136-140, Track 15):** GVS KNX kort aydınlatma & otomasyon gateway (`modules/facility/KnxLightingControlView.tsx` + `lib/facility/knxLightingGateway.ts` — ON/OFF/DIM_LUX/SCENE_MATCH/SCENE_STANDBY_ECO komutları + telegram payload derleme, seans öncesi 5dk otomatik açılış, 10dk boşlukta ECO %15, bellek-içi simülasyon driver) · NFC / dinamik QR turnike erişim (`lib/facility/turnstileAccessEngine.ts` — 60sn dönüşümlü kriptografik QR + 24sa NFC UID, FNV-1a imzalı token, feragat (Adım 90) + rezervasyon + üyelik (Adım 89) kapı kuralları: EXPIRED_WAIVER/NO_ACTIVE_BOOKING/UNPAID_MEMBERSHIP) · Dinamik akıllı dolap kilit kontrolörü (`lib/facility/smartLockerController.ts` — turnike girişinde otomatik dolap talebi + ephemeral BLE anahtar, çıkışta sanitasyon PENDING (Adım 91), koç master override) · Çevresel hava & zemin telafisi (`lib/environment/courtWeatherEngine.ts` — WBGT hesabı (eşik 28°C → sıcak çarpması/hidrasyon alarmı), top zıplama düzeltmesi (Adım 127 entegrasyonu) + kayma riski/sürtünme katsayısı) · Track 15 uçtan uca test suite (`scripts/pilotPhase8SmokeTest.mts` — KNX payload + turnike TTL/kilit + dolap anahtar/override + WBGT/slip, 20/20) — **TRACK 15 TAMAMLANDI (140/140) 🎉**
 
 
