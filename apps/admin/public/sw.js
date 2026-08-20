@@ -35,3 +35,33 @@ self.addEventListener('fetch', (event) => {
       )
   );
 });
+
+// ============================================================
+// 🔔 WEB PUSH — bildirim alındığında göster (Adım 04)
+// ============================================================
+self.addEventListener('push', (event) => {
+  let payload = { title: '⚡ ExtremeS', body: 'Yeni bildirim', icon: '/icons/icon-192.png', data: {} };
+  try {
+    const data = event.data ? event.data.json() : null;
+    if (data) payload = { ...payload, ...data };
+  } catch {
+    if (event.data) payload.body = event.data.text();
+  }
+  event.waitUntil(self.registration.showNotification(payload.title, { body: payload.body, icon: payload.icon, badge: '/icons/icon-192.png', data: payload.data || {} }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if ('focus' in client && client.url) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
+});

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { generateLiveHubSnapshot, type LivePerformanceHubSnapshot } from '../../lib/sports/livePerformanceHub';
 import { gctPlain, footStrikePlain, rsiPlain, loadingRatePlain, hrvDropPlain, heartRatePlain, type PlainMetric } from '../../lib/sports/plainLanguage';
+import { shareText, SHARE_TEMPLATES } from '../../lib/ops/communicationSuite';
+import { printPdf, type PdfReportData } from '../../lib/ops/pdfReportGenerator';
 
 // ============================================================================
 // 🏃 SPORCU PORTALI (/athlete) — sade dille bugünkü formum + başarılar
@@ -44,6 +46,33 @@ export default function AthletePortal() {
     { m: hr, key: 'hr' },
   ];
 
+  const shareReport = async () => {
+    const text = SHARE_TEMPLATES.report('Arda', Math.min(94, hub.comparison.rsi * 40), rsi.detail);
+    await shareText(text, { title: 'ExtremeS Karnem' });
+  };
+
+  const printPdfReport = () => {
+    const pdf: PdfReportData = {
+      title: '⚡ ExtremeS Antrenman Karnesi',
+      subtitle: 'SportVisionX Spor Bilimi Sistemi — sade dil raporu',
+      meta: [
+        { label: 'Sporcu', value: 'Arda G.' },
+        { label: 'Tarih', value: new Date().toLocaleDateString('tr-TR') },
+        { label: 'RSI (Reaktif Güç)', value: String(hub.comparison.rsi) },
+        { label: 'GCT (Zemin Temas)', value: `${hub.comparison.gctMs} ms` },
+        { label: 'Nabız', value: `${hub.physiology.heartRate} bpm` },
+        { label: 'Enerji', value: `%${hub.physiology.energyPct}` },
+      ],
+      sections: [
+        { heading: 'Bugünkü Form', lines: [gct.title, foot.title, rsi.title, loading.title, hrv.title] },
+        { heading: 'Detay', lines: [gct.detail, foot.detail, rsi.detail] },
+        { heading: 'Antrenör Önerisi', lines: [rsi.level === 'ELIT' ? 'Elit seviyede — hacmi artırabilirsin.' : 'Zayıf bölgeler için drill önerilir.'] },
+      ],
+      footer: '⚡ ExtremeS • Likya Kampüsü — Spor Bilimi Sistemi',
+    };
+    printPdf(pdf);
+  };
+
   return (
     <div style={{ maxWidth: 920, margin: '0 auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', background: 'linear-gradient(160deg,#f0fdf4,#ecfdf5)', minHeight: '100vh', color: '#0f172a' }}>
       {/* BAŞLIK */}
@@ -53,6 +82,8 @@ export default function AthletePortal() {
           <div style={{ fontSize: '11px', color: '#64748b' }}>Bugünkü formun — sade dille, teknik dille değil.</div>
         </div>
         <button onClick={() => setLive((v) => !v)} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #a7f3d0', background: '#fff', color: '#047857', cursor: 'pointer' }}>{live ? '⏸️ Duraklat' : '▶️ Devam'}</button>
+        <button onClick={shareReport} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #34d399', background: '#d1fae5', color: '#065f46', cursor: 'pointer' }}>📲 Karnemi Paylaş</button>
+        <button onClick={printPdfReport} style={{ fontSize: '11px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #f472b6', background: '#fdf2f8', color: '#9d174d', cursor: 'pointer' }}>📄 PDF Rapor</button>
       </div>
 
       {/* BUGÜNKÜ FORMUM — ENERJİ BAR + SKORLAR */}

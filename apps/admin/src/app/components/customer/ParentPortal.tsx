@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { generatePostSessionReport } from '../../lib/sports/postSessionReport';
 import { scanChildLocation } from '../../lib/security/geofencingProtection';
 import { footStrikePlain, loadingRatePlain, hrvDropPlain } from '../../lib/sports/plainLanguage';
+import { shareText, SHARE_TEMPLATES } from '../../lib/ops/communicationSuite';
+import { printPdf, type PdfReportData } from '../../lib/ops/pdfReportGenerator';
 
 // ============================================================================
 // 👨‍👩‍👧 VELİ PORTALI (/parent) — çocuk gelişimi + güvenlik + sade rapor
@@ -26,6 +28,31 @@ export default function ParentPortal() {
   const foot = footStrikePlain(28);
   const loading = loadingRatePlain(1.9);
   const hrv = hrvDropPlain(report.header.trimp > 200 ? 30 : 42, 48);
+
+  const shareSummary = async () => {
+    const text = SHARE_TEMPLATES.report('Arda', report.performance[0].scorePct, report.development.aiAdvice);
+    await shareText(text, { title: 'ExtremeS — Çocuğumun Karnesi' });
+  };
+
+  const printPdfReport = () => {
+    const pdf: PdfReportData = {
+      title: '🏆 SportVisionX Ölçüm & Gelişim Raporu',
+      subtitle: `${report.header.athlete} • ${report.header.sessionType}`,
+      meta: [
+        { label: 'Sporcu', value: report.header.athlete },
+        { label: 'Antrenör', value: report.header.coach },
+        { label: 'TRIMP', value: String(report.header.trimp) },
+        { label: 'Sakatlık Riski', value: report.injury.risk },
+      ],
+      sections: [
+        { heading: 'Performans Özeti', lines: report.performance.map((p) => `${p.title}: %${p.scorePct} (${p.tier})`) },
+        { heading: 'Sakatlık & Yorgunluk', lines: report.injury.details.concat([report.fatigue.note]) },
+        { heading: 'Antrenör Tavsiyesi (AI)', lines: [report.development.aiAdvice] },
+      ],
+      footer: '⚡ ExtremeS • Likya Kampüsü — Veli Raporu',
+    };
+    printPdf(pdf);
+  };
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', background: 'linear-gradient(160deg,#fdf2f8,#fce7f3)', minHeight: '100vh', color: '#0f172a' }}>
@@ -94,7 +121,10 @@ export default function ParentPortal() {
           <div style={{ marginTop: '6px' }}>🔋 <b>Yorgunluk:</b> {hrv.emoji} {hrv.detail}</div>
           <div style={{ marginTop: '8px', padding: '8px 10px', borderRadius: '10px', background: '#fff', border: '1px solid #fbcfe8' }}>💡 <b>Antrenörün önerisi:</b> "{report.development.aiAdvice}"</div>
         </div>
-        <button onClick={() => alert(`📲 Rapor paylaşımı: "${report.notification}"`)} style={{ fontSize: '10px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#db2777,#ec4899)', color: '#fff', marginTop: '10px' }}>📲 Raporu Paylaş</button>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '10px' }}>
+          <button onClick={shareSummary} style={{ fontSize: '10px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: 'none', cursor: 'pointer', background: 'linear-gradient(135deg,#25d366,#4ade80)', color: '#0d1322' }}>📲 Raporu Paylaş</button>
+          <button onClick={printPdfReport} style={{ fontSize: '10px', fontWeight: 800, padding: '8px 14px', borderRadius: '10px', border: '1px solid #f472b6', background: '#fff', color: '#9d174d', cursor: 'pointer' }}>📄 PDF İndir</button>
+        </div>
       </div>
     </div>
   );
