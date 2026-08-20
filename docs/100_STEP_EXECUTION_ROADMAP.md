@@ -92,11 +92,11 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 61 | Sporcu seviye & XP sistemi (antrenman hacmi/kalitesi) | [ ] |
-| 62 | 3D animasyonlu rozet açılış modalı | [ ] |
-| 63 | Dinamik günlük seri sayacı (dondurma koruması) | [ ] |
-| 64 | Anonim yüzdelik akran karşılaştırma radar grafikleri | [ ] |
-| 65 | Etkileşimli 3D ayak basınç modeli (Three.js/CSS3D) | [ ] |
+| 61 | Sporcu seviye & XP sistemi (antrenman hacmi/kalitesi) | [x] |
+| 62 | 3D animasyonlu rozet açılış modalı | [x] |
+| 63 | Dinamik günlük seri sayacı (dondurma koruması) | [x] |
+| 64 | Anonim yüzdelik akran karşılaştırma radar grafikleri | [x] |
+| 65 | Etkileşimli 3D ayak basınç modeli (Three.js/CSS3D) | [x] |
 | 66 | Özelleştirilebilir dashboard (sürükle-bırak metrik kartlar) | [ ] |
 | 67 | Veli büyüme kilometre taşı zaman çizelgesi (+foto) | [ ] |
 | 68 | Antrenör taktik beyaz tahtası (kort çizimi) | [ ] |
@@ -180,4 +180,6 @@
 - **Batch 11 (Adım 51-55, Track 4 devam):** Telemetri zaman serisi sıkıştırma (`telemetryCompressor.ts` — delta(ts/HR) + kuantize GCT/basınç, ≥%70 payload, round-trip) · Supabase Storage adaptörü (`supabaseStorageAdapter.ts` — avatars/reports/drills bucket'lar, signed URL, mock CI yedeği) · Sporcu CRUD + RBAC (`athleteApiHandler.ts` — ceo/manager/coach düzenler, athlete kendi, boy 50-250/kilo 20-180 sanitizasyon) · Takım yönetimi (`squadManagementApi.ts` — çoklu coach, assign/remove, kadro istatistikleri) · Trend SQL fonksiyonları + TS sarmalayıcı (`20260220_trend_functions.sql` + `historicalTrendAggregator.ts` — haftalık rollup, takım hazırlığı) · `track4Batch11SmokeTest.mts` (26/26).
 
 - **Batch 12 (Adım 56-60, Track 4 KAPANIŞ):** Otomatik veri saklama/ayıklama (`retentionPolicyEngine.ts` + `20260220_retention_policy.sql` — ham 30g → özet 90g → prune, seans/uyarı kalıcı, prune_expired_telemetry) · Tıbbi/biyometrik denetim günlüğü (`auditLogService.ts` + `20260220_audit_log.sql` — append-only, UPDATE/DELETE bloke, KVKK/GDPR) · Realtime WebSocket abonelik (`realtimeSubscriptionManager.ts` — squad-alerts/session-telemetry, üstel backoff, mock fallback) · Veli-çocuk güvenli bağlama + OTP (`parentVerificationEngine.ts` — 6 haneli, 15dk TTL, antrenör/kimlik/telefon onayı, revoke) · `track4Batch12SmokeTest.mts` (23/23, Adım 46-60 bütünlük) — **TRACK 4 %100 TAMAMLANDI (60/60) 🎉**
+
+- **Batch 13 (Adım 61-65, Track 5 BAŞLANGIÇ):** Sporcu seviye & XP motoru (`athleteXpEngine.ts` — seans/RSI-PB/GCT/heftalık seri XP, Level=⌊√(XP/100)⌋+1, rütbe başlıkları) · Rozet kaydı + açılış modalı (`badgeRegistry.ts` + `AchievementBadgeModal.tsx` — ACE/Hız/Dayanıklılık/Denge/Tutarlılık, glow+paylaşım kartı) · Streak & tutarlılık (`streakTracker.ts` — ardışık seri, 1 gün dondurma koruması, katılım %) · Anonim kohort yüzdelik radar (`cohortRadarEngine.ts` + `CohortPercentileRadar.tsx` — 5 eksen, GCT ters yüzdelik, PII yok) · 3D ayak basınç ısı haritası (`footPressureShader.ts` + `FootPressureHeatmap3D.tsx` — Mavi→Yeşil→Kırmızı, eliptik maske, orbit/zoom) · `track5Batch13SmokeTest.mts` (27/27).
 
