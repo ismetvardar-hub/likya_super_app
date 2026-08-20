@@ -167,3 +167,5 @@
 
 - **Batch 6 (Adım 26-30, Track 2 KAPANIŞ):** Web Bluetooth API mock (`virtualBlePeripheral.ts` — BluetoothDevice/GATTServer/Characteristic, headless CI) · Çift periferik GATT yöneticisi (`dualInsoleManager.ts` — INSOLE_LEFT/RIGHT eş zamanlı notify → bilateral stride paketi) · Asimetri & bilateral denge motoru (`asymmetryEngine.ts` — |GCT_L−GCT_R|/max×100, 52/48 yük dengesi, >%10 uyarı) · BLE OTA servisi (`bleOtaService.ts` — chunked GATT yazım, CRC32, ilerleme olayları) · kapsamlı `track2Batch6SmokeTest.mts` (25/25) — **TRACK 2 %100 TAMAMLANDI (30/30) 🎉**
 
+- **Batch 7 (Adım 31-35, Track 3 BAŞLANGIÇ):** EWMA+Rolling ACWR motoru (`acwrEngine.ts` — λ 0.25/0.069, 7/28 gün, 🟢0.8-1.3/🟡/🔴≥1.5 SPIKE) · Gerçek zamanlı mekanik yorgunluk degradasyonu (`fatigueCurveEngine.ts` — GCT>%15, RSI>%20, kardiyovasküler dekouple, stamina%+decay) · Spektral HRV + 1-10 hazır olma skoru (`spectralHrvEngine.ts`) · Basınç kalibrasyonlu GRF yaklaşımı (`grfApproximationEngine.ts` — Fz=m·g+k·ΔP, IP/AP/loading rate) · 8 sınıflı tenis vuruş sınıflandırıcı (`tennisStrokeClassifier.ts` — TS/Flat/1H/2H/Serve/Smash/Volley, güven+km/h+kinetik zincir) · `track3Batch7SmokeTest.mts` (23/23).
+
