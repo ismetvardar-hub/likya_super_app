@@ -208,6 +208,50 @@ Yanıt yapısı (200 OK):
 
 ---
 
+## 6l. Donanım Filo Sağlığı & Batarya Telemetri Yöneticisi (Adım 116)
+
+`src/modules/facility/HardwareFleetDashboard.tsx` + `lib/hardware/hardwareFleetManager.ts` — akademi yöneticileri için merkezi filo panosu:
+
+- 50+ BLE cihazın **SoC**, şarj döngüsü, **firmware sürüm drift'i** ve **sensör bozulma indeksi** tek panelde.
+- Bakım uyarıları: düşük/kritik pil, **FSR membran aşınması** ("Insole Set #08: FSR pressure membrane degradation 22% — Recalibration recommended"), kritik bozulma, firmware güncellemesi.
+- **OTA kademeli rollout:** Canary (%10) → Akademi — akademi rollout'u yalnızca Canary başarı oranı ≥%95 ise onaylanır (stage gating).
+
+---
+
+## 6m. Sub-Saniye WebRTC Düşük Gecikmeli Video & Telemetri Streamer (Adım 117)
+
+`src/modules/video/LiveWebRtcPlayer.tsx` + `lib/video/webrtcCourtStreamer.ts`:
+
+- **<300ms** gecikme hedefi; video yayını + 100Hz telemetri **DataChannel'lar** üzerinden: `telemetry_channel` (GRF paketleri) + `event_marker_channel` (ralli/olay işaretleri).
+- Video karesi ↔ telemetri karesi **mikro-saniye faz hizası** (±1000µs tolerans); batch hizalama doğrulaması uzak koçluğa canlı overlay besler.
+
+---
+
+## 6n. Ulusal Federasyon (TTF/ITF) Veri Değişimi & Uyumluluk API (Adım 118)
+
+`src/app/lib/federation/federationDataExchange.ts`:
+
+- **ITF Junior Biometric Standard** + **TTF Development Passport (JSON)** formatlarında pasaport dışa aktarımı.
+- **Otomatik PII gizleme:** tam ad, doğum tarihi ve tıbbi notlar maskelenir (sızıntı test edilir); doğrulanmış maç yükü (TRIMP), hız splitleri (0-5m/5-10m) ve TID yüzdelikleri aktarılır.
+- Şema doğrulama: zorunlu alan eksikliği ve format uyumsuzluğu yakalanır.
+
+---
+
+## 6o. Aktif Sensör Self-Healing & Dinamik Oto-Kalibrasyon (Adım 119)
+
+`src/app/lib/hardware/sensorSelfHealingEngine.ts` — doğal dinlenme aralıklarında çalışan drift-düzeltme:
+
+- **Ağırlık taşımayan an** tespiti: 10 sn kesintisiz düşük FSR yükü (oturma molası, su molası).
+- Zero-load baseline ofseti dinlenme ortalamasına sıfırlanır → sıcaklık + mekanik creep drift giderilir; sonraki okumalar otomatik düzeltilir.
+
+---
+
+## 6p. Track 11 Uçtan Uca Test (Adım 120)
+
+`scripts/pilotPhase4SmokeTest.mts` (18/18) — filo batarya/membran uyarıları + OTA stage-gating, WebRTC DataChannel paketleme + faz hizası, federasyon şema/PII kuralları, zero-load drift düzeltme matematiği ve Track 11 dosya/veri hattı bütünlüğü (116-120).
+
+---
+
 ## 7. Maç Günü Kontrol Listesi
 
 1. ☐ `curl /api/health` → `healthy: true` (DB, Storage, SW ok).
@@ -225,6 +269,10 @@ Yanıt yapısı (200 OK):
 13. ☐ Maç içi yorgunluk danışmanı T_fatigue öngörüsü ve taktik alarmları çalıştı.
 14. ☐ Dijital ikiz 3D replay: vuruş geri sarma + 360° kamera sorunsuz.
 15. ☐ TID havuz sıralaması PHV normalize edilmiş tier kademeleriyle yayında.
+16. ☐ Donanım filosu: SoC/membran uyarıları temiz; OTA rollout kademeli onaylı.
+17. ☐ WebRTC canlı yayın <300ms; telemetri overlay mikro-saniye hizalı.
+18. ☐ Federasyon pasaportu (ITF/TTF) şema geçerli + PII maskeli gönderildi.
+19. ☐ Sensör self-healing: dinlenme molalarında baseline drift düzeltmesi aktif.
 
 ---
 
@@ -235,10 +283,11 @@ cd apps/admin
 node scripts/pilotPhase1SmokeTest.mts   # 32/32 (Adım 101-105)
 node scripts/pilotPhase2SmokeTest.mts   # 24/24 (Adım 106-110)
 node scripts/pilotPhase3SmokeTest.mts   # 21/21 (Adım 111-115)
+node scripts/pilotPhase4SmokeTest.mts   # 18/18 (Adım 116-120)
 npx tsc --noEmit                        # 0 hata
 npm run build                           # EXIT 0
-node scripts/master100StepVerification.mts  # 55/55 (pilot faz 1-3 dahil)
+node scripts/master100StepVerification.mts  # 57/57 (pilot faz 1-4 dahil)
 ```
 
-**PİLOT FAZ 1-3 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
+**PİLOT FAZ 1-4 HAZIR — SAHAYA ÇIKIŞ ONAYI VERİLEBİLİR. 🏟️**
 
