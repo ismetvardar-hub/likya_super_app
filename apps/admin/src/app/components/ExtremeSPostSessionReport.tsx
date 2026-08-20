@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { generatePostSessionReport, deltaPct, postSessionReportStatus, type PostSessionReport } from '../lib/sports/postSessionReport';
+import { downloadSessionCsv, downloadSessionJson, buildDemoSessionSamples, sessionExporterStatus } from '../lib/ops/sessionDataExporter';
 
 // ============================================================================
 // 🏆 SPORTVISIONX ÖLÇÜM & GELİŞİM RAPORU (Post-Session)
@@ -117,8 +118,12 @@ export default function ExtremeSPostSessionReport() {
         </table>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
           <button onClick={() => { setNotified(true); }} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 13px', borderRadius: '10px', border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.1)', color: '#4ade80', cursor: 'pointer' }}>📲 Sporcunun Telefonuna Bildir</button>
-          {notified && <span style={{ fontSize: '9px', fontWeight: 700, color: '#4ade80' }}>📲 Bildirim gönderildi: {report.notification.slice(0, 64)}…</span>}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button onClick={() => downloadSessionCsv(buildDemoSessionSamples(8))} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>📥 CSV İndir</button>
+            <button onClick={() => downloadSessionJson(buildDemoSessionSamples(8))} style={{ fontSize: '9px', fontWeight: 800, padding: '7px 12px', borderRadius: '10px', border: '1px solid rgba(167,139,250,0.4)', background: 'rgba(167,139,250,0.08)', color: '#c4b5fd', cursor: 'pointer' }}>📥 JSON İndir</button>
+          </div>
         </div>
+        <div style={{ fontSize: '8px', color: '#475569', marginTop: '6px' }}>{sessionExporterStatus()} • 9 sütun: HR/GCT/RSI/Toe/Heel/Arm/Loading/TRIMP</div>
       </div>
     </div>
   );

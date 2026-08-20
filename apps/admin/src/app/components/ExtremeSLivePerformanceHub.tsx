@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { generateLiveHubSnapshot, livePerformanceHubStatus, type LivePerformanceHubSnapshot } from '../lib/sports/livePerformanceHub';
 import { requestHeartRateConnection, requestInsoleConnection, requestMiBandConnection, webBluetoothSupported, webBluetoothBridgeStatus, browserBluetoothAdvice, computeRmssd } from '../lib/hardware/webBluetoothBridge';
+import { playFeedback, sensoryForThreshold, sensoryFeedbackStatus } from '../lib/ops/sensoryFeedbackEngine';
 
 // ============================================================================
 // 🏆 SPORTVISIONX LIVE PERFORMANCE HUB — 6 bölgeli canlı ekran
@@ -29,6 +30,9 @@ export default function ExtremeSLivePerformanceHub() {
   const k = snap.kinetic;
   const co = snap.coordination;
   const fa = snap.fatigue;
+
+  const sensoryKind = sensoryForThreshold(snap.comparison.gctMs, snap.comparison.rsi, snap.physiology.heartRate >= 185 ? 70 : 20);
+  const sensoryTest = (kind: 'SUCCESS' | 'CAUTION' | 'WARNING') => { playFeedback(kind); setBleMsg(`🔊 Duyusal: ${kind} — ${sensoryFeedbackStatus().split(':')[1]}`); };
 
   const connectSensor = async (kind: 'HEART_RATE' | 'INSOLE' | 'MI_BAND') => {
     setBleOpen(false);
@@ -206,6 +210,14 @@ export default function ExtremeSLivePerformanceHub() {
       </div>
 
       <div style={{ fontSize: '9px', color: '#475569' }}>{livePerformanceHubStatus()}</div>
+      {/* DUYUSAL GERİ BİLDİRİM */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', padding: '10px', borderRadius: '12px', background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.3)' }}>
+        <span style={{ fontSize: '10px', fontWeight: 800, color: '#c4b5fd' }}>🔊 Duyusal Motor ({sensoryFeedbackStatus().split(':')[1]}):</span>
+        <button onClick={() => sensoryTest('SUCCESS')} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 11px', borderRadius: 9, border: '1px solid rgba(74,222,128,0.4)', background: 'rgba(74,222,128,0.08)', color: '#4ade80', cursor: 'pointer' }}>🟢 Başarı</button>
+        <button onClick={() => sensoryTest('CAUTION')} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 11px', borderRadius: 9, border: '1px solid rgba(250,204,21,0.4)', background: 'rgba(250,204,21,0.08)', color: '#facc15', cursor: 'pointer' }}>🟡 Dikkat</button>
+        <button onClick={() => sensoryTest('WARNING')} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 11px', borderRadius: 9, border: '1px solid rgba(248,113,113,0.4)', background: 'rgba(248,113,113,0.08)', color: '#fb7185', cursor: 'pointer' }}>🔴 Uyarı</button>
+        <span style={{ fontSize: '9px', color: '#64748b' }}>Canlı eşik: {sensoryKind} ({snap.comparison.gctMs}ms GCT)</span>
+      </div>
     </div>
   );
 }

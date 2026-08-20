@@ -21,11 +21,11 @@
 | 08 | Yazdırılabilir yüksek kontrast A4 performans sertifikası | [x] |
 | 09 | Tek tık sporcu QR kod üretici (profil anlık erişim) | [x] |
 | 10 | Telegram bot webhook adaptörü (antrenör anlık alarm) | [x] |
-| 11 | `/parent` ve `/coach` push tercih paneli | [ ] |
-| 12 | Eşik ihlali → sesli ikaz / haptik motor (yüksek sakatlık riski) | [ ] |
-| 13 | Seans CSV/JSON dışa aktarımı (akademik spor bilimi araştırması) | [ ] |
-| 14 | Kulüp yöneticileri için özelleştirilebilir mesaj şablonları | [ ] |
-| 15 | Tüm export & notification işleyicileri için entegrasyon testleri | [ ] |
+| 11 | `/parent` ve `/coach` push tercih paneli | [x] |
+| 12 | Eşik ihlali → sesli ikaz / haptik motor (yüksek sakatlık riski) | [x] |
+| 13 | Seans CSV/JSON dışa aktarımı (akademik spor bilimi araştırması) | [x] |
+| 14 | Kulüp yöneticileri için özelleştirilebilir mesaj şablonları | [x] |
+| 15 | Tüm export & notification işleyicileri için entegrasyon testleri | [x] |
 
 ## Track 2: Hardware Firmware, BLE Protocol & Web Serial (Adım 16–30)
 
@@ -154,3 +154,4 @@
 
 - **Batch 1 (Adım 1-5, Track 1):** PDF üretici · WhatsApp/Web Share · Push kaydı · Bildirim Merkezi — tamamlandı.
 - **Batch 2 (Adım 6-10, Track 1):** Geofence veli alarmı · Antrenör digest · A4 sertifika · Sporcu QR · Telegram webhook — tamamlandı.
+- **Batch 3 (Adım 11-15, Track 1):** Push tercih paneli · Duyusal motor (ses+haptik) · CSV/JSON seans export · Kulüp şablonları · Uçtan uca entegrasyon testi — **TRACK 1 TAMAMLANDI 15/15 🎉**

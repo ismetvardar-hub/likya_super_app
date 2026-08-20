@@ -6,6 +6,7 @@ import { generatePostSessionReport } from '../../lib/sports/postSessionReport';
 import { hrvDropPlain } from '../../lib/sports/plainLanguage';
 import { buildSquadDigest, buildDigestHtml, buildDigestMailto, buildDigestDispatchPayload, coachDigestStatus } from '../../lib/ops/coachDigestGenerator';
 import { buildCoachAlert, dispatchTelegramAlert, formatTelegramAlert, telegramAlertStatus, type CoachAlertKind } from '../../lib/ops/telegramAlertAdapter';
+import NotificationPreferences from '../NotificationPreferences';
 
 // ============================================================================
 // 🧑‍🏫 ANTRENÖR PORTALI (/coach) — sporcu takibi + drill atama + rapor onayı
@@ -65,6 +66,10 @@ export default function CoachPortal() {
       <div>
         <div style={{ fontSize: '20px', fontWeight: 900, color: '#1e3a8a' }}>🧑‍🏫 Antrenör Paneli</div>
         <div style={{ fontSize: '11px', color: '#64748b' }}>Caner B. — bugün {roster.length} sporcu takipte · canlı efor + risk radarı</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, alignItems: 'start' }}>
+        <NotificationPreferences />
       </div>
 
       {/* SPORCU TAKİP LİSTESİ */}

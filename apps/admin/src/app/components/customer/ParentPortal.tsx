@@ -7,6 +7,7 @@ import { footStrikePlain, loadingRatePlain, hrvDropPlain } from '../../lib/sport
 import { shareText, SHARE_TEMPLATES } from '../../lib/ops/communicationSuite';
 import { printPdf, type PdfReportData } from '../../lib/ops/pdfReportGenerator';
 import { simulateGeofenceEvent, getLastGeofenceAlert, type ParentAlertPayload } from '../../lib/ops/geofenceAlertTrigger';
+import NotificationPreferences from '../NotificationPreferences';
 
 // ============================================================================
 // 👨‍👩‍👧 VELİ PORTALI (/parent) — çocuk gelişimi + güvenlik + sade rapor
@@ -62,6 +63,10 @@ export default function ParentPortal() {
       <div>
         <div style={{ fontSize: '20px', fontWeight: 900, color: '#831843' }}>👨‍👩‍👧 Veli Paneli — Arda'nın Gelişimi</div>
         <div style={{ fontSize: '11px', color: '#64748b' }}>Çocuğunuzun sağlığı, güvenliği ve gelişimi — sade dille.</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14, alignItems: 'start' }}>
+        <NotificationPreferences />
       </div>
 
       {/* GELİŞİM & SAĞLIK ÖZETİ */}
