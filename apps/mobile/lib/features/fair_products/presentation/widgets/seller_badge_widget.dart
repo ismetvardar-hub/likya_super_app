@@ -26,10 +26,10 @@ class SellerBadgeWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: AppTheme.primaryColor,
             radius: 20,
-            child: const Icon(Icons.verified_user_rounded, color: Colors.white, size: 22),
+            child: Icon(Icons.verified_user_rounded, color: Colors.white, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
