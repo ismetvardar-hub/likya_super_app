@@ -36,11 +36,11 @@
 | 18 | Özel BLE GATT Service (0x4FAF…) — FSR & GCT notification | [x] |
 | 19 | Tarayıcı tabanlı Web Serial ESP32 Firmware Flasher | [x] |
 | 20 | Otomatik yeniden bağlanma + paket kaybı kurtarma (BLE) | [x] |
-| 21 | BLE pil seviyesi telemetri monitörü (0x180F) | [ ] |
-| 22 | FSR kalibrasyon sihirbazı (direnç → Newton/basınç) | [ ] |
-| 23 | Çok sensörlü senkronizasyon motoru (HRM/Insole/IMU zaman hizası) | [ ] |
-| 24 | Dinamik örnekleme hızı (güç tasarrufu vs. hızlı drill) | [ ] |
-| 25 | Donanım teşhis overlay (RSSI, gecikme, düşen çerçeve) | [ ] |
+| 21 | BLE pil seviyesi telemetri monitörü (0x180F) | [x] |
+| 22 | FSR kalibrasyon sihirbazı (direnç → Newton/basınç) | [x] |
+| 23 | Çok sensörlü senkronizasyon motoru (HRM/Insole/IMU zaman hizası) | [x] |
+| 24 | Dinamik örnekleme hızı (güç tasarrufu vs. hızlı drill) | [x] |
+| 25 | Donanım teşhis overlay (RSSI, gecikme, düşen çerçeve) | [x] |
 | 26 | Mock BLE sanal periferik üretici (offline CI) | [ ] |
 | 27 | Çift tabanlık desteği (Sol + Sağ eş zamanlı BLE) | [ ] |
 | 28 | Ayak basış asimetrisi algoritması (L/R denge %) | [ ] |
@@ -156,3 +156,4 @@
 - **Batch 2 (Adım 6-10, Track 1):** Geofence veli alarmı · Antrenör digest · A4 sertifika · Sporcu QR · Telegram webhook — tamamlandı.
 - **Batch 3 (Adım 11-15, Track 1):** Push tercih paneli · Duyusal motor (ses+haptik) · CSV/JSON seans export · Kulüp şablonları · Uçtan uca entegrasyon testi — **TRACK 1 TAMAMLANDI 15/15 🎉**
 - **Batch 4 (Adım 16-20, Track 2):** ESP32 firmware (`esp32_insole_ble.ino`) · ADC filtre (`adc_filter.h` + TS mirror) · BLE GATT protokol · Web Serial Flasher · Oto-reconnect + watchdog — tamamlandı.
+- **Batch 5 (Adım 21-25, Track 2):** Pil telemetrisi (0x180F) · Kalibrasyon sihirbazı · Sensör senkron (100ms) · Adaptif örnekleme · Teşhis HUD — tamamlandı.

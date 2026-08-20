@@ -5,6 +5,9 @@ import { generateLiveHubSnapshot, livePerformanceHubStatus, type LivePerformance
 import { requestHeartRateConnection, requestInsoleConnection, requestMiBandConnection, webBluetoothSupported, webBluetoothBridgeStatus, browserBluetoothAdvice, computeRmssd } from '../lib/hardware/webBluetoothBridge';
 import { playFeedback, sensoryForThreshold, sensoryFeedbackStatus } from '../lib/ops/sensoryFeedbackEngine';
 import WebSerialFlasher from './WebSerialFlasher';
+import InsoleCalibrationWizard from './InsoleCalibrationWizard';
+import HardwareDiagnosticsOverlay from './HardwareDiagnosticsOverlay';
+import { powerBadge, batteryTelemetryStatus, readBatteryLevel } from '../lib/hardware/batteryTelemetryService';
 
 // ============================================================================
 // 🏆 SPORTVISIONX LIVE PERFORMANCE HUB — 6 bölgeli canlı ekran
@@ -94,6 +97,9 @@ export default function ExtremeSLivePerformanceHub() {
           <span style={{ fontSize: '10px', fontWeight: 800, color: live ? '#f87171' : '#64748b' }}>{live ? '🔴 LIVE' : '⏸️ DURAKLATILDI'}</span>
           <button onClick={() => setLive((v) => !v)} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>{live ? '⏸️' : '▶️'}</button>
           <WebSerialFlasher />
+          <InsoleCalibrationWizard />
+          <HardwareDiagnosticsOverlay metrics={{ rssiDbm: -58, latencyMs: 24, droppedPackets: 3, jitterMs: 9, framesPerSec: 94 }} />
+          <span style={{ fontSize: '9px', fontWeight: 700, color: '#facc15' }}>{powerBadge(78).emoji} %78</span>
         </div>
       </div>
       {/* BAĞLI SENSÖR ROZETLERİ */}
