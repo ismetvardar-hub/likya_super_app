@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { generateLiveHubSnapshot, livePerformanceHubStatus, type LivePerformanceHubSnapshot } from '../lib/sports/livePerformanceHub';
 import { requestHeartRateConnection, requestInsoleConnection, requestMiBandConnection, webBluetoothSupported, webBluetoothBridgeStatus, browserBluetoothAdvice, computeRmssd } from '../lib/hardware/webBluetoothBridge';
 import { playFeedback, sensoryForThreshold, sensoryFeedbackStatus } from '../lib/ops/sensoryFeedbackEngine';
+import WebSerialFlasher from './WebSerialFlasher';
 
 // ============================================================================
 // 🏆 SPORTVISIONX LIVE PERFORMANCE HUB — 6 bölgeli canlı ekran
@@ -92,6 +93,7 @@ export default function ExtremeSLivePerformanceHub() {
           <button onClick={() => setBleOpen((v) => !v)} style={{ fontSize: '9.5px', fontWeight: 800, padding: '7px 14px', borderRadius: '10px', border: '1px solid rgba(74,222,128,0.5)', background: 'rgba(74,222,128,0.1)', color: '#4ade80', cursor: 'pointer', boxShadow: '0 0 12px rgba(74,222,128,0.15)' }}>📡 Sensörleri Bağla (BLE)</button>
           <span style={{ fontSize: '10px', fontWeight: 800, color: live ? '#f87171' : '#64748b' }}>{live ? '🔴 LIVE' : '⏸️ DURAKLATILDI'}</span>
           <button onClick={() => setLive((v) => !v)} style={{ fontSize: '9px', fontWeight: 800, padding: '6px 12px', borderRadius: '10px', border: '1px solid rgba(56,189,248,0.4)', background: 'rgba(56,189,248,0.08)', color: '#38bdf8', cursor: 'pointer' }}>{live ? '⏸️' : '▶️'}</button>
+          <WebSerialFlasher />
         </div>
       </div>
       {/* BAĞLI SENSÖR ROZETLERİ */}

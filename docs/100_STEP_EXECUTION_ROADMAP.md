@@ -31,11 +31,11 @@
 
 | # | Adım | Durum |
 |---|---|---|
-| 16 | ESP32 üretim firmware (`esp32_insole_ble.ino`) — çift FSR örnekleme | [ ] |
-| 17 | 100Hz donanım ADC gürültü filtresi (moving average / EMA) | [ ] |
-| 18 | Özel BLE GATT Service (0x4FAF…) — FSR & GCT notification | [ ] |
-| 19 | Tarayıcı tabanlı Web Serial ESP32 Firmware Flasher | [ ] |
-| 20 | Otomatik yeniden bağlanma + paket kaybı kurtarma (BLE) | [ ] |
+| 16 | ESP32 üretim firmware (`esp32_insole_ble.ino`) — çift FSR örnekleme | [x] |
+| 17 | 100Hz donanım ADC gürültü filtresi (moving average / EMA) | [x] |
+| 18 | Özel BLE GATT Service (0x4FAF…) — FSR & GCT notification | [x] |
+| 19 | Tarayıcı tabanlı Web Serial ESP32 Firmware Flasher | [x] |
+| 20 | Otomatik yeniden bağlanma + paket kaybı kurtarma (BLE) | [x] |
 | 21 | BLE pil seviyesi telemetri monitörü (0x180F) | [ ] |
 | 22 | FSR kalibrasyon sihirbazı (direnç → Newton/basınç) | [ ] |
 | 23 | Çok sensörlü senkronizasyon motoru (HRM/Insole/IMU zaman hizası) | [ ] |
@@ -155,3 +155,4 @@
 - **Batch 1 (Adım 1-5, Track 1):** PDF üretici · WhatsApp/Web Share · Push kaydı · Bildirim Merkezi — tamamlandı.
 - **Batch 2 (Adım 6-10, Track 1):** Geofence veli alarmı · Antrenör digest · A4 sertifika · Sporcu QR · Telegram webhook — tamamlandı.
 - **Batch 3 (Adım 11-15, Track 1):** Push tercih paneli · Duyusal motor (ses+haptik) · CSV/JSON seans export · Kulüp şablonları · Uçtan uca entegrasyon testi — **TRACK 1 TAMAMLANDI 15/15 🎉**
+- **Batch 4 (Adım 16-20, Track 2):** ESP32 firmware (`esp32_insole_ble.ino`) · ADC filtre (`adc_filter.h` + TS mirror) · BLE GATT protokol · Web Serial Flasher · Oto-reconnect + watchdog — tamamlandı.
