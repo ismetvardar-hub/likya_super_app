@@ -250,7 +250,7 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
     icon: '👁️',
     keywords: ['sports vision', 'hız radarı', 'km/h', 'reaksiyon', 'mem0', 'uzun süreli hafıza', 'gotify', 'daze-reminder', 'phv', 'müfredat', 'basketball ready 360', '150 ajan'],
     content:
-      'lib/vision/sportsVisionRadar.ts — Computer Vision stub: top hızı km/h, oyuncu reaksiyon ms, araç giriş/çıkış olayları (simüle + analiz). lib/ai/mem0LongTermMemory.ts — Mem0 mimarisi: üye tercihleri, antrenman geçmişi, Daze Chef ikram alışkanlıkları; localStorage kalıcı; memoryContextForMember AI promptuna bağlam verir. lib/notifications/gotifyPushBridge.ts — Daze-Reminder: 120s sipariş hazır + kort saati WebSocket push (Gotify token yoksa simülasyon). lib/sports/phvAthleticCurriculum.ts — Basketball Ready 360/OTA: 6-16 yaş PHV evresi (pre/phv/post) tespiti + drill planlama. lib/ai/agentCatalog.ts — 150 ajanlık sektörel katalog (15 sektör × 10 uzman). components/SportsVisionMemoryCard.tsx — 3 sekmeli HUD (Speed Radar / Long-Term Memory / Gotify Push); sportvision view içinde.',
+      'lib/vision/sportsVisionRadar.ts — Computer Vision stub: top hızı km/h, oyuncu reaksiyon ms, araç giriş/çıkış olayları (simüle + analiz). lib/ai/mem0LongTermMemory.ts — Mem0 mimarisi: üye tercihleri, antrenman geçmişi, Daze Chef ikram alışkanlıkları; localStorage kalıcı; memoryContextForMember AI promptuna bağlam verir. lib/notifications/gotifyPushBridge.ts — Daze-Reminder: 120s sipariş hazır + kort saati WebSocket push (Gotify token yoksa simülasyon). lib/sports/phvAthleticCurriculum.ts — Basketball Ready 360/OTA: 6-16 yaş PHV evresi (pre/phv/post) tespiti + drill planlama. lib/ai/agentCatalog.ts — 150 ajanlık sektörel katalog (15 sektör × 10 uzman).',
   },
 
   {
@@ -295,7 +295,7 @@ export const KNOWLEDGE_VAULT: KnowledgeEntry[] = [
     icon: '📊',
     keywords: ['multi-agent research', 'araştırma ajanı', 'koordinatör', 'web search', 'document analyzer', 'synthesis', 'sports manager', 'antrenman', 'scouting', 'maç raporu', 'safety audit', 'sentinel bilet', 'ekipman güvenliği'],
     content:
-      'lib/ai/multiAgentResearch.ts — Multi-Agent Research System: Coordinator komutasında Web Search, Document Analyzer, Synthesis ve Reporting ajanları paralel çalışır; runResearch 5 ajanlı rapor üretir. lib/sports/claudeSportsManager.ts — Otonom Kulüp Direktörü: padel/tenis/basketbol/su-sporları için antrenman planı, performans özeti, scouting ve maç raporu. lib/simulators/facilitySafetyAudit.ts — Ekipman Güvenlik Denetçisi: tesis/kort/oyun ekipmanlarını standartlara (EN/FIBA/ITF/TSE) göre denetler, kritik durumda Sentinel bakım servisine otomatik bilet açar. components/MultiAgentSportsCard.tsx — 3 sekmeli neon HUD (📊 Research / 🎾 Sports Manager / 🛡️ Safety Checklist); Spor Vizyon (sportvision) view içinde.',
+      'lib/ai/multiAgentResearch.ts — Multi-Agent Research System: Coordinator komutasında Web Search, Document Analyzer, Synthesis ve Reporting ajanları paralel çalışır; runResearch 5 ajanlı rapor üretir. lib/sports/claudeSportsManager.ts — Otonom Kulüp Direktörü: padel/tenis/basketbol/su-sporları için antrenman planı, performans özeti, scouting ve maç raporu. lib/simulators/facilitySafetyAudit.ts — Ekipman Güvenlik Denetçisi: tesis/kort/oyun ekipmanlarını standartlara (EN/FIBA/ITF/TSE) göre denetler, kritik durumda Sentinel bakım servisine otomatik bilet açar.',
   },
 
   {

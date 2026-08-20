@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2, Ghost, Ruler, ShoppingBag, Package, UserPlus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, LayoutDashboard, Map, Cpu, Users, CreditCard, Shield, Megaphone, Gift, Building2, Activity, Boxes, TrendingUp, Wrench, HeartPulse, Home, Store, Tent, Car, Trophy, Sparkles, Scale, Bot, Network, Radar, Cloud, Music, Trash2, Ghost, Ruler, Package, UserPlus } from 'lucide-react';
 import Park3DTwin from './Park3DTwin';
 import IoTSensorMap from './IoTSensorMap';
 import AIAgentAutonomousController from './AIAgentAutonomousController';
@@ -51,15 +51,11 @@ import { sanitizeInput } from '../lib/security/zeroTrustShield';
 import RoomOnlyConcept from './RoomOnlyConcept';
 import SportVisionX from './SportVisionX';
 import AthletePerformanceAI from './AthletePerformanceAI';
-import SportVisionDashboard from './SportVisionDashboard';
-import SportsVisionMemoryCard from './SportsVisionMemoryCard';
-import MultiAgentSportsCard from './MultiAgentSportsCard';
 import YouthDevelopmentDashboard from './YouthDevelopmentDashboard';
 import HolisticChildDashboard from './HolisticChildDashboard';
 import ScoutingEcosystem from './ScoutingEcosystem';
 import ToolsAndAgentsDashboard from './ToolsAndAgentsDashboard';
 import DazeSmartCampus from './DazeSmartCampus';
-import SportMediaCommerceDashboard from './SportMediaCommerceDashboard';
 import ProcurementDashboard from './ProcurementDashboard';
 import { runPraisonChain, type AgentTask } from '../lib/ai/praisonOrchestrator';
 import { openLiveBridgeStatus, createSpeechRecognitionBridge, isSpeechRecognitionSupported } from '../lib/ai/openLiveBridge';
@@ -130,7 +126,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     moduleIds: [
       'campus', 'pricing', 'supplier', 'crew', 'gift', 'hrdispatch',
       'finance', 'marketing', 'legal', 'dept', 'hr', 'payment', 'risk',
-      'gcp', 'saas', 'mediacom',
+      'gcp', 'saas',
     ],
   },
   {
@@ -140,7 +136,7 @@ const MODULE_DOMAINS: { id: string; name: string; chipLabel: string; icon: strin
     icon: '🎾',
     color: '#34d399',
     moduleIds: [
-      'athlete', 'sportvision', 'sportvisionx', 'youthdev', 'holistic', 'scouting',
+      'athlete', 'sportvisionx', 'youthdev', 'holistic', 'scouting',
     ],
   },
   {
@@ -199,14 +195,12 @@ const MODULES: ModuleItem[] = [
 
   // 🎾 SPOR, KAMPÜS & DENEYİM
   { id: 'athlete', name: '🎗️ Sports Vision', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Biyomekanik AI analiz', category: 'sports' },
-  { id: 'sportvision', name: '🩻 Sport Vision Ajanlar', icon: <Activity size={16} />, color: '#34d399', description: 'Otonom branş ajanları & BESYO akademisi', category: 'sports' },
   { id: 'sportvisionx', name: '🩻 Sport Vision X', icon: <Ghost size={16} />, color: '#00f2fe', description: 'Ghost Avatar • Pazu Bandı • 🏆 Performans', category: 'sports' },
   { id: 'youthdev', name: 'Gelişim Ligi & Biyometrik', icon: <Ruler size={16} />, color: '#4ade80', description: 'PHV büyüme atağı & genç sporcu akademisi', category: 'sports' },
   { id: 'holistic', name: '360° Çocuk Gelişimi', icon: <HeartPulse size={16} />, color: '#f472b6', description: 'Veli anketi, medikal OCR, tribün analizi', category: 'sports' },
   { id: 'scouting', name: 'Scouting & Rekabet', icon: <Trophy size={16} />, color: '#f59e0b', description: 'Kulüp ihracı & küresel rekabet zekası', category: 'sports' },
   { id: 'toolsagents', name: 'İstemci Araçlar & Ajan Hattı', icon: <Wrench size={16} />, color: '#ecc94b', description: 'KVKK uyumlu araçlar & 6 ajanlı üretim hattı', category: 'infra' },
   { id: 'smartcampus', name: 'Akıllı Tesis Operasyonları', icon: <Building2 size={16} />, color: '#34d399', description: 'Enerji, lig, güvenlik, bakım, concierge', category: 'infra' },
-  { id: 'mediacom', name: 'Medya Kasası & KVKK', icon: <ShoppingBag size={16} />, color: '#f472b6', description: 'Klip satışı, Daze-Gift, hukuk uyumu', category: 'growth' },
   { id: 'procurement', name: 'Donanım & Satın Alma', icon: <Package size={16} />, color: '#00f2fe', description: 'Şartname, tedarikçi, ihale, beyanname', category: 'infra' },
   { id: 'hrdispatch', name: 'Otonom Vardiya & İK', icon: <UserPlus size={16} />, color: '#4ade80', description: 'İşe davet, yoğunluk radarı, skorlama', category: 'ops' },
   { id: 'caravan', name: 'Konaklama & Karavan', icon: <Car size={16} />, color: '#34d399', description: 'Otel, karavan & kort slotları', category: 'sports' },
@@ -1384,13 +1378,6 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 ) : null;
               })()}
               {activeView === 'athlete' && <AthletePerformanceAI />}
-              {activeView === 'sportvision' && (
-                <>
-                  <SportVisionDashboard />
-                  <SportsVisionMemoryCard />
-                  <MultiAgentSportsCard />
-                </>
-              )}
               {activeView === 'sportvisionx' && <SportVisionX />}
               {activeView === 'youthdev' && <YouthDevelopmentDashboard />}
               {activeView === 'holistic' && (
@@ -1409,7 +1396,6 @@ function detectPraisonTaskInline(text: string): { task: AgentTask; snapshot: Rec
                 </>
               )}
               {activeView === 'smartcampus' && <DazeSmartCampus />}
-              {activeView === 'mediacom' && <SportMediaCommerceDashboard />}
               {activeView === 'procurement' && <ProcurementDashboard />}
               {activeView === 'hrdispatch' && <HRDispatchDashboard />}
               {activeView === 'risk' && <StrategicRiskShield />}
