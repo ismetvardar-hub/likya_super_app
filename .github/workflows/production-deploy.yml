@@ -21,7 +21,9 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 20 .mts tip-stripping desteklemez (ERR_UNKNOWN_FILE_EXTENSION).
+          # Node 23.6+ tip-stripping'i varsayılan açar — .mts smoke/unit testleri doğrudan çalışır.
+          node-version: '23'
           cache: 'npm'
           cache-dependency-path: apps/admin/package-lock.json
 

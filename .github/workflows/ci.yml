@@ -57,7 +57,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 23.6+ .mts tip-stripping varsayılan açar (Node 20 yapamaz)
+          node-version: '23'
           cache: 'npm'
           cache-dependency-path: 'apps/admin/package-lock.json'
 
