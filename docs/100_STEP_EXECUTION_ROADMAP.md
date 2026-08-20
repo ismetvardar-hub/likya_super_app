@@ -77,11 +77,11 @@
 | 48 | DB migration scriptleri + seed veri fikstürleri | [x] |
 | 49 | Offline-first IndexedDB önbellek katmanı | [x] |
 | 50 | Arka plan senkronizasyon motoru (IndexedDB → Supabase) | [x] |
-| 51 | Telemetri zaman serisi batch sıkıştırma | [ ] |
-| 52 | Supabase Storage (PDF + avatar medya) | [ ] |
-| 53 | Sporcu profili CRUD API + RBAC | [ ] |
-| 54 | Antrenör çok sporcu squad yönetimi | [ ] |
-| 55 | Tarihsel trend SQL fonksiyonları (haftalık/aylık rollup) | [ ] |
+| 51 | Telemetri zaman serisi batch sıkıştırma | [x] |
+| 52 | Supabase Storage (PDF + avatar medya) | [x] |
+| 53 | Sporcu profili CRUD API + RBAC | [x] |
+| 54 | Antrenör çok sporcu squad yönetimi | [x] |
+| 55 | Tarihsel trend SQL fonksiyonları (haftalık/aylık rollup) | [x] |
 | 56 | Otomatik günlük DB yedekleme + saklama politikası | [ ] |
 | 57 | Tıbbi/büyüme verisi değişiklikleri denetim günlüğü | [ ] |
 | 58 | Canlı Supabase subscription (drill sevkiyatı) | [ ] |
@@ -176,4 +176,6 @@
 - **Akıllı Kort Geospatial + Sıfır-Token Önbellek (MapLibre/Sereniy konsepti):** `CourtGeospatialMap.tsx` (vektör SVG koyu tema — Kort 1-8/Salon/Soyunma, geofence sınırları + GEOFENCE ENTER/EXIT pin takibi, IoT durum göstergeleri) + saf `courtGeoEngine.ts` (ekvirektangular projeksiyon, nokta-çokgen, GeofenceTracker) · `semanticQueryCache.ts` (FNV-1a profil parmak izi, hit/miss, IndexedDB kalıcılık — $0 token) · `seasonMemoryBuffer.ts` (sezon hafıza vektörü: milestone/tekrarlayan kusur/toparlanma trendi, Ghost Avatar bağlam enjeksiyonu) · `geospatialCacheSmokeTest.mts` (23/23).
 
 - **Batch 10 (Adım 46-50, Track 4 BAŞLANGIÇ):** İlişkisel PostgreSQL şeması (`supabase/schema.sql` — squads/athletes/sessions/telemetry_frames/growth_records/parent_links/injury_alerts, FK+indeks) · Çok rollü RLS politikaları (`20260220_rls_policies.sql` — ceo/manager tam, coach takım, parent SELECT, athlete kendi verisi + yardımcı fonksiyonlar) · Deterministik seed fikstürleri (`seedFixtures.ts` — 6 sporcu, 72 seans, 864 telemetri, sakatlık bayrakları) · Offline-first depolama (`offlineStorageEngine.ts` — IndexedDB + bellek yedeği, pending_sync_queue write-ahead) · Arka plan senkronizasyon (`backgroundSyncEngine.ts` — online olayları, batch flush, LWW çakışma, ilerleme olayları) · `track4Batch10SmokeTest.mts` (31/31).
+
+- **Batch 11 (Adım 51-55, Track 4 devam):** Telemetri zaman serisi sıkıştırma (`telemetryCompressor.ts` — delta(ts/HR) + kuantize GCT/basınç, ≥%70 payload, round-trip) · Supabase Storage adaptörü (`supabaseStorageAdapter.ts` — avatars/reports/drills bucket'lar, signed URL, mock CI yedeği) · Sporcu CRUD + RBAC (`athleteApiHandler.ts` — ceo/manager/coach düzenler, athlete kendi, boy 50-250/kilo 20-180 sanitizasyon) · Takım yönetimi (`squadManagementApi.ts` — çoklu coach, assign/remove, kadro istatistikleri) · Trend SQL fonksiyonları + TS sarmalayıcı (`20260220_trend_functions.sql` + `historicalTrendAggregator.ts` — haftalık rollup, takım hazırlığı) · `track4Batch11SmokeTest.mts` (26/26).
 
