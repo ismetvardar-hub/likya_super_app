@@ -42,10 +42,10 @@
 | 24 | Dinamik örnekleme hızı (güç tasarrufu vs. hızlı drill) | [x] |
 | 25 | Donanım teşhis overlay (RSSI, gecikme, düşen çerçeve) | [x] |
 | 26 | Mock BLE sanal periferik üretici (offline CI) | [x] |
-| 27 | Çift tabanlık desteği (Sol + Sağ eş zamanlı BLE) | [ ] |
-| 28 | Ayak basış asimetrisi algoritması (L/R denge %) | [ ] |
-| 29 | BLE üzerinden firmware OTA güncelleme | [ ] |
-| 30 | BLE parsing & kalibrasyon hattı smoke testleri | [ ] |
+| 27 | Çift tabanlık desteği (Sol + Sağ eş zamanlı BLE) | [x] |
+| 28 | Ayak basış asimetrisi algoritması (L/R denge %) | [x] |
+| 29 | BLE üzerinden firmware OTA güncelleme | [x] |
+| 30 | BLE parsing & kalibrasyon hattı smoke testleri | [x] |
 
 ## Track 3: Sports Science & AI Kinetic Engine (Adım 31–45)
 
@@ -158,4 +158,6 @@
 - **Batch 4 (Adım 16-20, Track 2):** ESP32 firmware (`esp32_insole_ble.ino`) · ADC filtre (`adc_filter.h` + TS mirror) · BLE GATT protokol · Web Serial Flasher · Oto-reconnect + watchdog — tamamlandı.
 - **Batch 5 (Adım 21-25, Track 2):** Pil telemetrisi (0x180F) · Kalibrasyon sihirbazı · Sensör senkron (100ms) · Adaptif örnekleme · Teşhis HUD — tamamlandı.
 - **Batch 6 (Adım 26+31-45, Track 2+3):** Mock BLE sanal periferik üretici (offline CI, node-runnable) · 6 sınıflı tenis vuruş sınıflandırıcı · ACWR yük dengesi · exp-TRIMP · yorgunluk eğrisi + EPOC · spektral HRV (Goertzel LF/HF) · GRF vektör · RSI yaş/cinsiyet tier · sprint 0-5/5-10m profili · AI koç drill reçetesi · büyüme atağı (PHV) anomali tespiti + doğrulama testleri — **TRACK 3 TAMAMLANDI 15/15 🎉**
+
+- **Batch 7 (Adım 27-30, Track 2):** Çift tabanlık (Sol+Sağ eş zamanlı BLE simülasyonu) · ayak basış asimetrisi (topuk/önayak/GCT denge %) · BLE firmware OTA (CRC32 + ACK/yeniden gönderim) · BLE parsing & kalibrasyon smoke testleri — **TRACK 2 TAMAMLANDI 30/30 🎉**
 
